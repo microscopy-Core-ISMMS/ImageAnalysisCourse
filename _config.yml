@@ -47,6 +47,9 @@ sphinx:
       use_edit_page_button: false
     suppress_warnings:
       - mystnb.unknown_mime_type
+    # Open every external link (Colab badges, references, GitHub links, etc.)
+    # in a new browser tab so readers don't lose their place in the book.
+    myst_links_external_new_tab: true
     # Custom CSS for subtle Mount Sinai brand accents (cyan / magenta / violet).
     # The CSS file itself is at _static/custom.css.
     html_css_files:
