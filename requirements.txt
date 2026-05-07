@@ -5,5 +5,8 @@
 # live in scripts/requirements_notebooks.txt. With execute_notebooks: off
 # in _config.yml the build only needs JB + the deploy tool.
 
-jupyter-book>=1.0
+# Jupyter Book v2 is a totally different system (MyST-MD-based) and would
+# require rewriting _config.yml / _toc.yml. Stay on v1 (Sphinx-based) until
+# we choose to migrate deliberately.
+jupyter-book>=1.0,<2.0
 ghp-import>=2.1
