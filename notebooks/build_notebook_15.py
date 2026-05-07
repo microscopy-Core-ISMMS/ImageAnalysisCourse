@@ -75,7 +75,7 @@ def build_notebook(cells, name: str):
 # ---------------------------------------------------------------------------
 def section_title(b):
     b.md("""<!-- colab-badge -->
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OWNER/REPO/blob/main/notebooks/15_diffusion_models.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OWNER/REPO/blob/2026-workshop/notebooks/15_diffusion_models.ipynb)
 
 *Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.*""")
 

@@ -28,12 +28,12 @@ html:
 repository:
   url: https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse
   path_to_book: ""        # book is at repo root
-  branch: main
+  branch: 2026-workshop
 
 # Launch buttons (rendered as the 🚀 icon in the top-right of every page
 # that has executable cells). Together with `repository:` above this builds
 # Colab links of the form:
-#   https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/main/<page>.ipynb
+#   https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/<page>.ipynb
 launch_buttons:
   notebook_interface: classic
   colab_url: "https://colab.research.google.com"
