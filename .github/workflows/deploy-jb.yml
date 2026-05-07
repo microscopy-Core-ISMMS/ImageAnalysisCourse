@@ -44,11 +44,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
+          cache-dependency-path: requirements.txt
 
       - name: Install Jupyter Book + deploy tooling
         run: |
           python -m pip install --upgrade pip
-          pip install jupyter-book ghp-import
+          pip install -r requirements.txt
 
       - name: Build the book
         run: |

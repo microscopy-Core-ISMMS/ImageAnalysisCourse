@@ -1,0 +1,9 @@
+# Build-time dependencies for the Jupyter Book companion.
+# Used by .github/workflows/deploy-jb.yml and any local rebuild.
+#
+# Notebook *runtime* dependencies (numpy, scikit-image, cellpose, etc.)
+# live in scripts/requirements_notebooks.txt. With execute_notebooks: off
+# in _config.yml the build only needs JB + the deploy tool.
+
+jupyter-book>=1.0
+ghp-import>=2.1
