@@ -422,7 +422,7 @@
                 <article class="bd-article">
                   
   <!-- colab-badge -->
-<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/05_desktop_gui_complements.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/05_desktop_gui_complements.ipynb" rel="noreferer noopener" target="_blank"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
 <section class="tex2jax_ignore mathjax_ignore" id="notebook-05-desktop-gui-complements">
 <h1>Notebook 05 — Desktop GUI Complements<a class="headerlink" href="#notebook-05-desktop-gui-complements" title="Link to this heading">#</a></h1>
@@ -444,12 +444,12 @@
 <p>You do not need any of this to read along on workshop day. You need it to <em>do</em> the walkthroughs at home.</p>
 <section id="fiji">
 <h3>Fiji<a class="headerlink" href="#fiji" title="Link to this heading">#</a></h3>
-<p><a class="reference external" href="https://fiji.sc/">Download Fiji</a> (≈ 400 MB; runs on macOS, Windows, Linux). Fiji is “ImageJ + a curated plugin distribution” — the standard tool in microscopy image analysis.</p>
+<p><a class="reference external" href="https://fiji.sc/" rel="noreferer noopener" target="_blank">Download Fiji</a> (≈ 400 MB; runs on macOS, Windows, Linux). Fiji is “ImageJ + a curated plugin distribution” — the standard tool in microscopy image analysis.</p>
 <p>After installing, open Fiji and update via <em>Help → Update…</em> before the first session. The update mechanism also lets you subscribe to <em>update sites</em> — separate plugin channels — which is how you install StarDist, deepImageJ, and CSBDeep below.</p>
 </section>
 <section id="qupath">
 <h3>QuPath<a class="headerlink" href="#qupath" title="Link to this heading">#</a></h3>
-<p><a class="reference external" href="https://qupath.github.io/">Download QuPath</a> (≈ 200 MB; same platforms). QuPath is the standard open-source tool for whole-slide pathology and is also useful for tiled fluorescence. Built-in pixel and object classifiers, scriptable via Groovy.</p>
+<p><a class="reference external" href="https://qupath.github.io/" rel="noreferer noopener" target="_blank">Download QuPath</a> (≈ 200 MB; same platforms). QuPath is the standard open-source tool for whole-slide pathology and is also useful for tiled fluorescence. Built-in pixel and object classifiers, scriptable via Groovy.</p>
 </section>
 <section id="sample-data">
 <h3>Sample data<a class="headerlink" href="#sample-data" title="Link to this heading">#</a></h3>
@@ -457,7 +457,7 @@
 <ul class="simple">
 <li><p><strong>Fiji built-in</strong> — <em>File → Open Samples → HeLa Cells</em> (RGB fluorescence) or <em>Blobs</em> (single-channel test pattern).</p></li>
 <li><p><strong>scikit-image canonical samples</strong> — exported as TIFFs from Notebook 01: <code class="docutils literal notranslate"><span class="pre">cells3d</span></code> middle slice (DAPI + membrane), <code class="docutils literal notranslate"><span class="pre">human_mitosis</span></code>, <code class="docutils literal notranslate"><span class="pre">cell</span></code>. If you want these on disk, run the snippet in <em>Appendix — Exporting sample images</em> at the bottom of this notebook.</p></li>
-<li><p><strong>QuPath sample slides</strong> — the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/intro/getting_started.html#sample-data">QuPath tutorial slides</a> include a small H&amp;E and IHC slide that fit on a laptop.</p></li>
+<li><p><strong>QuPath sample slides</strong> — the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/intro/getting_started.html#sample-data" rel="noreferer noopener" target="_blank">QuPath tutorial slides</a> include a small H&amp;E and IHC slide that fit on a laptop.</p></li>
 </ul>
 </section>
 <section id="tool-versions-targeted-in-this-guide">
@@ -552,7 +552,7 @@
 <ol class="arabic simple">
 <li><p><strong>Create result</strong> produces a single labeled image (an 8-bit indexed image with one value per class) that you can save with <em>File → Save As → TIFF</em>. This is your final segmentation.</p></li>
 <li><p><strong>Save classifier</strong> writes a <code class="docutils literal notranslate"><span class="pre">.model</span></code> file. You can reload this on a different image with <em>Load classifier</em> — that is the GUI equivalent of “trained model artifact” we talked about in the lecture. Re-apply with <strong>Apply classifier</strong> on a new image stack to do batch inference.</p></li>
-<li><p>For headless / scripted batch processing, TWS exposes a Beanshell / Groovy / Python (Jython) scripting API. Search the <a class="reference external" href="https://imagej.net/plugins/tws/">Fiji TWS documentation</a> for <code class="docutils literal notranslate"><span class="pre">runWekaSegmentation</span></code>.</p></li>
+<li><p>For headless / scripted batch processing, TWS exposes a Beanshell / Groovy / Python (Jython) scripting API. Search the <a class="reference external" href="https://imagej.net/plugins/tws/" rel="noreferer noopener" target="_blank">Fiji TWS documentation</a> for <code class="docutils literal notranslate"><span class="pre">runWekaSegmentation</span></code>.</p></li>
 </ol>
 <blockquote>
 <div><p><strong>[Screenshot 7]</strong> <em>The “Create result” output: single-channel labeled image with three intensity levels (background, cell, nucleus), ready for export.</em></p>
@@ -560,14 +560,14 @@
 </section>
 <section id="a-7-going-further-labkit">
 <h3>A.7 Going further — Labkit<a class="headerlink" href="#a-7-going-further-labkit" title="Link to this heading">#</a></h3>
-<p><a class="reference external" href="https://imagej.net/plugins/labkit/">Labkit</a> is the modern successor to TWS. Same paint-and-train loop, but the labeling tools are faster (better undo/redo, SAM-assisted polygon labeling), it scales to larger images, and it has an optional deep-learning backend (U-Net training via <a class="reference external" href="https://imagej.net/plugins/bdv/">BigDataViewer</a>). Worth trying once you are comfortable with TWS — same mental model, smoother UX.</p>
+<p><a class="reference external" href="https://imagej.net/plugins/labkit/" rel="noreferer noopener" target="_blank">Labkit</a> is the modern successor to TWS. Same paint-and-train loop, but the labeling tools are faster (better undo/redo, SAM-assisted polygon labeling), it scales to larger images, and it has an optional deep-learning backend (U-Net training via <a class="reference external" href="https://imagej.net/plugins/bdv/" rel="noreferer noopener" target="_blank">BigDataViewer</a>). Worth trying once you are comfortable with TWS — same mental model, smoother UX.</p>
 <p><strong>When TWS is enough.</strong> Random forests on hand-engineered features still beat tiny CNNs on small datasets, and TWS results are fast and interpretable. Don’t reach for Labkit / DL until you’ve confirmed TWS isn’t enough.</p>
 </section>
 </section>
 <section id="b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images">
 <h2>B. QuPath Pixel Classifier — the trainable segmenter for whole-slide images<a class="headerlink" href="#b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images" title="Link to this heading">#</a></h2>
 <p>QuPath ships with a built-in pixel classifier that is the pathology-track equivalent of Trainable Weka. Same brush-and-train loop, but designed for whole-slide images: tiled inference, multi-resolution annotation, and integration with QuPath’s object-detection and quantification pipeline.</p>
-<p><strong>Citation.</strong> Bankhead et al., <em>Scientific Reports</em> 7:16878, 2017 (the QuPath paper). The pixel-classifier feature is documented in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/pixel_classification.html">QuPath manual, “Pixel classification” chapter</a>.</p>
+<p><strong>Citation.</strong> Bankhead et al., <em>Scientific Reports</em> 7:16878, 2017 (the QuPath paper). The pixel-classifier feature is documented in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/pixel_classification.html" rel="noreferer noopener" target="_blank">QuPath manual, “Pixel classification” chapter</a>.</p>
 <p><strong>Why it earns its own section.</strong> A typical H&amp;E whole-slide image is 50,000 × 50,000 pixels at 40× magnification. You cannot open one in Fiji without tiling it yourself. QuPath does the tiling for you, runs the classifier at the resolution you choose, and gives you a tissue-class segmentation that is downstream-ready for cell detection and quantification. <strong>For pathology, this is the canonical no-code workflow.</strong></p>
 <section id="b-1-open-a-slide-and-create-a-project">
 <h3>B.1 Open a slide and create a project<a class="headerlink" href="#b-1-open-a-slide-and-create-a-project" title="Link to this heading">#</a></h3>
@@ -626,12 +626,12 @@
 <section id="b-6-object-classifier-train-a-downstream-classifier-on-top">
 <h3>B.6 Object classifier — train a downstream classifier on top<a class="headerlink" href="#b-6-object-classifier-train-a-downstream-classifier-on-top" title="Link to this heading">#</a></h3>
 <p>QuPath’s <em>object classifier</em> is the second half of the no-code loop. After cell detection, you assign training labels to a few cells of each type (e.g., “lymphocyte”, “tumor cell”, “fibroblast”) and QuPath trains a random forest on per-cell measurements. Same paint-and-train idiom, applied to objects rather than pixels.</p>
-<p>This is beyond the scope of this notebook but follows directly from B.4 — covered in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/cell_classification.html">QuPath object classification tutorial</a>.</p>
+<p>This is beyond the scope of this notebook but follows directly from B.4 — covered in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/cell_classification.html" rel="noreferer noopener" target="_blank">QuPath object classification tutorial</a>.</p>
 </section>
 </section>
 <section id="c-deepimagej-bioimage-model-zoo-on-the-desktop">
 <h2>C. deepImageJ — BioImage Model Zoo on the desktop<a class="headerlink" href="#c-deepimagej-bioimage-model-zoo-on-the-desktop" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="https://deepimagej.github.io/">deepImageJ</a> is the Fiji surface for the <a class="reference external" href="https://bioimage.io">BioImage Model Zoo</a>. Anything you browsed via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> in Notebook 04 — the structured DL model registry — you can run here without writing a line of Python.</p>
+<p><a class="reference external" href="https://deepimagej.github.io/" rel="noreferer noopener" target="_blank">deepImageJ</a> is the Fiji surface for the <a class="reference external" href="https://bioimage.io" rel="noreferer noopener" target="_blank">BioImage Model Zoo</a>. Anything you browsed via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> in Notebook 04 — the structured DL model registry — you can run here without writing a line of Python.</p>
 <p><strong>Citation.</strong> Gómez-de-Mariscal et al., <em>Nature Methods</em> 18(10):1192–1195, 2021. ⚠ <em>Verified Notebook 04 references the same paper.</em></p>
 <p><strong>Why this matters for the workshop.</strong> Notebook 04’s BiMZ section was a Python API browse. Many lab members will never run that browse. deepImageJ gives them the same registry, accessed through the menu of the imaging tool they already use.</p>
 <section id="c-1-install-via-fiji-updater">
@@ -746,7 +746,7 @@
 <span class="n">stardist</span><span class="o">.</span><span class="na">detectObjects</span><span class="o">(</span><span class="n">getCurrentImageData</span><span class="o">(),</span><span class="w"> </span><span class="n">selected</span><span class="o">)</span>
 </pre></div>
 </div>
-<p>⚠ <em>The exact builder method names and the bundled model filename change between extension releases. Treat the snippet above as a placeholder — copy from the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/deep/stardist.html">QuPath StarDist documentation</a> at the time you install.</em></p>
+<p>⚠ <em>The exact builder method names and the bundled model filename change between extension releases. Treat the snippet above as a placeholder — copy from the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/deep/stardist.html" rel="noreferer noopener" target="_blank">QuPath StarDist documentation</a> at the time you install.</em></p>
 <blockquote>
 <div><p><strong>[Screenshot 17]</strong> <em>QuPath script editor with a StarDist H&amp;E script loaded, executed across a slide region, and the resulting cell objects visible on the canvas.</em></p>
 </div></blockquote>
@@ -761,10 +761,10 @@
 <h2>How this notebook connects to the rest of the workshop<a class="headerlink" href="#how-this-notebook-connects-to-the-rest-of-the-workshop" title="Link to this heading">#</a></h2>
 <p>The five GUI workflows above are not a parallel curriculum — they are the desktop counterparts of things you already touched in the labs and the lecture. Cross-references:</p>
 <ul class="simple">
-<li><p><strong>Notebook 01 (Cellpose-SAM segmentation)</strong>: same pretrained-model paradigm, different surface. The Cellpose authors maintain Fiji and napari plugins; the <a class="reference external" href="https://github.com/MouseLand/cellpose">Cellpose Fiji plugin</a> is the GUI counterpart of Notebook 01. ⚠ <em>Plugin status changes; verify which Fiji entry-point is canonical at install time.</em></p></li>
+<li><p><strong>Notebook 01 (Cellpose-SAM segmentation)</strong>: same pretrained-model paradigm, different surface. The Cellpose authors maintain Fiji and napari plugins; the <a class="reference external" href="https://github.com/MouseLand/cellpose" rel="noreferer noopener" target="_blank">Cellpose Fiji plugin</a> is the GUI counterpart of Notebook 01. ⚠ <em>Plugin status changes; verify which Fiji entry-point is canonical at install time.</em></p></li>
 <li><p><strong>Notebook 02 (validation)</strong>: every metric in Notebook 02 — IoU, Dice, count error, area-fraction error — applies identically to the outputs of TWS, QuPath Pixel Classifier, deepImageJ, and StarDist. <strong>The validation framework does not change because the model came from a GUI.</strong> Bring a held-out test image with ground-truth labels, compute the same numbers.</p></li>
-<li><p><strong>Notebook 03a (denoising)</strong>: the <a class="reference external" href="https://github.com/CSBDeep/CSBDeep_website">CARE Fiji plugin</a> (CSBDeep update site) runs the same denoising model from inside Fiji. If you trained a CARE model in ZeroCostDL4Mic, you can deploy it in Fiji.</p></li>
-<li><p><strong>Notebook 03b (foundation models)</strong>: the <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam">μSAM plugin</a> has both a napari interface and a <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam">QuPath extension</a> — the desktop counterparts of the foundation-model lab.</p></li>
+<li><p><strong>Notebook 03a (denoising)</strong>: the <a class="reference external" href="https://github.com/CSBDeep/CSBDeep_website" rel="noreferer noopener" target="_blank">CARE Fiji plugin</a> (CSBDeep update site) runs the same denoising model from inside Fiji. If you trained a CARE model in ZeroCostDL4Mic, you can deploy it in Fiji.</p></li>
+<li><p><strong>Notebook 03b (foundation models)</strong>: the <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam" rel="noreferer noopener" target="_blank">μSAM plugin</a> has both a napari interface and a <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam" rel="noreferer noopener" target="_blank">QuPath extension</a> — the desktop counterparts of the foundation-model lab.</p></li>
 <li><p><strong>Notebook 04 (community platforms)</strong>: deepImageJ (Section C above) is the Fiji surface for the same BioImage Model Zoo registry that Notebook 04 browsed via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code>.</p></li>
 <li><p><strong>Lecture 1</strong>: the “responsible use &amp; validation” pillar carries verbatim. A trainable Weka classifier without a held-out test set has the same problem as a CNN without a held-out test set. The “show failures” framing applies — try TWS or the QuPath Pixel Classifier on a deliberately out-of-distribution sample and watch it fail.</p></li>
 <li><p><strong>Lecture 2</strong>: the bridge talk between the morning lecture and the labs is the natural home for a 10-minute live GUI demo. <em>Trainable Weka → deepImageJ paired demo</em> in Fiji is the highest-pedagogical-value content this notebook supports — see the workshop schedule.</p></li>
@@ -803,7 +803,7 @@
 </tr>
 <tr class="row-odd"><td><p>To label and train at WSI scale, including tracking</p></td>
 <td><p>The other QuPath classifiers + (eventually) Labkit / DL backends</p></td>
-<td><p>Active area; check the <a class="reference external" href="https://qupath.readthedocs.io/">QuPath docs</a> for what’s current.</p></td>
+<td><p>Active area; check the <a class="reference external" href="https://qupath.readthedocs.io/" rel="noreferer noopener" target="_blank">QuPath docs</a> for what’s current.</p></td>
 </tr>
 </tbody>
 </table>
@@ -812,7 +812,7 @@
 <section id="what-is-not-in-this-notebook-and-where-to-look-instead">
 <h2>What is <strong>not</strong> in this notebook (and where to look instead)<a class="headerlink" href="#what-is-not-in-this-notebook-and-where-to-look-instead" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><strong>Cellpose human-in-the-loop fine-tuning.</strong> Cellpose 2.0+ supports a GUI-driven fine-tune workflow inside the Cellpose desktop app. If you want a <em>deep-learning</em> trainable segmenter (rather than the random-forest TWS), this is the canonical path. Documented in the <a class="reference external" href="https://cellpose.readthedocs.io/">Cellpose docs</a>.</p></li>
+<li><p><strong>Cellpose human-in-the-loop fine-tuning.</strong> Cellpose 2.0+ supports a GUI-driven fine-tune workflow inside the Cellpose desktop app. If you want a <em>deep-learning</em> trainable segmenter (rather than the random-forest TWS), this is the canonical path. Documented in the <a class="reference external" href="https://cellpose.readthedocs.io/" rel="noreferer noopener" target="_blank">Cellpose docs</a>.</p></li>
 <li><p><strong>napari + plugins.</strong> napari is the modern Python-native viewer with a deep plugin ecosystem ([napari-segment-anything], [napari-cellpose], [napari-cellseg3d], …). It bridges code-first and GUI workflows in a way Fiji cannot. A separate notebook is warranted.</p></li>
 <li><p><strong>Tracking GUIs.</strong> TrackMate (Fiji) and ELEPHANT, Mastodon, btrack — out of scope for this workshop’s segmentation focus.</p></li>
 <li><p><strong>Slide-management infrastructure.</strong> OMERO, BIA Image Archive, MoBIE — adjacent to the analysis tools above but a different workflow concern.</p></li>

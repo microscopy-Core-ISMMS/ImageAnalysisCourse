@@ -379,7 +379,7 @@
                 <article class="bd-article">
                   
   <!-- colab-badge -->
-<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/09_cellpose_finetune.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/09_cellpose_finetune.ipynb" rel="noreferer noopener" target="_blank"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
 <section class="tex2jax_ignore mathjax_ignore" id="notebook-09-cellpose-2-0-human-in-the-loop-fine-tuning-colab">
 <h1>Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)<a class="headerlink" href="#notebook-09-cellpose-2-0-human-in-the-loop-fine-tuning-colab" title="Link to this heading">#</a></h1>
@@ -687,7 +687,7 @@
 </div>
 </div>
 </div>
-<p>⚠ <strong>Note on Cellpose API stability.</strong> The <code class="docutils literal notranslate"><span class="pre">model.train()</span></code> signature may vary across Cellpose 3.x and 4.x releases. If you encounter an <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> on the <code class="docutils literal notranslate"><span class="pre">train()</span></code> call above, check the current Cellpose documentation at <a class="reference external" href="https://cellpose.readthedocs.io/">https://cellpose.readthedocs.io/</a>. The pattern stays the same (load → train → eval), but exact parameters shift.</p>
+<p>⚠ <strong>Note on Cellpose API stability.</strong> The <code class="docutils literal notranslate"><span class="pre">model.train()</span></code> signature may vary across Cellpose 3.x and 4.x releases. If you encounter an <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> on the <code class="docutils literal notranslate"><span class="pre">train()</span></code> call above, check the current Cellpose documentation at <a class="reference external" href="https://cellpose.readthedocs.io/" rel="noreferer noopener" target="_blank">https://cellpose.readthedocs.io/</a>. The pattern stays the same (load → train → eval), but exact parameters shift.</p>
 </section>
 <section id="step-4-evaluate-fine-tuned-model-on-held-out-test-set">
 <h2>Step 4: Evaluate fine-tuned model on held-out test set<a class="headerlink" href="#step-4-evaluate-fine-tuned-model-on-held-out-test-set" title="Link to this heading">#</a></h2>
@@ -815,8 +815,8 @@
 </ul>
 <p><strong>Where to go next:</strong></p>
 <ul class="simple">
-<li><p><strong>Human-in-the-loop (Cellpose interactive).</strong> Instead of pre-labeling 50 images, label a few, fine-tune, flag uncertain regions for correction, repeat. <a class="reference external" href="https://cellpose.readthedocs.io/">Cellpose GUI tutorial</a>.</p></li>
-<li><p><strong>Full Cellpose training docs.</strong> The <code class="docutils literal notranslate"><span class="pre">model.train()</span></code> API has more options: custom <code class="docutils literal notranslate"><span class="pre">channels</span></code>, <code class="docutils literal notranslate"><span class="pre">rescale</span></code>, regularization. <a class="reference external" href="https://cellpose.readthedocs.io/">Cellpose training guide</a>.</p></li>
+<li><p><strong>Human-in-the-loop (Cellpose interactive).</strong> Instead of pre-labeling 50 images, label a few, fine-tune, flag uncertain regions for correction, repeat. <a class="reference external" href="https://cellpose.readthedocs.io/" rel="noreferer noopener" target="_blank">Cellpose GUI tutorial</a>.</p></li>
+<li><p><strong>Full Cellpose training docs.</strong> The <code class="docutils literal notranslate"><span class="pre">model.train()</span></code> API has more options: custom <code class="docutils literal notranslate"><span class="pre">channels</span></code>, <code class="docutils literal notranslate"><span class="pre">rescale</span></code>, regularization. <a class="reference external" href="https://cellpose.readthedocs.io/" rel="noreferer noopener" target="_blank">Cellpose training guide</a>.</p></li>
 <li><p><strong>Broader training workflows.</strong> ZeroCostDL4Mic and Notebook 13 show how to build validation protocols for any fine-tuned model.</p></li>
 <li><p><strong>Open questions for your own data:</strong> How many training images do you actually need? How much does microscope/stain variation hurt transfer? These are empirical questions best answered by trying.</p></li>
 </ul>
