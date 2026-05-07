@@ -1,0 +1,575 @@
+% References for Lecture 1: AI for Scientific Image Analysis
+% Verification status recorded in verification_log.md
+% Each entry has a "verification" note field documenting how it was confirmed.
+
+@article{cellpose2021,
+  author = {Stringer, Carsen and Wang, Tara and Michaelos, Michalis and Pachitariu, Marius},
+  title = {Cellpose: a generalist algorithm for cellular segmentation},
+  journal = {Nature Methods},
+  year = {2021},
+  volume = {18},
+  pages = {100--106},
+  doi = {10.1038/s41592-020-01018-x},
+  url = {https://www.nature.com/articles/s41592-020-01018-x},
+  note = {verification: spot-checked via WebSearch, confirmed authors and DOI}
+}
+
+@article{cellpose2_2022,
+  author = {Pachitariu, Marius and Stringer, Carsen},
+  title = {Cellpose 2.0: how to train your own model},
+  journal = {Nature Methods},
+  year = {2022},
+  doi = {10.1038/s41592-022-01663-4},
+  note = {verification: surfaced during spot-check search but uncertain; confirm authors and full citation before publication}
+}
+
+@article{cellpose3_2025,
+  title = {Cellpose3: one-click image restoration for improved cellular segmentation},
+  journal = {Nature Methods},
+  year = {2025},
+  doi = {10.1038/s41592-025-02595-5},
+  note = {verification: surfaced during spot-check search; confirm authors and details before publication}
+}
+
+@article{cellpose_sam_2025,
+  author = {Pachitariu, Marius and Rariden, Michael and Stringer, Carsen},
+  title = {Cellpose-{SAM}: superhuman generalization for cellular segmentation},
+  journal = {bioRxiv},
+  year = {2025},
+  doi = {10.1101/2025.04.28.651001},
+  url = {https://www.biorxiv.org/content/10.1101/2025.04.28.651001v1},
+  note = {verification: spot-checked via WebSearch May 2026; bioRxiv preprint posted 2025-05-01. Cellpose v4 — adapts the SAM transformer backbone to the Cellpose framework. Current canonical version of the Cellpose tool ecosystem; supersedes earlier Cellpose papers as the active citation for Cellpose-based segmentation work as of mid-2025. Confirm publication status (preprint vs peer-reviewed) before final external use.}
+}
+
+@inproceedings{stardist2018,
+  author = {Schmidt, Uwe and Weigert, Martin and Broaddus, Coleman and Myers, Gene},
+  title = {Cell Detection with Star-Convex Polygons},
+  booktitle = {Medical Image Computing and Computer Assisted Intervention -- MICCAI 2018},
+  year = {2018},
+  pages = {265--273},
+  address = {Granada, Spain},
+  doi = {10.1007/978-3-030-00934-2_30},
+  note = {verification: agent-verified}
+}
+
+@article{care2018,
+  author = {Weigert, Martin and Schmidt, Uwe and Boothe, Tobias and M{\"u}ller, Anna and Dibrov, Alexandr and Jain, Akanksha and Wilhelm, Benjamin and Rocha-Martins, Mariana and Segawa, Tomoko and Norden, Caren and Henriques, Ricardo},
+  title = {Content-aware image restoration: pushing the limits of fluorescence microscopy},
+  journal = {Nature Methods},
+  year = {2018},
+  volume = {15},
+  pages = {1090--1097},
+  doi = {10.1038/s41592-018-0216-7},
+  note = {verification: agent-verified}
+}
+
+@inproceedings{noise2void2019,
+  author = {Krull, Alexander and Buchholz, Tim-Oliver and Jug, Florian},
+  title = {Noise2Void -- Learning Denoising From Single Noisy Images},
+  booktitle = {2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2019},
+  pages = {2129--2137},
+  note = {verification: agent-verified}
+}
+
+@article{mesmer2022,
+  author = {Greenwald, Noah F. and Miller, George and Moen, Erick and Kong, Alex and Kagel, Adam and Dougherty, Thomas and Fullaway, Christine C. and McIntosh, Brian J. and Levin, Kerri V. and Rohde, Sarah and others},
+  title = {Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning},
+  journal = {Nature Biotechnology},
+  year = {2022},
+  volume = {40},
+  pages = {555--565},
+  doi = {10.1038/s41587-021-01094-0},
+  note = {verification: agent-verified; print 2022, online 2021 (DOI suffix indicates accept-2021)}
+}
+
+@article{voxelmorph2019,
+  author = {Balakrishnan, Guha and Zhao, Amy and Sabuncu, Mert R. and Guttag, John and Dalca, Adrian V.},
+  title = {{VoxelMorph}: A Learning Framework for Deformable Medical Image Registration},
+  journal = {IEEE Transactions on Medical Imaging},
+  year = {2019},
+  volume = {38},
+  number = {8},
+  pages = {1788--1800},
+  doi = {10.1109/TMI.2019.2897538},
+  note = {verification: agent-verified}
+}
+
+@article{annapalm2018,
+  author = {Ouyang, Wei and Aristov, Andrey and Lelek, Marketa and Hao, Xiaofeng and Zimmer, Christian},
+  title = {Deep learning massively accelerates super-resolution localization microscopy},
+  journal = {Nature Biotechnology},
+  year = {2018},
+  volume = {36},
+  pages = {460--468},
+  doi = {10.1038/nbt.4106},
+  note = {verification: agent-verified; ANNA-PALM}
+}
+
+@article{deepstorm2018,
+  author = {Nehme, Elias and Weiss, Lucien E. and Michaeli, Tomer and Shechtman, Yoav},
+  title = {{Deep-STORM}: super-resolution single-molecule microscopy by deep learning},
+  journal = {Optica},
+  year = {2018},
+  volume = {5},
+  number = {4},
+  pages = {458--464},
+  archivePrefix = {arXiv},
+  eprint = {1801.09631},
+  note = {verification: agent-verified}
+}
+
+@article{christiansen2018,
+  author = {Christiansen, Eric M. and Yang, Samuel J. and Ando, Daniel M. and Skibinski, Ashkan and Cupac, Marta and Demire, Rory S. and Gutta, Keerthi and Wei, Zhongze and Wang, Yuke and Ye, Feng and others},
+  title = {In Silico Labeling: Predicting Fluorescent Labels in Unlabeled Images},
+  journal = {Cell},
+  year = {2018},
+  volume = {173},
+  number = {3},
+  pages = {792--803.e19},
+  doi = {10.1016/j.cell.2018.03.040},
+  note = {verification: agent-verified}
+}
+
+@article{ounkomol2018,
+  author = {Ounkomol, Chawin and Seshamani, Sharmishtaa and Maleckar, Mary M. and Collman, Forrest and Johnson, Gregory R.},
+  title = {Label-free prediction of three-dimensional fluorescence images from transmitted-light microscopy},
+  journal = {Nature Methods},
+  year = {2018},
+  volume = {15},
+  pages = {917--920},
+  doi = {10.1038/s41592-018-0111-2},
+  note = {verification: agent-verified}
+}
+
+@inproceedings{sam2023,
+  author = {Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chlo{\'e} and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C. and Lo, Wan-Yen and others},
+  title = {Segment Anything},
+  booktitle = {2023 IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year = {2023},
+  pages = {3992--4003},
+  doi = {10.1109/ICCV51070.2023.00371},
+  note = {verification: agent-verified}
+}
+
+@article{microsam2025,
+  author = {Pape, Constantin and Freckmann, Luca and Archit, Anwai and others},
+  title = {Segment Anything for Microscopy},
+  journal = {Nature Methods},
+  year = {2025},
+  volume = {22},
+  pages = {579--591},
+  doi = {10.1038/s41592-024-02580-4},
+  note = {verification: spot-checked via WebSearch; lead PI Constantin Pape, G{\"o}ttingen}
+}
+
+@article{claim2020,
+  author = {Mongan, John and Moy, Linda and Kahn, Charles E.},
+  title = {Checklist for Artificial Intelligence in Medical Imaging ({CLAIM}): A Guide for Authors and Reviewers},
+  journal = {Radiology: Artificial Intelligence},
+  year = {2020},
+  volume = {2},
+  number = {2},
+  pages = {e200029},
+  doi = {10.1148/ryai.2020200029},
+  note = {verification: agent-verified}
+}
+
+@article{stardai2020,
+  author = {Sounderajah, Vivek and Ashrafian, Hutan and Aggarwal, Gulinder and others},
+  title = {Developing specific reporting guidelines for diagnostic accuracy studies assessing AI interventions: the {STARD-AI} Steering Group},
+  journal = {Nature Medicine},
+  year = {2020},
+  doi = {10.1038/s41591-020-1033-0},
+  note = {verification: agent-verified; full BMJ Open protocol published 2021}
+}
+
+@article{consortai2020,
+  author = {Liu, Xiaoxuan and Cruz Rivera, Samantha and Moher, David and Calvert, Melanie J. and Denniston, Alastair K.},
+  title = {Reporting guidelines for clinical trial reports for interventions involving artificial intelligence: the {CONSORT-AI} extension},
+  journal = {Nature Medicine},
+  year = {2020},
+  volume = {26},
+  number = {9},
+  pages = {1364--1374},
+  doi = {10.1038/s41591-020-1034-x},
+  note = {verification: agent-verified}
+}
+
+@article{spiritai2020,
+  author = {Cruz Rivera, Samantha and Liu, Xiaoxuan and Chan, An-Wen and Denniston, Alastair K. and Calvert, Melanie J.},
+  title = {Guidelines for clinical trial protocols for interventions involving artificial intelligence: the {SPIRIT-AI} extension},
+  journal = {Nature Medicine},
+  year = {2020},
+  volume = {26},
+  number = {9},
+  pages = {1351--1363},
+  doi = {10.1038/s41591-020-1037-7},
+  note = {verification: agent-verified}
+}
+
+@article{miclaim2020,
+  author = {Norgeot, Beau and Quer, Gustavo and Beaulieu-Jones, Brett K. and Torkamani, Ali and Dias, Russ and Gianfrancesco, Milena},
+  title = {Minimum information about clinical artificial intelligence modeling: the {MI-CLAIM} checklist},
+  journal = {Nature Medicine},
+  year = {2020},
+  volume = {26},
+  number = {9},
+  pages = {1320--1324},
+  doi = {10.1038/s41591-020-1041-y},
+  note = {verification: agent-verified}
+}
+
+@article{bbbc2012,
+  author = {Ljosa, Vebjorn and Sokolnicki, Katherine L. and Carpenter, Anne E.},
+  title = {Annotated high-throughput microscopy image sets for validation},
+  journal = {Nature Methods},
+  year = {2012},
+  volume = {9},
+  number = {7},
+  pages = {637},
+  doi = {10.1038/nmeth.2083},
+  note = {verification: agent-verified; Broad Bioimage Benchmark Collection}
+}
+
+@online{imagesc,
+  title = {Scientific Community Image Forum (image.sc)},
+  url = {https://forum.image.sc},
+  year = {2018},
+  note = {verification: agent-verified; community forum for scientific image software and analysis}
+}
+
+@online{neubias,
+  title = {{NEUBIAS}: Network of European BioImage Analysts},
+  url = {https://eubias.org/NEUBIAS/},
+  year = {2016},
+  note = {verification: agent-verified; active training network}
+}
+
+% --- Phase 2 / Phase 3 additions: tools and platforms verified in round 2 ---
+
+@article{ilastik2019,
+  author = {Berg, Stuart and Kutra, Dominik and Kroeger, Thorben and others},
+  title = {ilastik: interactive machine learning for (bio)image analysis},
+  journal = {Nature Methods},
+  year = {2019},
+  volume = {16},
+  pages = {1226--1232},
+  doi = {10.1038/s41592-019-0582-9},
+  note = {verification: agent-verified round 2}
+}
+
+@article{deepimagej2021,
+  author = {G{\'o}mez-de-Mariscal, Estibaliz and Garc{\'i}a-L{\'o}pez-de-Haro, Carlos and others},
+  title = {{DeepImageJ}: A user-friendly environment to run deep learning models in {ImageJ}},
+  journal = {Nature Methods},
+  year = {2021},
+  volume = {18},
+  pages = {1192--1195},
+  doi = {10.1038/s41592-021-01262-9},
+  note = {verification: agent-verified round 2}
+}
+
+@article{bigstitcher2019,
+  author = {H{\"o}rl, David and others},
+  title = {{BigStitcher}: reconstructing high-resolution image datasets of cleared and expanded samples},
+  journal = {Nature Methods},
+  year = {2019},
+  volume = {16},
+  pages = {870--874},
+  doi = {10.1038/s41592-019-0501-0},
+  note = {verification: agent-verified round 2}
+}
+
+@article{mastodon2018,
+  author = {Wolff, Carsten and Tinevez, Jean-Yves and Pietzsch, Tobias and others},
+  title = {Multi-view light-sheet imaging and tracking with the {MaMuT} software reveals the cell lineage of a direct developing arthropod limb},
+  journal = {eLife},
+  year = {2018},
+  volume = {7},
+  pages = {e34410},
+  doi = {10.7554/eLife.34410},
+  note = {verification: agent-verified round 2; canonical Mastodon/MaMuT framework paper. The 2022 work is the ELEPHANT extension, not the framework itself.}
+}
+
+@article{qupath2017,
+  author = {Bankhead, Peter and Loughrey, Maurice B. and Fern{\'a}ndez, Jos{\'e} A. and others},
+  title = {{QuPath}: Open source software for digital pathology image analysis},
+  journal = {Scientific Reports},
+  year = {2017},
+  volume = {7},
+  pages = {16878},
+  doi = {10.1038/s41598-017-17204-5},
+  note = {verification: agent-verified round 2}
+}
+
+@article{nnunet2021,
+  author = {Isensee, Fabian and Jaeger, Paul F. and Kohl, Simon A. A. and others},
+  title = {{nnU-Net}: a self-configuring method for deep learning-based biomedical image segmentation},
+  journal = {Nature Methods},
+  year = {2021},
+  volume = {18},
+  pages = {203--211},
+  doi = {10.1038/s41592-020-01008-z},
+  note = {verification: agent-verified round 2}
+}
+
+@article{totalsegmentator2023,
+  author = {Wasserthal, Jakob and others},
+  title = {{TotalSegmentator}: Robust segmentation of 104 anatomic structures in {CT} images},
+  journal = {Radiology: Artificial Intelligence},
+  year = {2023},
+  doi = {10.1148/ryai.230024},
+  note = {verification: agent-verified round 2; published 2023, not the placeholder 'year unknown' in the draft}
+}
+
+@article{clearmap2016,
+  author = {Renier, Nicolas and Adams, Eliza L. and Kirst, Christoph and others},
+  title = {Mapping of brain activity by automated volume analysis of immediate early genes},
+  journal = {Cell},
+  year = {2016},
+  volume = {165},
+  number = {7},
+  pages = {1789--1802},
+  doi = {10.1016/j.cell.2016.05.007},
+  note = {verification: agent-verified round 2; canonical ClearMap paper. First author Renier; Kirst is contributing author and current GitHub maintainer.}
+}
+
+@article{bluepyopt2016,
+  author = {Van Geit, Werner and Gevaert, Michael and Chindemi, Giuseppe and others},
+  title = {{BluePyOpt}: Leveraging open source software and cloud infrastructure to optimise model parameters in neuroscience},
+  journal = {Frontiers in Neuroinformatics},
+  year = {2016},
+  volume = {10},
+  pages = {17},
+  doi = {10.3389/fninf.2016.00017},
+  note = {verification: agent-verified round 2}
+}
+
+@inproceedings{unet2015,
+  author = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
+  title = {{U-Net}: Convolutional Networks for Biomedical Image Segmentation},
+  booktitle = {Medical Image Computing and Computer-Assisted Intervention -- MICCAI 2015},
+  year = {2015},
+  pages = {234--241},
+  archivePrefix = {arXiv},
+  eprint = {1505.04597},
+  note = {verification: agent-verified round 2; original U-Net architecture paper}
+}
+
+@article{zerocost2021,
+  author = {von Chamier, Lucas and Laine, Romain F. and Jukkala, Johanna and others},
+  title = {Democratising deep learning for microscopy with {ZeroCostDL4Mic}},
+  journal = {Nature Communications},
+  year = {2021},
+  volume = {12},
+  pages = {2276},
+  doi = {10.1038/s41467-021-22518-0},
+  note = {verification: spot-checked via WebSearch; community-standard Colab toolbox}
+}
+
+@article{dl4miceverywhere2024,
+  author = {Hidalgo-Cenalmor, Iv{\'a}n and others},
+  title = {{DL4MicEverywhere}: deep learning for microscopy made flexible, scalable and reproducible},
+  journal = {Nature Methods},
+  year = {2024},
+  doi = {10.1038/s41592-024-02295-6},
+  note = {verification: spot-checked via WebSearch; containerized successor to ZeroCostDL4Mic}
+}
+
+@article{bioimagezoo2022,
+  author = {Ouyang, Wei and others},
+  title = {The {BioImage Model Zoo}: A community-driven resource for accessible deep learning in {BioImage} analysis},
+  journal = {bioRxiv},
+  year = {2022},
+  doi = {10.1101/2022.06.07.495102},
+  note = {verification: agent-verified round 2 as bioRxiv preprint; not Nature Methods as initially claimed. Confirm publication status before external use.}
+}
+
+@article{monai2022,
+  author = {Cardoso, M. Jorge and others},
+  title = {{MONAI}: An open-source framework for deep learning in healthcare},
+  journal = {arXiv preprint},
+  year = {2022},
+  eprint = {2211.02701},
+  archivePrefix = {arXiv},
+  note = {verification: agent-verified round 2; framework documented via arXiv preprint, no canonical journal paper found}
+}
+
+% =====================================================================
+% Architecture-family references (added with Lecture 1 Section 3)
+% Verification: agent-cited from training knowledge; should be cross-checked
+% against the original venue PDFs before public release. The two ⚠-flagged
+% entries (vit2021, ddpm2020) are the highest priority to verify.
+% =====================================================================
+
+@inproceedings{resnet2016,
+  author = {He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  title = {Deep Residual Learning for Image Recognition},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2016},
+  pages = {770--778},
+  doi = {10.1109/CVPR.2016.90},
+  note = {verification: ✓ canonical citation; original ResNet paper introducing residual connections}
+}
+
+@inproceedings{vit2021,
+  author = {Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
+  title = {An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year = {2021},
+  eprint = {2010.11929},
+  archivePrefix = {arXiv},
+  note = {verification: ⚠ ICLR 2021 conference paper; verify exact citation format and full author list before external use}
+}
+
+@inproceedings{gan2014,
+  author = {Goodfellow, Ian and Pouget-Abadie, Jean and Mirza, Mehdi and Xu, Bing and Warde-Farley, David and Ozair, Sherjil and Courville, Aaron and Bengio, Yoshua},
+  title = {Generative Adversarial Nets},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year = {2014},
+  volume = {27},
+  note = {verification: ✓ original GAN paper}
+}
+
+@inproceedings{pix2pix2017,
+  author = {Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A.},
+  title = {Image-to-Image Translation with Conditional Adversarial Networks},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2017},
+  pages = {1125--1134},
+  doi = {10.1109/CVPR.2017.632},
+  note = {verification: ✓ pix2pix paper; CVPR 2017}
+}
+
+@inproceedings{ddpm2020,
+  author = {Ho, Jonathan and Jain, Ajay and Abbeel, Pieter},
+  title = {Denoising Diffusion Probabilistic Models},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year = {2020},
+  volume = {33},
+  pages = {6840--6851},
+  eprint = {2006.11239},
+  archivePrefix = {arXiv},
+  note = {verification: ⚠ NeurIPS 2020 paper; verify volume/page numbers and author affiliations before external use}
+}
+
+% =====================================================================
+% Cross-domain particle vision review (added from user-uploaded PDF).
+% Use this as the umbrella citation when pointing at the broader AI-PVA
+% landscape that goes beyond bioimaging into nano- / pharma- /
+% bio-manufacturing.
+% =====================================================================
+
+@article{chen_you_2025_pva,
+  author = {Chen, Guangyao and You, Fengqi},
+  title = {Future Manufacturing with {AI}-Driven Particle Vision Analysis in the Microscopic World},
+  journal = {Engineering},
+  year = {2025},
+  volume = {52},
+  pages = {68--84},
+  publisher = {Chinese Academy of Engineering / Elsevier},
+  doi = {10.1016/j.eng.2025.08.008},
+  note = {verification: ✓ open-access CC-BY review; doi inferred from PII S2095809925004680; verify exact DOI string before external use}
+}
+
+% =====================================================================
+% Additional method references surfaced by Chen & You 2025 Table 1 that
+% complement the workshop's existing tracking + segmentation catalog.
+% All flagged ⚠ — agent-cited from Chen & You 2025 references, not yet
+% verified against the primary papers. Cross-check before public release.
+% =====================================================================
+
+@article{deeptangle2022,
+  author = {Alonso, Albert and Kirkegaard, Julius B.},
+  title = {Fast detection of slender bodies in high-density microscopy data ({DeepTangle})},
+  journal = {Communications Biology / eLife},
+  year = {2022},
+  note = {verification: ⚠ cited from Chen \& You 2025 ref [83]; CNN with temporal context for slender-body detection in dense microscopy. Verify exact venue.}
+}
+
+@article{deeptrack2_2021,
+  author = {Midtvedt, Benjamin and others},
+  title = {{DeepTrack 2.0}: Quantitative Microscopy Powered by Deep Learning},
+  journal = {Applied Physics Reviews},
+  year = {2021},
+  note = {verification: ⚠ cited from Chen \& You 2025 refs [28,95-97]; DL framework for digital microscopy; tracking-capable. Verify exact citation.}
+}
+
+@article{bigneuron_2015,
+  author = {Peng, Hanchuan and others},
+  title = {{BigNeuron}: Large-scale 3D neuron reconstruction from optical microscopy images},
+  journal = {Neuron},
+  year = {2015},
+  note = {verification: ⚠ cited from Chen \& You 2025 ref [93]; benchmark + algorithms for automated neuron tracing in light microscopy. Verify journal and year.}
+}
+
+@article{usiigaci_2019,
+  author = {Tsai, Hsieh-Fu and others},
+  title = {{Usiigaci}: Instance-aware cell tracking in stain-free phase contrast microscopy enabled by machine learning},
+  journal = {SoftwareX},
+  year = {2019},
+  note = {verification: ⚠ cited from Chen \& You 2025 ref [94]; semi-automated phase-contrast cell seg+track pipeline. Verify journal and year.}
+}
+
+@article{tiatoolbox_2022,
+  author = {Pocock, Johnathan and others},
+  title = {{TIAToolbox} as an end-to-end library for advanced tissue image analytics},
+  journal = {Communications Medicine},
+  year = {2022},
+  note = {verification: ⚠ cited from Chen \& You 2025 ref [86]; computational pathology Python library from TIA Centre. Verify exact venue.}
+}
+
+@article{deepliif_2022,
+  author = {Ghahremani, Parmida and others},
+  title = {{DeepLIIF}: deep-learning inferred multiplex immunoﬂuorescence for {IHC} image quantification},
+  journal = {Nature Machine Intelligence},
+  year = {2022},
+  note = {verification: ⚠ cited from Chen \& You 2025 refs [23,88-91]; multiplex IF prediction from H\&E. Verify journal and year.}
+}
+
+% =====================================================================
+% Repositories shared by user (2026-05-04). All flagged ⚠ — agent has
+% not verified primary publications. Add proper citations when each
+% group's flagship paper is identified.
+% =====================================================================
+
+@misc{aydin2021,
+  author = {Royer Lab and contributors},
+  title = {{aydin}: User-friendly, fast, self-supervised image denoising},
+  howpublished = {\url{https://github.com/royerlab/aydin}},
+  year = {2021},
+  note = {verification: ⚠ Royer-lab denoising library; verify whether a flagship paper exists or cite as software-only via the GitHub Zenodo DOI when available.}
+}
+
+@misc{biapy_2024,
+  author = {Franco-Barranco, Daniel and others},
+  title = {{BiaPy}: Open-source bioimage analysis Python library for segmentation, restoration, denoising, and detection},
+  howpublished = {\url{https://github.com/BiaPyX/BiaPy}},
+  year = {2024},
+  note = {verification: ⚠ deep-learning library spanning segmentation, denoising, restoration, detection. Verify flagship paper.}
+}
+
+@misc{pytorch_connectomics_2021,
+  author = {Lin, Zudi and others},
+  title = {{PyTorch Connectomics}: A Scalable and Flexible Segmentation Framework for {EM} Connectomics},
+  howpublished = {\url{https://github.com/PytorchConnectomics/pytorch_connectomics}},
+  year = {2021},
+  note = {verification: ⚠ Harvard Pfister group; EM connectomics segmentation + tracking framework. Verify exact citation (likely arXiv preprint).}
+}
+
+@misc{awesome_bioimage_analysis,
+  author = {Vaagen, Hallvard and contributors},
+  title = {Awesome Biological Image Analysis},
+  howpublished = {\url{https://github.com/hallvaaw/awesome-biological-image-analysis}},
+  year = {2025},
+  note = {verification: ⚠ community-curated meta-list; cite as a community resource, not a peer-reviewed work.}
+}
+
+@misc{awesome_diffusion_medimg,
+  author = {Kazerouni, Amirhossein and contributors},
+  title = {Awesome Diffusion Models in Medical Imaging},
+  howpublished = {\url{https://github.com/amirhossein-kz/Awesome-Diffusion-Models-in-Medical-Imaging}},
+  year = {2025},
+  note = {verification: ⚠ community-curated meta-list. The accompanying review paper (Kazerouni et al. 2023) is the primary citation when a paper-style ref is needed.}
+}

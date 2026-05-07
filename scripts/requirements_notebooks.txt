@@ -1,0 +1,71 @@
+# Notebook runtime dependencies for the AI for Microscopy workshop.
+#
+# This file is the union of every notebook's `%pip install` cell. Use it
+# with run_jupyter_lab.sh --prefetch when you want every notebook to
+# cold-start without re-pip-installing each library.
+#
+# Total install size: ~5 GB (PyTorch + TensorFlow + cellpose + stardist
+# + diffusers + others). One-time. Skip if you only need to test a
+# subset of notebooks — let each notebook's setup cell install its own
+# deps the first time you run it (matches the Colab workflow).
+#
+# Versions are loose by intent — Colab tracks moving targets and so do we.
+# If something breaks because a dep moved, pin it here and re-run.
+
+# -- Core scientific stack (every notebook) --
+numpy
+scipy
+scikit-image>=0.20
+scikit-learn
+matplotlib
+pandas
+seaborn
+tifffile
+imageio
+
+# -- Jupyter / notebook runtime --
+jupyterlab>=4
+notebook>=7
+ipykernel
+ipywidgets
+nbconvert>=7,<8
+
+# -- Cellpose family (NB00, NB01, NB09, NB10, NB13) --
+# Pin to v3.x; v4 introduced API drift around model_type that the notebooks rely on.
+cellpose>=3.0,<4
+
+# -- StarDist family (NB10, NB13) --
+stardist>=0.8
+
+# -- CSBDeep + TensorFlow (NB04, NB07, NB12) --
+# csbdeep is the backend for both CARE and StarDist; pulls TensorFlow as a transitive dep.
+csbdeep
+tensorflow
+
+# -- PyTorch family (NB04, NB06, NB07, NB11, NB12, NB14, NB15) --
+torch
+torchvision
+
+# -- Segment Anything (NB03b, NB13) --
+# Pip-installable from the GitHub repo; not on PyPI.
+segment-anything @ git+https://github.com/facebookresearch/segment-anything.git
+
+# -- BioImage Model Zoo (NB04, NB13) --
+bioimageio.core
+
+# -- Tracking (NB11) --
+trackpy
+
+# -- Diffusion models (NB15) --
+transformers
+diffusers
+accelerate
+
+# -- Optional: known-fragile installs ---------------------------------------
+# These are flagged as ⚠ in the notebooks. Each notebook has a fallback path
+# if the package fails. Uncomment to attempt installation; if it errors, the
+# notebook's fallback still works.
+#
+# btrack            # Tracking — needs HDF5 binary deps, sometimes flaky on Colab/macOS.
+# nanopyx           # SRRF/eSRRF — Cython/Numba build from source; may fail.
+# micro-sam         # μSAM — large dependency tree, version-sensitive.

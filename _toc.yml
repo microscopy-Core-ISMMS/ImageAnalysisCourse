@@ -1,0 +1,61 @@
+# Jupyter Book Table of Contents — workshop structure.
+# This is the source of truth for the sidebar navigation. Files not listed
+# here are ignored even if they live in the source tree.
+
+format: jb-book
+root: intro
+
+parts:
+  - caption: Workshop overview
+    chapters:
+      - file: schedule
+      - file: prerequisites
+      - file: resources
+      - file: handout
+      - file: acknowledgments
+
+  - caption: Ramp-up evening (optional)
+    chapters:
+      - file: ramp-up/rampup_evening
+      - file: ramp-up/notebooks/python_basics
+      - file: ramp-up/notebooks/image_basics
+
+  - caption: Lecture 1 — Intro to AI for imaging
+    chapters:
+      - file: lectures/01_intro_ai_imaging/README
+      - file: lectures/01_intro_ai_imaging/00_lecture_prereqs_check
+      - file: lectures/01_intro_ai_imaging/lecture
+      - file: lectures/01_intro_ai_imaging/speaker_cues
+      - file: lectures/01_intro_ai_imaging/verification_log
+
+  - caption: Lecture 2 — Walking the day
+    chapters:
+      - file: lectures/02_walking_the_day/lecture
+
+  - caption: Lab notebooks (core)
+    chapters:
+      - file: notebooks/00_setup_self_check
+      - file: notebooks/01_cellpose_segmentation
+      - file: notebooks/02_validation_quantification
+      - file: notebooks/03a_denoising_n2v
+      - file: notebooks/03b_foundation_model_segmentation
+      - file: notebooks/04_community_platforms
+      - file: notebooks/05_desktop_gui_complements
+
+  - caption: Extension notebooks (post-workshop, self-paced)
+    chapters:
+      - file: notebooks/06_virtual_staining
+      - file: notebooks/07_widefield_superres
+      - file: notebooks/08_srrf_esrrf
+      - file: notebooks/09_cellpose_finetune
+      - file: notebooks/10_3d_segmentation
+      - file: notebooks/11_dl_tracking
+      - file: notebooks/12_deconvolution
+      - file: notebooks/13_validation_case_study
+      - file: notebooks/14_spot_detection
+      - file: notebooks/15_diffusion_models
+
+  - caption: Setup and data
+    chapters:
+      - file: env/README
+      - file: data/README

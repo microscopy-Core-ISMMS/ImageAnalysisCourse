@@ -1,0 +1,87 @@
+# Jupyter Book configuration for the AI for Microscopy Image Analysis workshop.
+# Replaces the previous Jekyll _config.yml.
+
+title: AI for Microscopy Image Analysis
+author: Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+copyright: "2026"
+logo: _static/Core_logo-transparent.png
+
+# Don't execute notebooks during the build — they're already built and we
+# don't want long-running cells (Cellpose, training loops) to slow the book.
+execute:
+  execute_notebooks: off
+  exclude_patterns:
+    - "**/*.py"
+
+# Bibliography support. references.bib is in the lectures folder.
+bibtex_bibfiles:
+  - lectures/01_intro_ai_imaging/references.bib
+
+# HTML output configuration
+html:
+  use_issues_button: false
+  use_repository_button: true   # ⚠ shows once `repository.url` is set to a real URL
+  favicon: ""
+  baseurl: ""
+
+# Repository (set when publishing).
+repository:
+  url: https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse
+  path_to_book: ""        # book is at repo root
+  branch: main
+
+# Launch buttons (rendered as the 🚀 icon in the top-right of every page
+# that has executable cells). Together with `repository:` above this builds
+# Colab links of the form:
+#   https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/main/<page>.ipynb
+launch_buttons:
+  notebook_interface: classic
+  colab_url: "https://colab.research.google.com"
+  thebe: false
+
+# Sphinx configuration
+sphinx:
+  config:
+    html_theme_options:
+      navigation_with_keys: false
+      use_edit_page_button: false
+    suppress_warnings:
+      - mystnb.unknown_mime_type
+    # Custom CSS for subtle Mount Sinai brand accents (cyan / magenta / violet).
+    # The CSS file itself is at _static/custom.css.
+    html_css_files:
+      - custom.css
+    # Tell Sphinx where to look for static assets
+    html_static_path:
+      - _static
+
+# Files and directories to exclude from the source scan
+exclude_patterns:
+  - _build
+  - "**.DS_Store"
+  - "**__pycache__**"
+  - "**build_*.py"
+  - "**.pyc"
+  - "**lecture.slides.html"
+  - "**lecture_slides*.html"
+  - "**colab_setup.py"
+  - "figures"
+  - "**figures/**"
+  - "env/environment.yml"
+  - "notebooks/00_setup_self_check.md"
+  - "notebooks/01_cellpose_segmentation.md"
+  - "notebooks/01_cellpose_segmentation"   # nested duplicate folder
+  - "notebooks/02_validation_quantification.md"
+  - "notebooks/03a_denoising_n2v.md"
+  - "notebooks/03b_foundation_model_segmentation.md"
+  - "lectures/01_intro_ai_imaging.md"   # early outline, superseded by the lecture folder
+  - "lectures/02_walking_the_day.md"    # early outline, superseded by the lecture folder
+
+# Parse extensions for richer markdown
+parse:
+  myst_enable_extensions:
+    - colon_fence       # supports ::: directive blocks
+    - dollarmath        # inline $math$
+    - linkify           # auto-link bare URLs
+    - substitution      # variable substitution
+    - tasklist          # GitHub-style task lists

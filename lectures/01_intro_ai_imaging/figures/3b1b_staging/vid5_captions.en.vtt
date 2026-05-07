@@ -1,0 +1,1273 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.000 --> 00:00:01.967
+In the last chapter, you and I started to step
+
+00:00:01.967 --> 00:00:04.020
+through the internal workings of a transformer.
+
+00:00:04.560 --> 00:00:07.880
+This is one of the key pieces of technology inside large language models,
+
+00:00:07.880 --> 00:00:10.200
+and a lot of other tools in the modern wave of AI.
+
+00:00:10.980 --> 00:00:15.520
+It first hit the scene in a now-famous 2017 paper called Attention is All You Need,
+
+00:00:15.520 --> 00:00:19.786
+and in this chapter you and I will dig into what this attention mechanism is,
+
+00:00:19.786 --> 00:00:21.700
+visualizing how it processes data.
+
+00:00:26.140 --> 00:00:29.540
+As a quick recap, here's the important context I want you to have in mind.
+
+00:00:30.000 --> 00:00:32.950
+The goal of the model that you and I are studying is to
+
+00:00:32.950 --> 00:00:36.060
+take in a piece of text and predict what word comes next.
+
+00:00:36.860 --> 00:00:40.337
+The input text is broken up into little pieces that we call tokens,
+
+00:00:40.337 --> 00:00:42.983
+and these are very often words or pieces of words,
+
+00:00:42.983 --> 00:00:47.239
+but just to make the examples in this video easier for you and me to think about,
+
+00:00:47.239 --> 00:00:50.560
+let's simplify by pretending that tokens are always just words.
+
+00:00:51.480 --> 00:00:54.537
+The first step in a transformer is to associate each token
+
+00:00:54.537 --> 00:00:57.700
+with a high-dimensional vector, what we call its embedding.
+
+00:00:57.700 --> 00:01:02.010
+The most important idea I want you to have in mind is how directions in this
+
+00:01:02.010 --> 00:01:07.000
+high-dimensional space of all possible embeddings can correspond with semantic meaning.
+
+00:01:07.680 --> 00:01:11.716
+In the last chapter we saw an example for how direction can correspond to gender,
+
+00:01:11.716 --> 00:01:15.504
+in the sense that adding a certain step in this space can take you from the
+
+00:01:15.504 --> 00:01:19.640
+embedding of a masculine noun to the embedding of the corresponding feminine noun.
+
+00:01:20.160 --> 00:01:23.595
+That's just one example you could imagine how many other directions in this
+
+00:01:23.595 --> 00:01:27.580
+high-dimensional space could correspond to numerous other aspects of a word's meaning.
+
+00:01:28.800 --> 00:01:32.535
+The aim of a transformer is to progressively adjust these embeddings
+
+00:01:32.535 --> 00:01:35.445
+so that they don't merely encode an individual word,
+
+00:01:35.445 --> 00:01:39.180
+but instead they bake in some much, much richer contextual meaning.
+
+00:01:40.140 --> 00:01:43.656
+I should say up front that a lot of people find the attention mechanism,
+
+00:01:43.656 --> 00:01:46.050
+this key piece in a transformer, very confusing,
+
+00:01:46.050 --> 00:01:48.980
+so don't worry if it takes some time for things to sink in.
+
+00:01:49.440 --> 00:01:52.696
+I think that before we dive into the computational details and all
+
+00:01:52.696 --> 00:01:55.805
+the matrix multiplications, it's worth thinking about a couple
+
+00:01:55.805 --> 00:01:59.160
+examples for the kind of behavior that we want attention to enable.
+
+00:02:00.140 --> 00:02:04.335
+Consider the phrases American shrew mole, one mole of carbon dioxide,
+
+00:02:04.335 --> 00:02:06.220
+and take a biopsy of the mole.
+
+00:02:06.700 --> 00:02:09.976
+You and I know that the word mole has different meanings in each one of these,
+
+00:02:09.976 --> 00:02:10.900
+based on the context.
+
+00:02:11.360 --> 00:02:15.075
+But after the first step of a transformer, the one that breaks up the text
+
+00:02:15.075 --> 00:02:18.840
+and associates each token with a vector, the vector that's associated with
+
+00:02:18.840 --> 00:02:21.150
+mole would be the same in all of these cases,
+
+00:02:21.150 --> 00:02:24.915
+because this initial token embedding is effectively a lookup table with no
+
+00:02:24.915 --> 00:02:26.220
+reference to the context.
+
+00:02:26.620 --> 00:02:29.961
+It's only in the next step of the transformer that the surrounding
+
+00:02:29.961 --> 00:02:33.100
+embeddings have the chance to pass information into this one.
+
+00:02:33.820 --> 00:02:38.288
+The picture you might have in mind is that there are multiple distinct directions in
+
+00:02:38.288 --> 00:02:42.491
+this embedding space encoding the multiple distinct meanings of the word mole,
+
+00:02:42.491 --> 00:02:47.119
+and that a well-trained attention block calculates what you need to add to the generic
+
+00:02:47.119 --> 00:02:51.800
+embedding to move it to one of these specific directions, as a function of the context.
+
+00:02:53.300 --> 00:02:56.180
+To take another example, consider the embedding of the word tower.
+
+00:02:57.060 --> 00:03:01.067
+This is presumably some very generic, non-specific direction in the space,
+
+00:03:01.067 --> 00:03:03.720
+associated with lots of other large, tall nouns.
+
+00:03:04.020 --> 00:03:06.589
+If this word was immediately preceded by Eiffel,
+
+00:03:06.589 --> 00:03:10.336
+you could imagine wanting the mechanism to update this vector so that
+
+00:03:10.336 --> 00:03:14.296
+it points in a direction that more specifically encodes the Eiffel tower,
+
+00:03:14.296 --> 00:03:19.060
+maybe correlated with vectors associated with Paris and France and things made of steel.
+
+00:03:19.920 --> 00:03:22.229
+If it was also preceded by the word miniature,
+
+00:03:22.229 --> 00:03:24.639
+then the vector should be updated even further,
+
+00:03:24.639 --> 00:03:27.500
+so that it no longer correlates with large, tall things.
+
+00:03:29.480 --> 00:03:32.274
+More generally than just refining the meaning of a word,
+
+00:03:32.274 --> 00:03:35.667
+the attention block allows the model to move information encoded in
+
+00:03:35.667 --> 00:03:39.458
+one embedding to that of another, potentially ones that are quite far away,
+
+00:03:39.458 --> 00:03:43.300
+and potentially with information that's much richer than just a single word.
+
+00:03:43.300 --> 00:03:47.931
+What we saw in the last chapter was how after all of the vectors flow through the
+
+00:03:47.931 --> 00:03:50.904
+network, including many different attention blocks,
+
+00:03:50.904 --> 00:03:55.707
+the computation you perform to produce a prediction of the next token is entirely a
+
+00:03:55.707 --> 00:03:58.280
+function of the last vector in the sequence.
+
+00:03:59.100 --> 00:04:03.450
+Imagine, for example, that the text you input is most of an entire mystery novel,
+
+00:04:03.450 --> 00:04:07.800
+all the way up to a point near the end, which reads, therefore the murderer was.
+
+00:04:08.400 --> 00:04:11.457
+If the model is going to accurately predict the next word,
+
+00:04:11.457 --> 00:04:16.043
+that final vector in the sequence, which began its life simply embedding the word was,
+
+00:04:16.043 --> 00:04:20.313
+will have to have been updated by all of the attention blocks to represent much,
+
+00:04:20.313 --> 00:04:24.319
+much more than any individual word, somehow encoding all of the information
+
+00:04:24.319 --> 00:04:28.220
+from the full context window that's relevant to predicting the next word.
+
+00:04:29.500 --> 00:04:32.580
+To step through the computations, though, let's take a much simpler example.
+
+00:04:32.980 --> 00:04:35.390
+Imagine that the input includes the phrase, a
+
+00:04:35.390 --> 00:04:37.960
+fluffy blue creature roamed the verdant forest.
+
+00:04:38.460 --> 00:04:42.620
+And for the moment, suppose that the only type of update that we care about
+
+00:04:42.620 --> 00:04:46.780
+is having the adjectives adjust the meanings of their corresponding nouns.
+
+00:04:47.000 --> 00:04:50.720
+What I'm about to describe is what we would call a single head of attention,
+
+00:04:50.720 --> 00:04:54.930
+and later we will see how the attention block consists of many different heads run in
+
+00:04:54.930 --> 00:04:55.420
+parallel.
+
+00:04:56.140 --> 00:04:59.835
+Again, the initial embedding for each word is some high dimensional vector
+
+00:04:59.835 --> 00:05:03.380
+that only encodes the meaning of that particular word with no context.
+
+00:05:04.000 --> 00:05:05.220
+Actually, that's not quite true.
+
+00:05:05.380 --> 00:05:07.640
+They also encode the position of the word.
+
+00:05:07.980 --> 00:05:11.620
+There's a lot more to say about the specific way that positions are encoded,
+
+00:05:11.620 --> 00:05:15.212
+but right now, all you need to know is that the entries of this vector are
+
+00:05:15.212 --> 00:05:18.900
+enough to tell you both what the word is and where it exists in the context.
+
+00:05:19.500 --> 00:05:21.660
+Let's go ahead and denote these embeddings with the letter e.
+
+00:05:22.420 --> 00:05:26.050
+The goal is to have a series of computations produce a new refined
+
+00:05:26.050 --> 00:05:29.625
+set of embeddings where, for example, those corresponding to the
+
+00:05:29.625 --> 00:05:33.420
+nouns have ingested the meaning from their corresponding adjectives.
+
+00:05:33.900 --> 00:05:37.149
+And playing the deep learning game, we want most of the computations
+
+00:05:37.149 --> 00:05:39.346
+involved to look like matrix-vector products,
+
+00:05:39.346 --> 00:05:41.687
+where the matrices are full of tuneable weights,
+
+00:05:41.687 --> 00:05:43.980
+things that the model will learn based on data.
+
+00:05:44.660 --> 00:05:48.363
+To be clear, I'm making up this example of adjectives updating nouns just to
+
+00:05:48.363 --> 00:05:52.260
+illustrate the type of behavior that you could imagine an attention head doing.
+
+00:05:52.860 --> 00:05:57.003
+As with so much deep learning, the true behavior is much harder to parse because it's
+
+00:05:57.003 --> 00:06:01.340
+based on tweaking and tuning a huge number of parameters to minimize some cost function.
+
+00:06:01.680 --> 00:06:05.558
+It's just that as we step through all of different matrices filled with parameters
+
+00:06:05.558 --> 00:06:09.484
+that are involved in this process, I think it's really helpful to have an imagined
+
+00:06:09.484 --> 00:06:13.220
+example of something that it could be doing to help keep it all more concrete.
+
+00:06:14.140 --> 00:06:18.152
+For the first step of this process, you might imagine each noun, like creature,
+
+00:06:18.152 --> 00:06:21.960
+asking the question, hey, are there any adjectives sitting in front of me?
+
+00:06:22.160 --> 00:06:25.376
+And for the words fluffy and blue, to each be able to answer,
+
+00:06:25.376 --> 00:06:27.960
+yeah, I'm an adjective and I'm in that position.
+
+00:06:28.960 --> 00:06:32.260
+That question is somehow encoded as yet another vector,
+
+00:06:32.260 --> 00:06:36.100
+another list of numbers, which we call the query for this word.
+
+00:06:36.980 --> 00:06:42.020
+This query vector though has a much smaller dimension than the embedding vector, say 128.
+
+00:06:42.940 --> 00:06:46.300
+Computing this query looks like taking a certain matrix,
+
+00:06:46.300 --> 00:06:49.780
+which I'll label wq, and multiplying it by the embedding.
+
+00:06:50.960 --> 00:06:54.170
+Compressing things a bit, let's write that query vector as q,
+
+00:06:54.170 --> 00:06:58.012
+and then anytime you see me put a matrix next to an arrow like this one,
+
+00:06:58.012 --> 00:07:02.642
+it's meant to represent that multiplying this matrix by the vector at the arrow's start
+
+00:07:02.642 --> 00:07:04.800
+gives you the vector at the arrow's end.
+
+00:07:05.860 --> 00:07:10.211
+In this case, you multiply this matrix by all of the embeddings in the context,
+
+00:07:10.211 --> 00:07:12.580
+producing one query vector for each token.
+
+00:07:13.740 --> 00:07:16.381
+The entries of this matrix are parameters of the model,
+
+00:07:16.381 --> 00:07:19.694
+which means the true behavior is learned from data, and in practice,
+
+00:07:19.694 --> 00:07:23.440
+what this matrix does in a particular attention head is challenging to parse.
+
+00:07:23.900 --> 00:07:27.896
+But for our sake, imagining an example that we might hope that it would learn,
+
+00:07:27.896 --> 00:07:31.431
+we'll suppose that this query matrix maps the embeddings of nouns to
+
+00:07:31.431 --> 00:07:34.915
+certain directions in this smaller query space that somehow encodes
+
+00:07:34.915 --> 00:07:38.040
+the notion of looking for adjectives in preceding positions.
+
+00:07:38.780 --> 00:07:41.440
+As to what it does to other embeddings, who knows?
+
+00:07:41.720 --> 00:07:44.340
+Maybe it simultaneously tries to accomplish some other goal with those.
+
+00:07:44.540 --> 00:07:47.160
+Right now, we're laser focused on the nouns.
+
+00:07:47.280 --> 00:07:51.598
+At the same time, associated with this is a second matrix called the key matrix,
+
+00:07:51.598 --> 00:07:54.620
+which you also multiply by every one of the embeddings.
+
+00:07:55.280 --> 00:07:58.500
+This produces a second sequence of vectors that we call the keys.
+
+00:07:59.420 --> 00:08:03.140
+Conceptually, you want to think of the keys as potentially answering the queries.
+
+00:08:03.840 --> 00:08:07.964
+This key matrix is also full of tuneable parameters, and just like the query matrix,
+
+00:08:07.964 --> 00:08:11.400
+it maps the embedding vectors to that same smaller dimensional space.
+
+00:08:12.200 --> 00:08:17.020
+You think of the keys as matching the queries whenever they closely align with each other.
+
+00:08:17.460 --> 00:08:22.153
+In our example, you would imagine that the key matrix maps the adjectives like fluffy and
+
+00:08:22.153 --> 00:08:26.740
+blue to vectors that are closely aligned with the query produced by the word creature.
+
+00:08:27.200 --> 00:08:30.114
+To measure how well each key matches each query,
+
+00:08:30.114 --> 00:08:34.000
+you compute a dot product between each possible key-query pair.
+
+00:08:34.480 --> 00:08:37.105
+I like to visualize a grid full of a bunch of dots,
+
+00:08:37.105 --> 00:08:40.244
+where the bigger dots correspond to the larger dot products,
+
+00:08:40.244 --> 00:08:42.560
+the places where the keys and queries align.
+
+00:08:43.280 --> 00:08:47.477
+For our adjective noun example, that would look a little more like this,
+
+00:08:47.477 --> 00:08:52.432
+where if the keys produced by fluffy and blue really do align closely with the query
+
+00:08:52.432 --> 00:08:57.271
+produced by creature, then the dot products in these two spots would be some large
+
+00:08:57.271 --> 00:08:58.320
+positive numbers.
+
+00:08:59.100 --> 00:09:02.260
+In the lingo, machine learning people would say that this means the
+
+00:09:02.260 --> 00:09:05.420
+embeddings of fluffy and blue attend to the embedding of creature.
+
+00:09:06.040 --> 00:09:09.466
+By contrast to the dot product between the key for some other
+
+00:09:09.466 --> 00:09:12.893
+word like the and the query for creature would be some small
+
+00:09:12.893 --> 00:09:16.600
+or negative value that reflects that are unrelated to each other.
+
+00:09:17.700 --> 00:09:21.332
+So we have this grid of values that can be any real number from
+
+00:09:21.332 --> 00:09:25.136
+negative infinity to infinity, giving us a score for how relevant
+
+00:09:25.136 --> 00:09:28.480
+each word is to updating the meaning of every other word.
+
+00:09:29.200 --> 00:09:32.518
+The way we're about to use these scores is to take a certain
+
+00:09:32.518 --> 00:09:35.780
+weighted sum along each column, weighted by the relevance.
+
+00:09:36.520 --> 00:09:40.160
+So instead of having values range from negative infinity to infinity,
+
+00:09:40.160 --> 00:09:43.959
+what we want is for the numbers in these columns to be between 0 and 1,
+
+00:09:43.959 --> 00:09:48.180
+and for each column to add up to 1, as if they were a probability distribution.
+
+00:09:49.280 --> 00:09:52.220
+If you're coming in from the last chapter, you know what we need to do then.
+
+00:09:52.620 --> 00:09:57.300
+We compute a softmax along each one of these columns to normalize the values.
+
+00:10:00.060 --> 00:10:03.187
+In our picture, after you apply softmax to all of the columns,
+
+00:10:03.187 --> 00:10:05.860
+we'll fill in the grid with these normalized values.
+
+00:10:06.780 --> 00:10:10.705
+At this point you're safe to think about each column as giving weights according
+
+00:10:10.705 --> 00:10:14.580
+to how relevant the word on the left is to the corresponding value at the top.
+
+00:10:15.080 --> 00:10:16.840
+We call this grid an attention pattern.
+
+00:10:18.080 --> 00:10:20.235
+Now if you look at the original transformer paper,
+
+00:10:20.235 --> 00:10:22.820
+there's a really compact way that they write this all down.
+
+00:10:23.880 --> 00:10:27.428
+Here the variables q and k represent the full arrays of query
+
+00:10:27.428 --> 00:10:31.034
+and key vectors respectively, those little vectors you get by
+
+00:10:31.034 --> 00:10:34.640
+multiplying the embeddings by the query and the key matrices.
+
+00:10:35.160 --> 00:10:39.063
+This expression up in the numerator is a really compact way to represent
+
+00:10:39.063 --> 00:10:43.020
+the grid of all possible dot products between pairs of keys and queries.
+
+00:10:44.000 --> 00:10:48.035
+A small technical detail that I didn't mention is that for numerical stability,
+
+00:10:48.035 --> 00:10:51.202
+it happens to be helpful to divide all of these values by the
+
+00:10:51.202 --> 00:10:53.960
+square root of the dimension in that key query space.
+
+00:10:54.480 --> 00:10:57.809
+Then this softmax that's wrapped around the full expression
+
+00:10:57.809 --> 00:11:00.800
+is meant to be understood to apply column by column.
+
+00:11:01.640 --> 00:11:04.700
+As to that v term, we'll talk about it in just a second.
+
+00:11:05.020 --> 00:11:08.460
+Before that, there's one other technical detail that so far I've skipped.
+
+00:11:09.040 --> 00:11:12.999
+During the training process, when you run this model on a given text example,
+
+00:11:12.999 --> 00:11:17.369
+and all of the weights are slightly adjusted and tuned to either reward or punish it
+
+00:11:17.369 --> 00:11:21.534
+based on how high a probability it assigns to the true next word in the passage,
+
+00:11:21.534 --> 00:11:25.442
+it turns out to make the whole training process a lot more efficient if you
+
+00:11:25.442 --> 00:11:29.555
+simultaneously have it predict every possible next token following each initial
+
+00:11:29.555 --> 00:11:31.560
+subsequence of tokens in this passage.
+
+00:11:31.940 --> 00:11:34.876
+For example, with the phrase that we've been focusing on,
+
+00:11:34.876 --> 00:11:39.100
+it might also be predicting what words follow creature and what words follow the.
+
+00:11:39.940 --> 00:11:42.825
+This is really nice, because it means what would otherwise
+
+00:11:42.825 --> 00:11:45.560
+be a single training example effectively acts as many.
+
+00:11:46.100 --> 00:11:49.430
+For the purposes of our attention pattern, it means that you never
+
+00:11:49.430 --> 00:11:52.155
+want to allow later words to influence earlier words,
+
+00:11:52.155 --> 00:11:56.040
+since otherwise they could kind of give away the answer for what comes next.
+
+00:11:56.560 --> 00:11:59.562
+What this means is that we want all of these spots here,
+
+00:11:59.562 --> 00:12:02.831
+the ones representing later tokens influencing earlier ones,
+
+00:12:02.831 --> 00:12:04.600
+to somehow be forced to be zero.
+
+00:12:05.920 --> 00:12:08.711
+The simplest thing you might think to do is to set them equal to zero,
+
+00:12:08.711 --> 00:12:11.264
+but if you did that the columns wouldn't add up to one anymore,
+
+00:12:11.264 --> 00:12:12.420
+they wouldn't be normalized.
+
+00:12:13.120 --> 00:12:16.409
+So instead, a common way to do this is that before applying softmax,
+
+00:12:16.409 --> 00:12:19.020
+you set all of those entries to be negative infinity.
+
+00:12:19.680 --> 00:12:23.559
+If you do that, then after applying softmax, all of those get turned into zero,
+
+00:12:23.559 --> 00:12:25.180
+but the columns stay normalized.
+
+00:12:26.000 --> 00:12:27.540
+This process is called masking.
+
+00:12:27.540 --> 00:12:31.298
+There are versions of attention where you don't apply it, but in our GPT example,
+
+00:12:31.298 --> 00:12:34.918
+even though this is more relevant during the training phase than it would be,
+
+00:12:34.918 --> 00:12:37.377
+say, running it as a chatbot or something like that,
+
+00:12:37.377 --> 00:12:41.460
+you do always apply this masking to prevent later tokens from influencing earlier ones.
+
+00:12:42.480 --> 00:12:45.771
+Another fact that's worth reflecting on about this attention
+
+00:12:45.771 --> 00:12:49.500
+pattern is how its size is equal to the square of the context size.
+
+00:12:49.900 --> 00:12:53.999
+So this is why context size can be a really huge bottleneck for large language models,
+
+00:12:53.999 --> 00:12:55.620
+and scaling it up is non-trivial.
+
+00:12:56.300 --> 00:13:00.075
+As you imagine, motivated by a desire for bigger and bigger context windows,
+
+00:13:00.075 --> 00:13:04.148
+recent years have seen some variations to the attention mechanism aimed at making
+
+00:13:04.148 --> 00:13:08.320
+context more scalable, but right here, you and I are staying focused on the basics.
+
+00:13:10.560 --> 00:13:12.925
+Okay, great, computing this pattern lets the model
+
+00:13:12.925 --> 00:13:15.480
+deduce which words are relevant to which other words.
+
+00:13:16.020 --> 00:13:18.510
+Now you need to actually update the embeddings,
+
+00:13:18.510 --> 00:13:22.800
+allowing words to pass information to whichever other words they're relevant to.
+
+00:13:22.800 --> 00:13:26.762
+For example, you want the embedding of Fluffy to somehow cause a change
+
+00:13:26.762 --> 00:13:30.837
+to Creature that moves it to a different part of this 12,000-dimensional
+
+00:13:30.837 --> 00:13:34.520
+embedding space that more specifically encodes a Fluffy creature.
+
+00:13:35.460 --> 00:13:38.323
+What I'm going to do here is first show you the most straightforward
+
+00:13:38.323 --> 00:13:40.892
+way that you could do this, though there's a slight way that
+
+00:13:40.892 --> 00:13:43.460
+this gets modified in the context of multi-headed attention.
+
+00:13:44.080 --> 00:13:47.115
+This most straightforward way would be to use a third matrix,
+
+00:13:47.115 --> 00:13:51.445
+what we call the value matrix, which you multiply by the embedding of that first word,
+
+00:13:51.445 --> 00:13:52.440
+for example Fluffy.
+
+00:13:53.300 --> 00:13:55.886
+The result of this is what you would call a value vector,
+
+00:13:55.886 --> 00:13:59.153
+and this is something that you add to the embedding of the second word,
+
+00:13:59.153 --> 00:14:01.920
+in this case something you add to the embedding of Creature.
+
+00:14:02.600 --> 00:14:07.000
+So this value vector lives in the same very high-dimensional space as the embeddings.
+
+00:14:07.460 --> 00:14:10.780
+When you multiply this value matrix by the embedding of a word,
+
+00:14:10.780 --> 00:14:15.311
+you might think of it as saying, if this word is relevant to adjusting the meaning of
+
+00:14:15.311 --> 00:14:19.790
+something else, what exactly should be added to the embedding of that something else
+
+00:14:19.790 --> 00:14:21.160
+in order to reflect this?
+
+00:14:22.140 --> 00:14:25.968
+Looking back in our diagram, let's set aside all of the keys and the queries,
+
+00:14:25.968 --> 00:14:29.448
+since after you compute the attention pattern you're done with those,
+
+00:14:29.448 --> 00:14:32.878
+then you're going to take this value matrix and multiply it by every
+
+00:14:32.878 --> 00:14:36.060
+one of those embeddings to produce a sequence of value vectors.
+
+00:14:37.120 --> 00:14:39.099
+You might think of these value vectors as being
+
+00:14:39.099 --> 00:14:41.120
+kind of associated with the corresponding keys.
+
+00:14:42.320 --> 00:14:45.750
+For each column in this diagram, you multiply each of the
+
+00:14:45.750 --> 00:14:49.240
+value vectors by the corresponding weight in that column.
+
+00:14:50.080 --> 00:14:52.762
+For example here, under the embedding of Creature,
+
+00:14:52.762 --> 00:14:57.054
+you would be adding large proportions of the value vectors for Fluffy and Blue,
+
+00:14:57.054 --> 00:15:01.560
+while all of the other value vectors get zeroed out, or at least nearly zeroed out.
+
+00:15:02.120 --> 00:15:06.751
+And then finally, the way to actually update the embedding associated with this column,
+
+00:15:06.751 --> 00:15:09.892
+previously encoding some context-free meaning of Creature,
+
+00:15:09.892 --> 00:15:13.139
+you add together all of these rescaled values in the column,
+
+00:15:13.139 --> 00:15:16.652
+producing a change that you want to add, that I'll label delta-e,
+
+00:15:16.652 --> 00:15:19.260
+and then you add that to the original embedding.
+
+00:15:19.680 --> 00:15:23.116
+Hopefully what results is a more refined vector encoding the more
+
+00:15:23.116 --> 00:15:26.500
+contextually rich meaning, like that of a fluffy blue creature.
+
+00:15:27.380 --> 00:15:30.172
+And of course you don't just do this to one embedding,
+
+00:15:30.172 --> 00:15:34.050
+you apply the same weighted sum across all of the columns in this picture,
+
+00:15:34.050 --> 00:15:38.290
+producing a sequence of changes, adding all of those changes to the corresponding
+
+00:15:38.290 --> 00:15:42.219
+embeddings, produces a full sequence of more refined embeddings popping out
+
+00:15:42.219 --> 00:15:43.460
+of the attention block.
+
+00:15:44.860 --> 00:15:49.100
+Zooming out, this whole process is what you would describe as a single head of attention.
+
+00:15:49.600 --> 00:15:54.241
+As I've described things so far, this process is parameterized by three distinct
+
+00:15:54.241 --> 00:15:58.940
+matrices, all filled with tunable parameters, the key, the query, and the value.
+
+00:15:59.500 --> 00:16:02.935
+I want to take a moment to continue what we started in the last chapter,
+
+00:16:02.935 --> 00:16:07.086
+with the scorekeeping where we count up the total number of model parameters using the
+
+00:16:07.086 --> 00:16:08.040
+numbers from GPT-3.
+
+00:16:09.300 --> 00:16:15.037
+These key and query matrices each have 12,288 columns, matching the embedding dimension,
+
+00:16:15.037 --> 00:16:19.600
+and 128 rows, matching the dimension of that smaller key query space.
+
+00:16:20.260 --> 00:16:24.220
+This gives us an additional 1.5 million or so parameters for each one.
+
+00:16:24.860 --> 00:16:30.123
+If you look at that value matrix by contrast, the way I've described things so
+
+00:16:30.123 --> 00:16:35.859
+far would suggest that it's a square matrix that has 12,288 columns and 12,288 rows,
+
+00:16:35.859 --> 00:16:40.920
+since both its inputs and outputs live in this very large embedding space.
+
+00:16:41.500 --> 00:16:45.140
+If true, that would mean about 150 million added parameters.
+
+00:16:45.660 --> 00:16:47.300
+And to be clear, you could do that.
+
+00:16:47.420 --> 00:16:49.760
+You could devote orders of magnitude more parameters
+
+00:16:49.760 --> 00:16:51.740
+to the value map than to the key and query.
+
+00:16:52.060 --> 00:16:54.992
+But in practice, it is much more efficient if instead you make
+
+00:16:54.992 --> 00:16:57.923
+it so that the number of parameters devoted to this value map
+
+00:16:57.923 --> 00:17:00.760
+is the same as the number devoted to the key and the query.
+
+00:17:01.460 --> 00:17:03.290
+This is especially relevant in the setting of
+
+00:17:03.290 --> 00:17:05.160
+running multiple attention heads in parallel.
+
+00:17:06.240 --> 00:17:10.100
+The way this looks is that the value map is factored as a product of two smaller matrices.
+
+00:17:11.180 --> 00:17:15.335
+Conceptually, I would still encourage you to think about the overall linear map,
+
+00:17:15.335 --> 00:17:18.762
+one with inputs and outputs, both in this larger embedding space,
+
+00:17:18.762 --> 00:17:23.073
+for example taking the embedding of blue to this blueness direction that you would
+
+00:17:23.073 --> 00:17:23.800
+add to nouns.
+
+00:17:27.040 --> 00:17:30.338
+The first matrix on the right here has a smaller number of rows,
+
+00:17:30.338 --> 00:17:32.760
+typically the same size as the key-query space
+
+00:17:33.100 --> 00:17:35.745
+What this means is you can think of it as mapping the
+
+00:17:35.745 --> 00:17:38.440
+large embedding vectors down to a much smaller space.
+
+00:17:39.040 --> 00:17:42.700
+This is not the conventional naming, but I'm going to call this the value down matrix.
+
+00:17:43.400 --> 00:17:47.372
+The second matrix maps from this smaller space back up to the embedding space,
+
+00:17:47.372 --> 00:17:50.580
+producing the vectors that you use to make the actual updates.
+
+00:17:51.000 --> 00:17:54.740
+I'm going to call this one the value up matrix, which again is not conventional.
+
+00:17:55.160 --> 00:17:58.080
+The way that you would see this written in most papers looks a little different.
+
+00:17:58.380 --> 00:17:59.520
+I'll talk about it in a minute.
+
+00:17:59.700 --> 00:18:02.540
+In my opinion, it tends to make things a little more conceptually confusing.
+
+00:18:03.260 --> 00:18:06.826
+To throw in linear algebra jargon here, what we're basically doing is
+
+00:18:06.826 --> 00:18:10.340
+constraining the overall value map to be a low rank transformation.
+
+00:18:11.420 --> 00:18:16.100
+Turning back to the parameter count, all four of these matrices have the same size,
+
+00:18:16.100 --> 00:18:20.780
+and adding them all up we get about 6.3 million parameters for one attention head.
+
+00:18:22.040 --> 00:18:24.194
+As a quick side note, to be a little more accurate,
+
+00:18:24.194 --> 00:18:27.446
+everything described so far is what people would call a self-attention head,
+
+00:18:27.446 --> 00:18:30.486
+to distinguish it from a variation that comes up in other models that's
+
+00:18:30.486 --> 00:18:31.500
+called cross-attention.
+
+00:18:32.300 --> 00:18:35.732
+This isn't relevant to our GPT example, but if you're curious,
+
+00:18:35.732 --> 00:18:39.774
+cross-attention involves models that process two distinct types of data,
+
+00:18:39.774 --> 00:18:43.815
+like text in one language and text in another language that's part of an
+
+00:18:43.815 --> 00:18:47.967
+ongoing generation of a translation, or maybe audio input of speech and an
+
+00:18:47.967 --> 00:18:49.240
+ongoing transcription.
+
+00:18:50.400 --> 00:18:52.700
+A cross-attention head looks almost identical.
+
+00:18:52.980 --> 00:18:57.400
+The only difference is that the key and query maps act on different data sets.
+
+00:18:57.840 --> 00:19:02.058
+In a model doing translation, for example, the keys might come from one language,
+
+00:19:02.058 --> 00:19:06.119
+while the queries come from another, and the attention pattern could describe
+
+00:19:06.119 --> 00:19:09.660
+which words from one language correspond to which words in another.
+
+00:19:10.340 --> 00:19:12.885
+And in this setting there would typically be no masking,
+
+00:19:12.885 --> 00:19:16.340
+since there's not really any notion of later tokens affecting earlier ones.
+
+00:19:17.180 --> 00:19:20.766
+Staying focused on self-attention though, if you understood everything so far,
+
+00:19:20.766 --> 00:19:24.674
+and if you were to stop here, you would come away with the essence of what attention
+
+00:19:24.674 --> 00:19:25.180
+really is.
+
+00:19:25.760 --> 00:19:28.714
+All that's really left to us is to lay out the sense
+
+00:19:28.714 --> 00:19:31.440
+in which you do this many many different times.
+
+00:19:32.100 --> 00:19:35.132
+In our central example we focused on adjectives updating nouns,
+
+00:19:35.132 --> 00:19:38.886
+but of course there are lots of different ways that context can influence the
+
+00:19:38.886 --> 00:19:39.800
+meaning of a word.
+
+00:19:40.360 --> 00:19:43.195
+If the words they crashed the preceded the word car,
+
+00:19:43.195 --> 00:19:46.520
+it has implications for the shape and structure of that car.
+
+00:19:47.200 --> 00:19:49.280
+And a lot of associations might be less grammatical.
+
+00:19:49.760 --> 00:19:52.883
+If the word wizard is anywhere in the same passage as Harry,
+
+00:19:52.883 --> 00:19:55.903
+it suggests that this might be referring to Harry Potter,
+
+00:19:55.903 --> 00:19:59.963
+whereas if instead the words Queen, Sussex, and William were in that passage,
+
+00:19:59.963 --> 00:20:04.440
+then perhaps the embedding of Harry should instead be updated to refer to the prince.
+
+00:20:05.040 --> 00:20:08.540
+For every different type of contextual updating that you might imagine,
+
+00:20:08.540 --> 00:20:11.942
+the parameters of these key and query matrices would be different to
+
+00:20:11.942 --> 00:20:15.295
+capture the different attention patterns, and the parameters of our
+
+00:20:15.295 --> 00:20:19.140
+value map would be different based on what should be added to the embeddings.
+
+00:20:19.980 --> 00:20:23.117
+And again, in practice the true behavior of these maps is much more
+
+00:20:23.117 --> 00:20:26.348
+difficult to interpret, where the weights are set to do whatever the
+
+00:20:26.348 --> 00:20:30.140
+model needs them to do to best accomplish its goal of predicting the next token.
+
+00:20:31.400 --> 00:20:35.188
+As I said before, everything we described is a single head of attention,
+
+00:20:35.188 --> 00:20:38.713
+and a full attention block inside a transformer consists of what's
+
+00:20:38.713 --> 00:20:43.132
+called multi-headed attention, where you run a lot of these operations in parallel,
+
+00:20:43.132 --> 00:20:45.920
+each with its own distinct key query and value maps.
+
+00:20:47.420 --> 00:20:51.700
+GPT-3 for example uses 96 attention heads inside each block.
+
+00:20:52.020 --> 00:20:54.471
+Considering that each one is already a bit confusing,
+
+00:20:54.471 --> 00:20:56.460
+it's certainly a lot to hold in your head.
+
+00:20:56.760 --> 00:21:01.119
+Just to spell it all out very explicitly, this means you have 96 distinct
+
+00:21:01.119 --> 00:21:05.000
+key and query matrices producing 96 distinct attention patterns.
+
+00:21:05.440 --> 00:21:08.914
+Then each head has its own distinct value matrices
+
+00:21:08.914 --> 00:21:12.180
+used to produce 96 sequences of value vectors.
+
+00:21:12.460 --> 00:21:16.680
+These are all added together using the corresponding attention patterns as weights.
+
+00:21:17.480 --> 00:21:21.398
+What this means is that for each position in the context, each token,
+
+00:21:21.398 --> 00:21:26.168
+every one of these heads produces a proposed change to be added to the embedding in
+
+00:21:26.168 --> 00:21:27.020
+that position.
+
+00:21:27.660 --> 00:21:32.010
+So what you do is you sum together all of those proposed changes, one for each head,
+
+00:21:32.010 --> 00:21:35.480
+and you add the result to the original embedding of that position.
+
+00:21:36.660 --> 00:21:41.721
+This entire sum here would be one slice of what's outputted from this multi-headed
+
+00:21:41.721 --> 00:21:47.028
+attention block, a single one of those refined embeddings that pops out the other end
+
+00:21:47.028 --> 00:21:47.460
+of it.
+
+00:21:48.320 --> 00:21:50.188
+Again, this is a lot to think about, so don't
+
+00:21:50.188 --> 00:21:52.140
+worry at all if it takes some time to sink in.
+
+00:21:52.380 --> 00:21:56.318
+The overall idea is that by running many distinct heads in parallel,
+
+00:21:56.318 --> 00:22:00.835
+you're giving the model the capacity to learn many distinct ways that context
+
+00:22:00.835 --> 00:22:01.820
+changes meaning.
+
+00:22:03.700 --> 00:22:07.267
+Pulling up our running tally for parameter count with 96 heads,
+
+00:22:07.267 --> 00:22:10.494
+each including its own variation of these four matrices,
+
+00:22:10.494 --> 00:22:15.080
+each block of multi-headed attention ends up with around 600 million parameters.
+
+00:22:16.420 --> 00:22:19.026
+There's one added slightly annoying thing that I should really
+
+00:22:19.026 --> 00:22:21.800
+mention for any of you who go on to read more about transformers.
+
+00:22:22.080 --> 00:22:25.592
+You remember how I said that the value map is factored out into these two
+
+00:22:25.592 --> 00:22:29.440
+distinct matrices, which I labeled as the value down and the value up matrices.
+
+00:22:29.960 --> 00:22:34.228
+The way that I framed things would suggest that you see this pair of matrices
+
+00:22:34.228 --> 00:22:38.440
+inside each attention head, and you could absolutely implement it this way.
+
+00:22:38.640 --> 00:22:39.920
+That would be a valid design.
+
+00:22:40.260 --> 00:22:42.570
+But the way that you see this written in papers and the way
+
+00:22:42.570 --> 00:22:44.920
+that it's implemented in practice looks a little different.
+
+00:22:45.340 --> 00:22:50.829
+All of these value up matrices for each head appear stapled together in one giant matrix
+
+00:22:50.829 --> 00:22:56.380
+that we call the output matrix, associated with the entire multi-headed attention block.
+
+00:22:56.820 --> 00:23:00.586
+And when you see people refer to the value matrix for a given attention head,
+
+00:23:00.586 --> 00:23:03.178
+they're typically only referring to this first step,
+
+00:23:03.178 --> 00:23:07.140
+the one that I was labeling as the value down projection into the smaller space.
+
+00:23:08.340 --> 00:23:11.040
+For the curious among you, I've left an on-screen note about it.
+
+00:23:11.260 --> 00:23:13.594
+It's one of those details that runs the risk of distracting
+
+00:23:13.594 --> 00:23:16.047
+from the main conceptual points, but I do want to call it out
+
+00:23:16.047 --> 00:23:18.540
+just so that you know if you read about this in other sources.
+
+00:23:19.240 --> 00:23:23.665
+Setting aside all the technical nuances, in the preview from the last chapter we saw how
+
+00:23:23.665 --> 00:23:28.040
+data flowing through a transformer doesn't just flow through a single attention block.
+
+00:23:28.640 --> 00:23:32.700
+For one thing, it also goes through these other operations called multi-layer perceptrons.
+
+00:23:33.120 --> 00:23:34.880
+We'll talk more about those in the next chapter.
+
+00:23:35.180 --> 00:23:39.320
+And then it repeatedly goes through many many copies of both of these operations.
+
+00:23:39.980 --> 00:23:43.905
+What this means is that after a given word imbibes some of its context,
+
+00:23:43.905 --> 00:23:47.221
+there are many more chances for this more nuanced embedding
+
+00:23:47.221 --> 00:23:50.040
+to be influenced by its more nuanced surroundings.
+
+00:23:50.940 --> 00:23:54.947
+The further down the network you go, with each embedding taking in more and more
+
+00:23:54.947 --> 00:23:59.055
+meaning from all the other embeddings, which themselves are getting more and more
+
+00:23:59.055 --> 00:24:03.012
+nuanced, the hope is that there's the capacity to encode higher level and more
+
+00:24:03.012 --> 00:24:07.320
+abstract ideas about a given input beyond just descriptors and grammatical structure.
+
+00:24:07.880 --> 00:24:11.712
+Things like sentiment and tone and whether it's a poem and what underlying
+
+00:24:11.712 --> 00:24:15.130
+scientific truths are relevant to the piece and things like that.
+
+00:24:16.700 --> 00:24:21.988
+Turning back one more time to our scorekeeping, GPT-3 includes 96 distinct layers,
+
+00:24:21.988 --> 00:24:27.341
+so the total number of key query and value parameters is multiplied by another 96,
+
+00:24:27.341 --> 00:24:31.985
+which brings the total sum to just under 58 billion distinct parameters
+
+00:24:31.985 --> 00:24:34.500
+devoted to all of the attention heads.
+
+00:24:34.980 --> 00:24:37.960
+That is a lot to be sure, but it's only about a third
+
+00:24:37.960 --> 00:24:40.940
+of the 175 billion that are in the network in total.
+
+00:24:41.520 --> 00:24:44.097
+So even though attention gets all of the attention,
+
+00:24:44.097 --> 00:24:48.140
+the majority of parameters come from the blocks sitting in between these steps.
+
+00:24:48.560 --> 00:24:50.975
+In the next chapter, you and I will talk more about those
+
+00:24:50.975 --> 00:24:53.560
+other blocks and also a lot more about the training process.
+
+00:24:54.120 --> 00:24:58.764
+A big part of the story for the success of the attention mechanism is not so much any
+
+00:24:58.764 --> 00:25:02.971
+specific kind of behaviour that it enables, but the fact that it's extremely
+
+00:25:02.971 --> 00:25:07.724
+parallelizable, meaning that you can run a huge number of computations in a short time
+
+00:25:07.724 --> 00:25:08.380
+using GPUs.
+
+00:25:09.460 --> 00:25:13.311
+Given that one of the big lessons about deep learning in the last decade or two has
+
+00:25:13.311 --> 00:25:17.394
+been that scale alone seems to give huge qualitative improvements in model performance,
+
+00:25:17.394 --> 00:25:21.060
+there's a huge advantage to parallelizable architectures that let you do this.
+
+00:25:22.040 --> 00:25:25.340
+If you want to learn more about this stuff, I've left lots of links in the description.
+
+00:25:25.920 --> 00:25:30.040
+In particular, anything produced by Andrej Karpathy or Chris Ola tend to be pure gold.
+
+00:25:30.560 --> 00:25:33.720
+In this video, I wanted to just jump into attention in its current form,
+
+00:25:33.720 --> 00:25:36.704
+but if you're curious about more of the history for how we got here
+
+00:25:36.704 --> 00:25:38.942
+and how you might reinvent this idea for yourself,
+
+00:25:38.942 --> 00:25:42.540
+my friend Vivek just put up a couple videos giving a lot more of that motivation.
+
+00:25:43.120 --> 00:25:45.790
+Also, Britt Cruz from the channel The Art of the Problem has a
+
+00:25:45.790 --> 00:25:48.460
+really nice video about the history of large language models.
+
+00:26:04.960 --> 00:26:09.200
+Thank you.
+

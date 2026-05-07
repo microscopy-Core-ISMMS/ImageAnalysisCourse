@@ -1,0 +1,93 @@
+# Jupyter Book build output
+_build/
+.jupyter_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+!env/environment.yml
+!env/check_lecture_env.py
+!env/README.md
+venv/
+.conda/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large model checkpoints (downloaded at runtime, not tracked)
+*.pth
+*.pt
+*.ckpt
+sam_vit_*.pth
+cellpose_models/
+
+# Lab outputs (regenerated each run)
+masks_easy.npy
+masks_hard.npy
+features.csv
+sample.png
+sample_easy.png
+sample_hard.png
+test.tif
+care_outputs/
+
+# Logs
+*.log
+
+# Workshop scratch / Claude session artifacts
+# (Defensive — these typically live outside the repo, but if anything
+# wanders in we don't want it tracked.)
+handoff.md
+deliverables.md
+deliverables.csv
+review_items.md
+zoom_event_page.md
+source_audit_and_proposal.md
+per_exercise_plan.md
+review_user_edited.md
+qa_v*/
+qa_phase*/
+qa_user_edited/
+qa_composites/
+qa_tools_v*/
+audit_text/
+working/
+LabkitScreenshots/
+*.scratch.*
+.claude/
+.auto-memory/
+
+# Attendee / registration data (safety guard)
+attendees.csv
+attendees.xlsx
+registrations.csv
+*roster*
+*roster*.csv
+*roster*.xlsx
+
+# Build/staging temp
+/tmp/
+*.tmp
