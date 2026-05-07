@@ -1,0 +1,631 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ramp-up Evening (Optional T0 Session) &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ramp-up/rampup_evening';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Ramp-up — Python and numpy basics for image work" href="notebooks/python_basics.html" />
+    <link rel="prev" title="Acknowledgments" href="../acknowledgments.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ramp-up/rampup_evening.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ramp-up Evening (Optional T0 Session)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-exists">Why this exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#session-outline-2-5-hours">Session outline (2.5 hours)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#welcome-and-orientation-15-min">18:30 – 18:45 — Welcome and orientation (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-1-python-and-notebooks-45-min">18:45 – 19:30 — Block 1: Python and notebooks (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#break-15-min">19:30 – 19:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-2-image-data-fundamentals-45-min">19:45 – 20:30 — Block 2: Image data fundamentals (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">20:30 – 20:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-3-ml-literacy-at-a-glance-30-min">20:45 – 21:15 — Block 3: ML literacy at a glance (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up-and-q-a-15-min">21:15 – 21:30 — Wrap-up and Q&amp;A (15 min)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#materials">Materials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-for-instructors">Notes for instructors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-paced-option">Self-paced option</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ramp-up-evening-optional-t0-session">
+<h1>Ramp-up Evening (Optional T0 Session)<a class="headerlink" href="#ramp-up-evening-optional-t0-session" title="Link to this heading">#</a></h1>
+<p><strong>Format:</strong> 2.5-hour optional session, evening before the workshop day
+<strong>Audience:</strong> Attendees whose [self-check notebook](/notebooks/00_setup_self_check) recommended additional preparation, plus anyone who self-identifies as needing a runway
+<strong>Curriculum mapping:</strong> Compresses T0.1 (Python and scripting), T0.3 (math and ML literacy), and T0.4 (image data fundamentals) into one block focused on what the workshop day will require
+<strong>Format constraints:</strong> Designed to be deliverable in person, on Zoom, or self-paced. Nothing depends on real-time interaction.</p>
+<section id="why-this-exists">
+<h2>Why this exists<a class="headerlink" href="#why-this-exists" title="Link to this heading">#</a></h2>
+<p>The workshop assumes biology fluency and basic Python; some attendees have one but not the other. The biology-first analyst pathway is a real and common entry into bioimage analysis, and rushed Python prep on the morning of the workshop is not a kindness. This ramp-up session gives those attendees a no-pressure runway, with content scoped exactly to what the next-day labs will use and nothing more.</p>
+<p>This session is optional. Attending it does not mean an attendee is “behind.” Skipping it is fine if the self-check showed readiness.</p>
+</section>
+<section id="learning-objectives">
+<h2>Learning objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of the session, attendees should be able to:</p>
+<ol class="arabic simple">
+<li><p>Open, run, and modify a Jupyter / Colab notebook with confidence</p></li>
+<li><p>Manipulate basic numpy arrays representing images: indexing, slicing, computing simple statistics</p></li>
+<li><p>Load a microscopy image and inspect its shape, dtype, and metadata</p></li>
+<li><p>Describe at a conceptual level what training, validation, and a model output mean — enough to follow the morning lecture without confusion</p></li>
+<li><p>Arrive at the workshop the next day ready to focus on the AI methods rather than the tooling</p></li>
+</ol>
+</section>
+<section id="session-outline-2-5-hours">
+<h2>Session outline (2.5 hours)<a class="headerlink" href="#session-outline-2-5-hours" title="Link to this heading">#</a></h2>
+<section id="welcome-and-orientation-15-min">
+<h3>18:30 – 18:45 — Welcome and orientation (15 min)<a class="headerlink" href="#welcome-and-orientation-15-min" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Why this evening: framing as a runway, not a remedial session</p></li>
+<li><p>What we will cover, what we will not, and what to expect tomorrow</p></li>
+<li><p>Confirm everyone’s Colab opens and runs; one-on-one help for anyone who is blocked</p></li>
+<li><p>Brief introductions if the group is small</p></li>
+</ul>
+</section>
+<section id="block-1-python-and-notebooks-45-min">
+<h3>18:45 – 19:30 — Block 1: Python and notebooks (45 min)<a class="headerlink" href="#block-1-python-and-notebooks-45-min" title="Link to this heading">#</a></h3>
+<p>The minimum Python the workshop requires.</p>
+<ul class="simple">
+<li><p>Variables, types, and the values that come up in image work (integers, floats, arrays)</p></li>
+<li><p>Lists, dictionaries, indexing, slicing — concretely, with image-shaped examples</p></li>
+<li><p>Function calls and how to read a function’s documentation</p></li>
+<li><p>numpy’s array model: arrays as multi-dimensional grids, shape, dtype, basic operations</p></li>
+<li><p>The “predict before run” habit: read the cell, predict the output, then run</p></li>
+</ul>
+<p>This block is hands-on the entire time. Attendees follow along in a notebook tailored for the session (<code class="docutils literal notranslate"><span class="pre">ramp-up/notebooks/python_basics.ipynb</span></code>, to be authored). The notebook intentionally repeats some of the workshop’s setup-check material so attendees who attend both feel the continuity.</p>
+</section>
+<section id="break-15-min">
+<h3>19:30 – 19:45 — Break (15 min)<a class="headerlink" href="#break-15-min" title="Link to this heading">#</a></h3>
+</section>
+<section id="block-2-image-data-fundamentals-45-min">
+<h3>19:45 – 20:30 — Block 2: Image data fundamentals (45 min)<a class="headerlink" href="#block-2-image-data-fundamentals-45-min" title="Link to this heading">#</a></h3>
+<p>The minimum image-data fluency the workshop requires.</p>
+<ul class="simple">
+<li><p>What a digital image is: pixels, dimensions (height, width, channels, time, Z), bit depth</p></li>
+<li><p>Common formats encountered in microscopy (TIFF, OME-TIFF) and how to inspect their metadata</p></li>
+<li><p>Loading an image into numpy and reasoning about its shape</p></li>
+<li><p>Display: matplotlib basics for showing images with appropriate contrast, colormaps, and scale</p></li>
+<li><p>Calibration and pixel size: the difference between pixel coordinates and physical units, briefly</p></li>
+</ul>
+<p>Hands-on the entire time. Attendees follow along in a notebook tailored for the session (<code class="docutils literal notranslate"><span class="pre">ramp-up/notebooks/image_basics.ipynb</span></code>, to be authored).</p>
+</section>
+<section id="id1">
+<h3>20:30 – 20:45 — Break (15 min)<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+</section>
+<section id="block-3-ml-literacy-at-a-glance-30-min">
+<h3>20:45 – 21:15 — Block 3: ML literacy at a glance (30 min)<a class="headerlink" href="#block-3-ml-literacy-at-a-glance-30-min" title="Link to this heading">#</a></h3>
+<p>The minimum conceptual ML fluency the workshop requires. Lecture-style, not hands-on.</p>
+<ul class="simple">
+<li><p>What “machine learning” means at the level the workshop will use the term</p></li>
+<li><p>Training, validation, and test data — what each is for and why they need to be different</p></li>
+<li><p>Pretrained models, fine-tuning, zero-shot inference: the three operating modes the workshop will use</p></li>
+<li><p>What a “model output” actually is: a function applied to data, with all the limitations of any function fit to data</p></li>
+<li><p>Where models fail: a quick preview of the morning lecture’s failure-mode discussion</p></li>
+</ul>
+<p>This block has no hands-on component. The intent is to give attendees the vocabulary and mental model so the morning lecture can move at its planned pace.</p>
+</section>
+<section id="wrap-up-and-q-a-15-min">
+<h3>21:15 – 21:30 — Wrap-up and Q&amp;A (15 min)<a class="headerlink" href="#wrap-up-and-q-a-15-min" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Preview of the morning: what to expect, where to be, what to bring</p></li>
+<li><p>Q&amp;A — open floor</p></li>
+<li><p>Reassurance: tomorrow’s lectures are designed to land for everyone in this room</p></li>
+</ul>
+</section>
+</section>
+<section id="materials">
+<h2>Materials<a class="headerlink" href="#materials" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ramp-up/notebooks/python_basics.ipynb</span></code> (to be authored)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ramp-up/notebooks/image_basics.ipynb</span></code> (to be authored)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ramp-up/slides/ml_at_a_glance.pdf</span></code> (short slide deck for Block 3, to be authored)</p></li>
+<li><p>The same <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> used for the main workshop</p></li>
+</ul>
+</section>
+<section id="notes-for-instructors">
+<h2>Notes for instructors<a class="headerlink" href="#notes-for-instructors" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Keep the tone calm and supportive. Attendees who self-identified as needing the ramp-up may be self-conscious about it; the framing matters.</p></li>
+<li><p>Resist over-teaching. The session is scoped to what the workshop <em>requires</em>, not what would be ideal. Attendees can deepen later.</p></li>
+<li><p>Walk the room (or pair attendees in breakout rooms on Zoom) during hands-on blocks. The notebooks are designed to be self-explanatory but human help during the first 10 minutes prevents anyone from getting stuck.</p></li>
+<li><p>Time is tight. If a block runs long, skip the optional cells and end on time so attendees get a full night before the workshop.</p></li>
+</ul>
+</section>
+<section id="self-paced-option">
+<h2>Self-paced option<a class="headerlink" href="#self-paced-option" title="Link to this heading">#</a></h2>
+<p>For attendees who cannot attend the live ramp-up session, the same content is available in the <code class="docutils literal notranslate"><span class="pre">ramp-up/</span></code> folder of this repository as self-paced notebooks. Each notebook has the same structure as the live block: 45 minutes (or 30 for ML at a glance), hands-on where appropriate, with an end-of-notebook self-check. Attendees can complete them at their own pace and arrive at the workshop with the same baseline as live-session participants.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ramp-up"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../acknowledgments.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Acknowledgments</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="notebooks/python_basics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ramp-up — Python and numpy basics for image work</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-exists">Why this exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#session-outline-2-5-hours">Session outline (2.5 hours)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#welcome-and-orientation-15-min">18:30 – 18:45 — Welcome and orientation (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-1-python-and-notebooks-45-min">18:45 – 19:30 — Block 1: Python and notebooks (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#break-15-min">19:30 – 19:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-2-image-data-fundamentals-45-min">19:45 – 20:30 — Block 2: Image data fundamentals (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">20:30 – 20:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block-3-ml-literacy-at-a-glance-30-min">20:45 – 21:15 — Block 3: ML literacy at a glance (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up-and-q-a-15-min">21:15 – 21:30 — Wrap-up and Q&amp;A (15 min)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#materials">Materials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-for-instructors">Notes for instructors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-paced-option">Self-paced option</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

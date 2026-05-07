@@ -1,0 +1,95 @@
+/* Custom CSS: subtle Mount Sinai brand accents over the Sphinx-Book-Theme.
+ *
+ * Brand colors (sampled from Core_logo-transparent.png in BrandCenter/):
+ *   --ms-cyan    : #00adee
+ *   --ms-magenta : #d7078c
+ *   --ms-violet  : #40276e
+ *
+ * Strict design rule: do NOT recolor or restyle the logo image; CSS only
+ * touches the surrounding theme (links, headers, callouts). The logo file
+ * itself is the approved electronic artwork and is untouched.
+ */
+
+:root {
+  --ms-cyan:    #00adee;
+  --ms-magenta: #d7078c;
+  --ms-violet:  #40276e;
+  --ms-cyan-soft:    #e6f6fd;   /* very light cyan background tint */
+  --ms-magenta-soft: #fbe6f1;   /* very light magenta background tint */
+}
+
+/* ----- Links ----- */
+/* Primary text links pick up the violet (deep, readable on white). */
+a, a:visited {
+  color: var(--ms-violet);
+  text-decoration: none;
+}
+a:hover, a:focus {
+  color: var(--ms-magenta);
+  text-decoration: underline;
+}
+
+/* ----- Section headings ----- */
+/* H2/H3 anchor underlines in cyan; H1 unchanged so the page title reads as default. */
+h2, h3 {
+  border-bottom: 2px solid var(--ms-cyan);
+  padding-bottom: 0.18em;
+}
+h2 a.headerlink, h3 a.headerlink {
+  color: var(--ms-cyan);
+}
+
+/* ----- Strong emphasis ----- */
+/* `**bold**` in markdown → magenta highlight. Subtle: only when bold is used
+   for emphasis, not for code or list bullets. */
+.bd-content strong {
+  color: var(--ms-violet);
+}
+
+/* ----- Admonitions: tint the left border to brand colors by class ----- */
+.bd-content .admonition.note,
+.bd-content .admonition.tip {
+  border-left-color: var(--ms-cyan) !important;
+}
+.bd-content .admonition.warning,
+.bd-content .admonition.attention,
+.bd-content .admonition.important {
+  border-left-color: var(--ms-magenta) !important;
+}
+
+/* ----- Sidebar active-page indicator ----- */
+.bd-sidebar a.current,
+.bd-toc a.active {
+  color: var(--ms-magenta) !important;
+  font-weight: 600;
+}
+
+/* ----- Logo sizing in the sidebar header ----- */
+/* The Core logo is wide (long wordmark). Default sphinx-book-theme can shrink
+   it past brand-minimum readability. Cap min height so the mountain stays
+   recognizable, and keep the aspect ratio. */
+.navbar-brand img,
+.bd-sidebar__top .navbar-brand img,
+img.logo {
+  min-height: 40px;
+  max-height: 60px;
+  width: auto;
+  /* Brand-rule clear space: a small breathing room inside the sidebar */
+  margin: 8px 0;
+}
+
+/* ----- Code blocks: subtle violet left border ----- */
+.bd-content div.highlight {
+  border-left: 3px solid var(--ms-violet);
+}
+
+/* ----- Tables: header row tinted cyan ----- */
+.bd-content table.table > thead {
+  background-color: var(--ms-cyan-soft);
+  border-bottom: 2px solid var(--ms-cyan);
+}
+
+/* ----- Callout for Predict-then-observe blocks ----- */
+/* The notebook pedagogy uses bold "Predict before running." callouts. We
+   don't have a CSS hook into that text directly, but the surrounding bold
+   already picks up the violet rule above. No extra rules needed.  */

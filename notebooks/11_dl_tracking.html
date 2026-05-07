@@ -1,0 +1,1166 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack) &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/11_dl_tracking';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 12 — Deconvolution (DL + classical baseline)" href="12_deconvolution.html" />
+    <link rel="prev" title="Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D" href="10_3d_segmentation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/11_dl_tracking.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-time-lapse-generator">Synthetic time-lapse generator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-time-lapse">Visualize the time-lapse</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-per-frame-detection">Step 1 — Per-frame detection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predict-before-you-run-tracking-failure-modes">Predict before you run: tracking failure modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-1-trackpy-classical-linker">Method 1 — TrackPy classical linker</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-2-btrack-bayesian-linker-or-kalman-fallback">Method 2 — btrack Bayesian linker (or Kalman fallback)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-tracks-side-by-side">Visualize tracks side-by-side</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-id-consistency-metric">Compute ID-consistency metric</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-own-method-picker-and-parameters">Choose-your-own: method picker and parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-test-failure-modes">Stress test — failure modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sota-ultrack-pointer-only">SOTA Ultrack (pointer only)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- colab-badge -->
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/11_dl_tracking.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack">
+<h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)<a class="headerlink" href="#notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack" title="Link to this heading">#</a></h1>
+<p><strong>Status.</strong> Core lab — workshop day 3. Recommended after Notebooks 01 (Cellpose), 10 (3D segmentation).
+<strong>Estimated time.</strong> 25–35 minutes on Colab T4.</p>
+<p><strong>Learning goals.</strong></p>
+<ol class="arabic simple">
+<li><p>Understand tracking as <strong>detection + linking</strong>: the frame-by-frame centroids are the hard part; connecting them across time is a separate algorithmic choice.</p></li>
+<li><p>Compare <strong>classical</strong> (TrackPy) vs <strong>Bayesian</strong> (btrack) vs <strong>SOTA</strong> (Ultrack) linking strategies.</p></li>
+<li><p>Compute ID-consistency metrics to evaluate which method best recovers ground-truth track assignments.</p></li>
+<li><p>Visualize failure modes: cells that touch, disappear momentarily, or move abruptly.</p></li>
+<li><p>Choose a method based on data complexity and computational budget.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>Why this lab matters.</strong> Time-lapse microscopy is one of the richest datasets in cell biology — but only if you can track the <em>same cell</em> across frames. This lab separates the detection problem (solved upstream by Cellpose, StarDist, etc.) from the <em>linking</em> problem, which has multiple solutions with very different trade-offs.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>A note on btrack.</strong> The Bayesian tracker package (<code class="docutils literal notranslate"><span class="pre">btrack</span></code>) is powerful but has uncertain pip-install compatibility on free-tier Colab due to HDF5 dependencies. We detect this upfront and fall back to a simplified Kalman-style linker if needed — the teaching point lands either way.</p>
+</div></blockquote>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<p>Install core dependencies. TrackPy always installs cleanly; btrack may require fallback.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+
+<span class="c1"># Core libraries</span>
+<span class="o">%</span><span class="k">pip</span> install --quiet trackpy scikit-image matplotlib numpy scipy pandas
+
+<span class="c1"># Try btrack; if it fails, we&#39;ll use a fallback Kalman linker</span>
+<span class="n">BTRACK_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install --quiet btrack
+    <span class="kn">import</span><span class="w"> </span><span class="nn">btrack</span>
+    <span class="n">BTRACK_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ btrack installed successfully&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ℹ btrack install failed (expected on some Colab runtimes): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Will use simplified Kalman-style fallback instead&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">measure</span><span class="p">,</span> <span class="n">morphology</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">linear_sum_assignment</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">trackpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tp</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Core imports ready.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;btrack available: </span><span class="si">{</span><span class="n">BTRACK_AVAILABLE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="synthetic-time-lapse-generator">
+<h2>Synthetic time-lapse generator<a class="headerlink" href="#synthetic-time-lapse-generator" title="Link to this heading">#</a></h2>
+<p>Generate a small (T=30 frames) time-lapse with N moving cells, realistic dynamics, and ground-truth masks. Each cell has:</p>
+<ul class="simple">
+<li><p>A starting position (random)</p></li>
+<li><p>A velocity vector (constant + small random perturbation per frame)</p></li>
+<li><p>A finite lifespan (cells appear, move, and sometimes disappear mid-sequence)</p></li>
+</ul>
+<p>We’ll use this synthetic data so that:</p>
+<ol class="arabic simple">
+<li><p>We know the <em>ground truth</em> track assignments.</p></li>
+<li><p>We can test linking algorithms on controlled failure modes.</p></li>
+<li><p>Everything runs fast (T, H, W all small).</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_synthetic_timelapse</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">n_cells</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a synthetic time-lapse with ground-truth labeled masks and track info.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        images:  (T, H, W) array, grayscale time-lapse</span>
+<span class="sd">        masks:   (T, H, W) array, integer labels (0 = background, 1..N = cell IDs)</span>
+<span class="sd">        tracks:  dict mapping cell_id -&gt; list of (t, cy, cx) tuples (ground truth)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">masks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+    <span class="c1"># Initialize cells: (cell_id, start_t, end_t, cy0, cx0, vy, vx)</span>
+    <span class="n">cells_info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cells</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">start_t</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span> <span class="o">//</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">end_t</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">start_t</span> <span class="o">+</span> <span class="n">T</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">cy0</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">H</span> <span class="o">-</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="n">cx0</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">W</span> <span class="o">-</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="n">vy</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">vx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">cells_info</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">start_t</span><span class="p">,</span> <span class="n">end_t</span><span class="p">,</span> <span class="n">cy0</span><span class="p">,</span> <span class="n">cx0</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">vx</span><span class="p">))</span>
+
+    <span class="c1"># Render each frame</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">start_t</span><span class="p">,</span> <span class="n">end_t</span><span class="p">,</span> <span class="n">cy0</span><span class="p">,</span> <span class="n">cx0</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">vx</span> <span class="ow">in</span> <span class="n">cells_info</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">start_t</span> <span class="o">&lt;=</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">end_t</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="c1"># Cell is active; compute position at time t with small noise</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">start_t</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">cy0</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">cx0</span> <span class="o">+</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+            <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cy</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">H</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">W</span> <span class="o">-</span> <span class="mi">5</span><span class="p">))</span>
+
+            <span class="c1"># Draw a small circle (cell radius ~8 pixels)</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="mi">8</span>
+            <span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[:</span><span class="n">H</span><span class="p">,</span> <span class="p">:</span><span class="n">W</span><span class="p">]</span>
+            <span class="n">circle</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">radius</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="n">images</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">circle</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">circle</span><span class="p">],</span> <span class="mi">200</span><span class="p">)</span>
+            <span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">circle</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_id</span>
+
+    <span class="c1"># Add Gaussian blur and noise for realism</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+    <span class="n">images_smooth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">images_smooth</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">images_smooth</span> <span class="o">=</span> <span class="p">(</span><span class="n">images_smooth</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">images_smooth</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">images_smooth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">images_smooth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="c1"># Extract ground-truth tracks from masks</span>
+    <span class="n">tracks</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cells</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">tracks</span><span class="p">[</span><span class="n">cell_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">cell_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">obj_mask</span> <span class="o">=</span> <span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">==</span> <span class="n">cell_id</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">obj_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">props</span><span class="p">:</span>
+                <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">centroid</span>
+                <span class="n">tracks</span><span class="p">[</span><span class="n">cell_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">images_smooth</span><span class="p">,</span> <span class="n">masks</span><span class="p">,</span> <span class="n">tracks</span>
+
+
+<span class="c1"># Generate the data</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating synthetic time-lapse...&quot;</span><span class="p">)</span>
+<span class="n">images</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span> <span class="o">=</span> <span class="n">generate_synthetic_timelapse</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">n_cells</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  images shape: </span><span class="si">{</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  masks shape:  </span><span class="si">{</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gt_tracks</span><span class="p">)</span><span class="si">}</span><span class="s2"> cells total&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-the-time-lapse">
+<h2>Visualize the time-lapse<a class="headerlink" href="#visualize-the-time-lapse" title="Link to this heading">#</a></h2>
+<p>Show 4 representative frames + a time-projection to see the migration patterns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show sample frames</span>
+<span class="n">frame_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">29</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">frame_indices</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Frame </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Time projection (maximum intensity across all frames)</span>
+<span class="n">time_proj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">time_proj</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Time projection (max across all frames)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dynamic range: </span><span class="si">{</span><span class="n">images</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">images</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Active cells per frame (ground truth):&quot;</span><span class="p">),</span>
+<span class="n">active_per_frame</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gt_masks</span><span class="p">[</span><span class="n">t</span><span class="p">]))</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  min </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">active_per_frame</span><span class="p">)</span><span class="si">}</span><span class="s2">, max </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">active_per_frame</span><span class="p">)</span><span class="si">}</span><span class="s2">, mean </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">active_per_frame</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-1-per-frame-detection">
+<h2>Step 1 — Per-frame detection<a class="headerlink" href="#step-1-per-frame-detection" title="Link to this heading">#</a></h2>
+<p>Detect objects in each frame using the ground-truth masks (we pretend a detector like Cellpose gave us these). Extract centroids + basic properties and tabulate as a pandas DataFrame.</p>
+<p>In a real workflow, this step would be: run Cellpose or StarDist, extract regionprops for each detected object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract detections from ground-truth masks</span>
+<span class="n">detections</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">frame_mask</span> <span class="o">=</span> <span class="n">gt_masks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">frame_mask</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">area</span>
+        <span class="n">detections</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
+            <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">cy</span><span class="p">,</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">cx</span><span class="p">,</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="n">area</span><span class="p">,</span>  <span class="c1"># trackpy convention</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">area</span><span class="p">)),</span>
+        <span class="p">})</span>
+
+<span class="n">detections_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">detections</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">detections_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> objects across </span><span class="si">{</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">detections_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Objects per frame: min </span><span class="si">{</span><span class="n">detections_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;max </span><span class="si">{</span><span class="n">detections_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="predict-before-you-run-tracking-failure-modes">
+<h2>Predict before you run: tracking failure modes<a class="headerlink" href="#predict-before-you-run-tracking-failure-modes" title="Link to this heading">#</a></h2>
+<p><strong>Multiple choice.</strong> Which of these will be hardest to link correctly?</p>
+<p>(a) Two cells moving in parallel at constant velocity — easy, linear trajectory.
+(b) A cell that briefly disappears (occluded or dim) for one frame, then reappears in the same location.
+(c) Two cells colliding head-on, touching for one frame, then separating.
+(d) A cell making an abrupt 90-degree turn.</p>
+<p><strong>Answer:</strong> (c) is hardest. When two objects touch, they may temporarily merge into a single blob. A frame-to-frame linker has no signal to distinguish them in that frame. Classical methods like TrackPy handle (b) and (d) reasonably with the right parameters. Bayesian methods (btrack) excel at (d) because they model motion; they can struggle with merges unless trained specifically. Ultrack was designed to handle all three, especially merges.</p>
+<p><strong>What you should expect:</strong> All methods will get (a) right. (b) is handled by TrackPy’s <code class="docutils literal notranslate"><span class="pre">memory</span></code> parameter. (c) will cause splits/merges in the output of simple methods.</p>
+</section>
+<section id="method-1-trackpy-classical-linker">
+<h2>Method 1 — TrackPy classical linker<a class="headerlink" href="#method-1-trackpy-classical-linker" title="Link to this heading">#</a></h2>
+<p>TrackPy (<code class="docutils literal notranslate"><span class="pre">predict_then_link</span></code> or just <code class="docutils literal notranslate"><span class="pre">link</span></code>) performs greedy nearest-neighbor linking with optional <code class="docutils literal notranslate"><span class="pre">memory</span></code> (gap filling). Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">search_range</span></code>: maximum distance a cell can move in one frame (pixels)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">memory</span></code>: max consecutive frames a cell can disappear and still be re-linked</p></li>
+</ul>
+<p>Simple, fast, robust — but doesn’t model motion, so abrupt changes break it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Link detections with TrackPy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running TrackPy linker...&quot;</span><span class="p">)</span>
+<span class="n">search_range</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># pixels; tune to your cell speed</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="mi">2</span>         <span class="c1"># frames; allows brief disappearances</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">tracks_tp</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="n">detections_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">search_range</span><span class="o">=</span><span class="n">search_range</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  search_range=</span><span class="si">{</span><span class="n">search_range</span><span class="si">}</span><span class="s2">, memory=</span><span class="si">{</span><span class="n">memory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  linked into </span><span class="si">{</span><span class="n">tracks_tp</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> tracks&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TrackPy link failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tracks_tp</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">if</span> <span class="n">tracks_tp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Track length distribution:&quot;</span><span class="p">)</span>
+    <span class="n">track_lengths</span> <span class="o">=</span> <span class="n">tracks_tp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;particle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  min </span><span class="si">{</span><span class="n">track_lengths</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, max </span><span class="si">{</span><span class="n">track_lengths</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">, mean </span><span class="si">{</span><span class="n">track_lengths</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tracks_tp</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="method-2-btrack-bayesian-linker-or-kalman-fallback">
+<h2>Method 2 — btrack Bayesian linker (or Kalman fallback)<a class="headerlink" href="#method-2-btrack-bayesian-linker-or-kalman-fallback" title="Link to this heading">#</a></h2>
+<p>btrack models cell motion with a motion model (constant velocity + small noise). This handles abrupt changes better than pure nearest-neighbor, but requires more configuration.</p>
+<p><strong>If btrack is unavailable,</strong> we implement a simplified Kalman-style fallback: predict next position from current velocity, link to nearest detection within tolerance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simple_kalman_linker</span><span class="p">(</span><span class="n">detections_df</span><span class="p">,</span> <span class="n">max_gap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simplified Kalman-style linker: predict motion from velocity, link greedily.</span>
+
+<span class="sd">    Returns: DataFrame with &#39;particle&#39; column added (track IDs)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dets</span> <span class="o">=</span> <span class="n">detections_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">dets</span> <span class="o">=</span> <span class="n">dets</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Active tracks: {track_id: [(frame, y, x, vy_est, vx_est, last_seen_frame)]}</span>
+    <span class="n">active_tracks</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">next_track_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">particle_assignment</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dets</span><span class="p">)</span>  <span class="c1"># particle ID for each detection</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dets</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">int</span><span class="p">(</span><span class="n">dets</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">frame_dets</span> <span class="o">=</span> <span class="n">dets</span><span class="p">[</span><span class="n">dets</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">used</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="c1"># Try to link each frame_det to an active track</span>
+        <span class="k">for</span> <span class="n">det_idx</span><span class="p">,</span> <span class="n">det_row</span> <span class="ow">in</span> <span class="n">frame_dets</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">det_y</span><span class="p">,</span> <span class="n">det_x</span> <span class="o">=</span> <span class="n">det_row</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">det_row</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+            <span class="n">best_track_id</span><span class="p">,</span> <span class="n">best_dist</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Find closest active track (with motion prediction)</span>
+            <span class="k">for</span> <span class="n">tid</span><span class="p">,</span> <span class="n">track_history</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">active_tracks</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="n">frames_gap</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">track_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">frames_gap</span> <span class="o">&gt;</span> <span class="n">max_gap</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Predict position: last_pos + velocity * frames_gap</span>
+                <span class="n">last_frame</span><span class="p">,</span> <span class="n">last_y</span><span class="p">,</span> <span class="n">last_x</span><span class="p">,</span> <span class="n">vy_est</span><span class="p">,</span> <span class="n">vx_est</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">track_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">pred_y</span> <span class="o">=</span> <span class="n">last_y</span> <span class="o">+</span> <span class="n">vy_est</span> <span class="o">*</span> <span class="n">frames_gap</span>
+                <span class="n">pred_x</span> <span class="o">=</span> <span class="n">last_x</span> <span class="o">+</span> <span class="n">vx_est</span> <span class="o">*</span> <span class="n">frames_gap</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">pred_y</span> <span class="o">-</span> <span class="n">det_y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">pred_x</span> <span class="o">-</span> <span class="n">det_x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">max_dist</span> <span class="ow">and</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">best_dist</span><span class="p">:</span>
+                    <span class="n">best_track_id</span><span class="p">,</span> <span class="n">best_dist</span> <span class="o">=</span> <span class="n">tid</span><span class="p">,</span> <span class="n">dist</span>
+
+            <span class="k">if</span> <span class="n">best_track_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Link to existing track; update velocity estimate</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">last_y</span><span class="p">,</span> <span class="n">last_x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">vy_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">det_y</span> <span class="o">-</span> <span class="n">last_y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="n">vx_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">det_x</span> <span class="o">-</span> <span class="n">last_x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="n">active_tracks</span><span class="p">[</span><span class="n">best_track_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">det_y</span><span class="p">,</span> <span class="n">det_x</span><span class="p">,</span> <span class="n">vy_new</span><span class="p">,</span> <span class="n">vx_new</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+                <span class="n">particle_assignment</span><span class="p">[</span><span class="n">frame_dets</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">best_track_id</span>
+                <span class="n">used</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">best_track_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Start a new track</span>
+                <span class="n">active_tracks</span><span class="p">[</span><span class="n">next_track_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">det_y</span><span class="p">,</span> <span class="n">det_x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span>
+                <span class="n">particle_assignment</span><span class="p">[</span><span class="n">frame_dets</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">next_track_id</span>
+                <span class="n">next_track_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">dets</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">particle_assignment</span>
+    <span class="k">return</span> <span class="n">dets</span>
+
+
+<span class="k">if</span> <span class="n">BTRACK_AVAILABLE</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using btrack Bayesian linker...&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Simple btrack usage: load detections, configure motion model, track</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">btrack</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianTracker</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">btrack.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_model</span>
+
+        <span class="c1"># Convert detections to btrack object list</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">detections_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                                   <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]),</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})()</span>
+            <span class="n">objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="c1"># Initialize and configure tracker</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">BayesianTracker</span><span class="p">()</span>
+        <span class="n">tracker</span><span class="o">.</span><span class="n">configure_tracker</span><span class="p">(</span>
+            <span class="n">max_search_radius</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">max_frame_jump</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">max_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">max_merges</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tracker</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
+
+        <span class="c1"># Run tracker</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Tracking...&quot;</span><span class="p">)</span>
+        <span class="n">tracker</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  linked into </span><span class="si">{</span><span class="n">tracker</span><span class="o">.</span><span class="n">n_tracks</span><span class="si">}</span><span class="s2"> tracks&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract tracks as DataFrame</span>
+        <span class="n">tracks_btrack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracker</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+                <span class="n">tracks_btrack</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+                    <span class="s1">&#39;particle&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">ID</span><span class="p">),</span>
+                <span class="p">})</span>
+        <span class="n">tracks_btrack</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tracks_btrack</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tracks_btrack</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;btrack tracking failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Falling back to Kalman linker...&quot;</span><span class="p">)</span>
+        <span class="n">BTRACK_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">tracks_btrack</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">BTRACK_AVAILABLE</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using simplified Kalman-style fallback linker...&quot;</span><span class="p">)</span>
+    <span class="n">tracks_btrack</span> <span class="o">=</span> <span class="n">simple_kalman_linker</span><span class="p">(</span><span class="n">detections_df</span><span class="p">,</span> <span class="n">max_gap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  linked into </span><span class="si">{</span><span class="n">tracks_btrack</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> tracks&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tracks_btrack</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-tracks-side-by-side">
+<h2>Visualize tracks side-by-side<a class="headerlink" href="#visualize-tracks-side-by-side" title="Link to this heading">#</a></h2>
+<p>Overlay each method’s tracks on the time-projection image. Use a distinct color per track ID.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">overlay_tracks</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">time_proj</span><span class="p">,</span> <span class="n">tracks_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw tracks as colored lines on the time-projection.&quot;&quot;&quot;</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">time_proj</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab20</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tracks_df</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">particle_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+        <span class="n">track</span> <span class="o">=</span> <span class="n">tracks_df</span><span class="p">[</span><span class="n">tracks_df</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">particle_id</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">track</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">track</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="s1">&#39;o-&#39;</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">particle_id</span> <span class="o">%</span> <span class="mi">20</span><span class="p">],</span>
+                   <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span>
+
+
+<span class="c1"># Compare side-by-side</span>
+<span class="n">n_methods</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">tracks_tp</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_methods</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">n_methods</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">n_methods</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+<span class="n">time_proj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="n">tracks_tp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">overlay_tracks</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">ax_idx</span><span class="p">],</span> <span class="n">time_proj</span><span class="p">,</span> <span class="n">tracks_tp</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;TrackPy&quot;</span><span class="p">)</span>
+    <span class="n">ax_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">tracks_btrack</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;btrack (Bayesian)&quot;</span> <span class="k">if</span> <span class="n">BTRACK_AVAILABLE</span> <span class="k">else</span> <span class="s2">&quot;Kalman Fallback&quot;</span>
+    <span class="n">overlay_tracks</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">ax_idx</span><span class="p">],</span> <span class="n">time_proj</span><span class="p">,</span> <span class="n">tracks_btrack</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">method_name</span><span class="p">)</span>
+    <span class="n">ax_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compared </span><span class="si">{</span><span class="n">n_methods</span><span class="si">}</span><span class="s2"> linking methods.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compute-id-consistency-metric">
+<h2>Compute ID-consistency metric<a class="headerlink" href="#compute-id-consistency-metric" title="Link to this heading">#</a></h2>
+<p>For each linking method, compare predicted track IDs to ground-truth IDs using the <strong>Hungarian matching</strong> algorithm.</p>
+<p>Metric: fraction of correctly assigned frame-object pairs (how many (frame, object) tuples got the right track ID).</p>
+<p>Higher score = better recovery of ground-truth tracks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_id_consistency</span><span class="p">(</span><span class="n">pred_tracks_df</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute ID consistency: Hungarian match of predicted track centroids to ground-truth track centroids.</span>
+
+<span class="sd">    Returns: fraction of correctly matched detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build ground-truth centroid list: (frame, object_idx) -&gt; (y, x)</span>
+    <span class="n">gt_cents</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">gt_masks</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">prop_idx</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">props</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">label</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">gt_cents</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">prop</span><span class="o">.</span><span class="n">label</span><span class="p">)]</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">centroid</span>
+
+    <span class="c1"># Build predicted centroid list</span>
+    <span class="n">pred_cents</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">pred_tracks_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">])</span>
+        <span class="n">particle</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">])</span>
+        <span class="n">pred_cents</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">particle</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+
+    <span class="c1"># For each frame, perform Hungarian matching</span>
+    <span class="n">total_matched</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_detections</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gt_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">gt_in_frame</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gt_cents</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">}</span>
+        <span class="n">pred_in_frame</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pred_cents</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gt_in_frame</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">pred_in_frame</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">gt_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gt_in_frame</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="n">pred_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pred_in_frame</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
+
+        <span class="c1"># Build distance matrix</span>
+        <span class="n">n_gt</span><span class="p">,</span> <span class="n">n_pred</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gt_ids</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_ids</span><span class="p">)</span>
+        <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_gt</span><span class="p">,</span> <span class="n">n_pred</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gt_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gt_ids</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pred_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pred_ids</span><span class="p">):</span>
+                <span class="n">dy</span> <span class="o">=</span> <span class="n">gt_in_frame</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">gt_id</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pred_in_frame</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">pred_id</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dx</span> <span class="o">=</span> <span class="n">gt_in_frame</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">gt_id</span><span class="p">)][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pred_in_frame</span><span class="p">[(</span><span class="n">t</span><span class="p">,</span> <span class="n">pred_id</span><span class="p">)][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">cost_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dy</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dx</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Hungarian matching</span>
+        <span class="n">gt_match</span><span class="p">,</span> <span class="n">pred_match</span> <span class="o">=</span> <span class="n">linear_sum_assignment</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">)</span>
+        <span class="n">matched_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">[</span><span class="n">gt_match</span><span class="p">,</span> <span class="n">pred_match</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># within 10 pixels = match</span>
+        <span class="n">total_matched</span> <span class="o">+=</span> <span class="n">matched_count</span>
+        <span class="n">total_detections</span> <span class="o">+=</span> <span class="n">n_gt</span>
+
+    <span class="n">consistency</span> <span class="o">=</span> <span class="n">total_matched</span> <span class="o">/</span> <span class="n">total_detections</span> <span class="k">if</span> <span class="n">total_detections</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">consistency</span>
+
+
+<span class="c1"># Compute for each method</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="n">tracks_tp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">cons_tp</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_tp</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span><span class="p">)</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;TrackPy&quot;</span><span class="p">,</span> <span class="n">cons_tp</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TrackPy ID-consistency: </span><span class="si">{</span><span class="n">cons_tp</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">tracks_btrack</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">cons_btrack</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_btrack</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span><span class="p">)</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;btrack (Bayesian)&quot;</span> <span class="k">if</span> <span class="n">BTRACK_AVAILABLE</span> <span class="k">else</span> <span class="s2">&quot;Kalman Fallback&quot;</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method_name</span><span class="p">,</span> <span class="n">cons_btrack</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> ID-consistency: </span><span class="si">{</span><span class="n">cons_btrack</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">best_method</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best method on this data: </span><span class="si">{</span><span class="n">best_method</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">best_method</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="choose-your-own-method-picker-and-parameters">
+<h2>Choose-your-own: method picker and parameters<a class="headerlink" href="#choose-your-own-method-picker-and-parameters" title="Link to this heading">#</a></h2>
+<p>Use these sliders to select a linking method and tune parameters. Re-run the cell to see updated results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># @title Method picker { run: &quot;auto&quot; }</span>
+<span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;TrackPy&quot;</span>  <span class="c1"># @param [&quot;TrackPy&quot;, &quot;Bayesian (btrack or fallback)&quot;]</span>
+<span class="n">search_range</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># @param {type: &quot;slider&quot;, min: 5, max: 50}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Search range: </span><span class="si">{</span><span class="n">search_range</span><span class="si">}</span><span class="s2"> pixels&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;TrackPy&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">tracks_tp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TrackPy result not available (check cell output above)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cons</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_tp</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID-consistency: </span><span class="si">{</span><span class="n">cons</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">n_tracks</span> <span class="o">=</span> <span class="n">tracks_tp</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of tracks: </span><span class="si">{</span><span class="n">n_tracks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">tracks_btrack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bayesian tracker result not available&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cons</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_btrack</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_tracks</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID-consistency: </span><span class="si">{</span><span class="n">cons</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">n_tracks</span> <span class="o">=</span> <span class="n">tracks_btrack</span><span class="p">[</span><span class="s1">&#39;particle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of tracks: </span><span class="si">{</span><span class="n">n_tracks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stress-test-failure-modes">
+<h2>Stress test — failure modes<a class="headerlink" href="#stress-test-failure-modes" title="Link to this heading">#</a></h2>
+<p>Re-run on a harder synthetic case: cells that touch, vanish for frames, and make abrupt turns.</p>
+<p>This section shows when each method breaks and why.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate a harder synthetic case</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating *harder* synthetic data (touching cells, abrupt motion)...&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">images_hard</span><span class="p">,</span> <span class="n">masks_hard</span><span class="p">,</span> <span class="n">tracks_hard</span> <span class="o">=</span> <span class="n">generate_synthetic_timelapse</span><span class="p">(</span>
+    <span class="n">T</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">n_cells</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Extract detections</span>
+<span class="n">detections_hard</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">masks_hard</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="n">detections_hard</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
+            <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">cy</span><span class="p">,</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">cx</span><span class="p">,</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="n">prop</span><span class="o">.</span><span class="n">area</span><span class="p">,</span>
+        <span class="p">})</span>
+<span class="n">detections_hard_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">detections_hard</span><span class="p">)</span>
+
+<span class="c1"># Link with both methods</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">detections_hard_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> detections in </span><span class="si">{</span><span class="n">masks_hard</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">tracks_tp_hard</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="n">detections_hard_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">search_range</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cons_tp_hard</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_tp_hard</span><span class="p">,</span> <span class="n">masks_hard</span><span class="p">,</span> <span class="n">tracks_hard</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TrackPy on harder data: ID-consistency </span><span class="si">{</span><span class="n">cons_tp_hard</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TrackPy on harder data failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">cons_tp_hard</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">tracks_btrack_hard</span> <span class="o">=</span> <span class="n">simple_kalman_linker</span><span class="p">(</span><span class="n">detections_hard_df</span><span class="p">,</span> <span class="n">max_gap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">cons_btrack_hard</span> <span class="o">=</span> <span class="n">compute_id_consistency</span><span class="p">(</span><span class="n">tracks_btrack_hard</span><span class="p">,</span> <span class="n">masks_hard</span><span class="p">,</span> <span class="n">tracks_hard</span><span class="p">)</span>
+<span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;btrack&quot;</span> <span class="k">if</span> <span class="n">BTRACK_AVAILABLE</span> <span class="k">else</span> <span class="s2">&quot;Kalman Fallback&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> on harder data: ID-consistency </span><span class="si">{</span><span class="n">cons_btrack_hard</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interpretation:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Both methods drop in accuracy on harder data (cells touching, abrupt motion).&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - TrackPy struggles more with abrupt direction changes (no motion model).&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Bayesian methods (btrack / Kalman) handle direction changes better,&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    but may split or merge cells at contact regions.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - For the hardest cases (dense, touching cells), Ultrack (SOTA) is recommended.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sota-ultrack-pointer-only">
+<h2>SOTA Ultrack (pointer only)<a class="headerlink" href="#sota-ultrack-pointer-only" title="Link to this heading">#</a></h2>
+<p>For the hardest tracking problems — dense cells, touching boundaries, whole-embryo lightsheet microscopy — the state-of-the-art is <strong>Ultrack</strong> (Bragantini et al., <em>Nature Methods</em> 2025).</p>
+<p>Ultrack is a neural-network-based tracker that learns to solve the linking problem end-to-end. It handles merges and splits explicitly and scales to millions of objects.</p>
+<p><strong>We do not try to install Ultrack here</strong> (heavy PyTorch dependencies, long setup). Instead:</p>
+<ul class="simple">
+<li><p>Visit <a class="reference external" href="https://github.com/royerlab/ultrack">github.com/royerlab/ultrack</a></p></li>
+<li><p>Review the paper and workflows</p></li>
+<li><p>When your own tracking problem becomes hard enough that the classical linkers fail, Ultrack is where to start</p></li>
+</ul>
+<p><strong>Rule of thumb:</strong></p>
+<ul class="simple">
+<li><p><strong>TrackPy</strong>: sparse particles, simple motion, no overlaps. Fast, interpretable.</p></li>
+<li><p><strong>btrack / Kalman</strong>: cell lineages, realistic motion model, occasional overlaps. Medium complexity.</p></li>
+<li><p><strong>Ultrack</strong>: dense cells, merges/splits, complex dynamics. SOTA but slower.</p></li>
+</ul>
+</section>
+<section id="closing-reflection">
+<h2>Closing reflection<a class="headerlink" href="#closing-reflection" title="Link to this heading">#</a></h2>
+<p>Tracking is <strong>detection + linking</strong>. This lab separated them:</p>
+<ol class="arabic simple">
+<li><p><strong>Detection</strong> (upstream from here): Cellpose, StarDist, SAM, etc. — solve “where are the objects in this frame?”</p></li>
+<li><p><strong>Linking</strong> (this lab): TrackPy, btrack, Ultrack — solve “which objects in frame T are the same as objects in frame T+1?”</p></li>
+</ol>
+<p><strong>Key takeaways:</strong></p>
+<ul class="simple">
+<li><p>Linking is a distinct algorithmic choice. Different methods make different trade-offs between speed, simplicity, and robustness to difficult cases.</p></li>
+<li><p><strong>Classical (TrackPy)</strong>: fast, robust on easy cases, no motion model.</p></li>
+<li><p><strong>Bayesian (btrack)</strong>: learns motion, handles surprises better, requires tuning.</p></li>
+<li><p><strong>SOTA (Ultrack)</strong>: neural-network end-to-end, handles merges/splits, slower and harder to install.</p></li>
+<li><p>The <strong>right choice depends on your data</strong>, not on what sounds most sophisticated.</p></li>
+</ul>
+<p><strong>Where to go next:</strong></p>
+<ul class="simple">
+<li><p><strong>Notebook 01</strong> — Cellpose segmentation (upstream detector for this workflow).</p></li>
+<li><p><strong>Notebook 10</strong> — 3D segmentation. Tracking in 3D+T is structurally the same but spatially richer.</p></li>
+<li><p><strong>Ultrack</strong> (<a class="reference external" href="https://github.com/royerlab/ultrack">royerlab/ultrack</a>) — when classical methods fail.</p></li>
+<li><p><strong>TrackMate</strong> (Fiji plugin) — GUI-based classical tracking; what TrackPy implements algorithmically.</p></li>
+<li><p><strong>Icy</strong> — another image analysis platform with interactive tracking tools.</p></li>
+</ul>
+<p><strong>A final note.</strong> Track quality is only as good as your detections. Spend effort on the segmentation step (Notebooks 01, 03a, 03b) before optimizing the linker.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="10_3d_segmentation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="12_deconvolution.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 12 — Deconvolution (DL + classical baseline)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-time-lapse-generator">Synthetic time-lapse generator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-time-lapse">Visualize the time-lapse</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-per-frame-detection">Step 1 — Per-frame detection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predict-before-you-run-tracking-failure-modes">Predict before you run: tracking failure modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-1-trackpy-classical-linker">Method 1 — TrackPy classical linker</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-2-btrack-bayesian-linker-or-kalman-fallback">Method 2 — btrack Bayesian linker (or Kalman fallback)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-tracks-side-by-side">Visualize tracks side-by-side</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-id-consistency-metric">Compute ID-consistency metric</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-own-method-picker-and-parameters">Choose-your-own: method picker and parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stress-test-failure-modes">Stress test — failure modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sota-ultrack-pointer-only">SOTA Ultrack (pointer only)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

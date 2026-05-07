@@ -1,0 +1,1144 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 05 — Desktop GUI Complements &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05_desktop_gui_complements';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 06 — Virtual Staining and Label-Free Prediction" href="06_virtual_staining.html" />
+    <link rel="prev" title="Notebook 04 — Community Platforms" href="04_community_platforms.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/05_desktop_gui_complements.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 05 — Desktop GUI Complements</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-notebook-exists">Why this notebook exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-will-need">What you will need</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fiji">Fiji</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qupath">QuPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-data">Sample data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-versions-targeted-in-this-guide">Tool versions targeted in this guide</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-trainable-weka-segmentation-in-fiji-the-no-code-trainable-segmenter">A. Trainable Weka Segmentation in Fiji — the no-code trainable segmenter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1-open-and-prepare-an-image">A.1 Open and prepare an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-2-launch-the-trainable-weka-segmentation-plugin">A.2 Launch the Trainable Weka Segmentation plugin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-3-add-and-label-classes">A.3 Add and label classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-4-train-and-inspect-the-classifier">A.4 Train and inspect the classifier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-5-iterate">A.5 Iterate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-6-apply-export-save-the-classifier">A.6 Apply, export, save the classifier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-7-going-further-labkit">A.7 Going further — Labkit</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images">B. QuPath Pixel Classifier — the trainable segmenter for whole-slide images</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-1-open-a-slide-and-create-a-project">B.1 Open a slide and create a project</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-2-annotate-tissue-classes">B.2 Annotate tissue classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-3-train-and-preview-live">B.3 Train and preview live</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-4-apply-and-export">B.4 Apply and export</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-5-what-this-enables">B.5 What this enables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-6-object-classifier-train-a-downstream-classifier-on-top">B.6 Object classifier — train a downstream classifier on top</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-deepimagej-bioimage-model-zoo-on-the-desktop">C. deepImageJ — BioImage Model Zoo on the desktop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-1-install-via-fiji-updater">C.1 Install via Fiji updater</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-2-browse-and-load-a-bimz-model">C.2 Browse and load a BiMZ model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-3-run-on-an-image">C.3 Run on an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-4-what-this-enables">C.4 What this enables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-stardist-fiji-plugin-pretrained-nuclear-segmentation-one-click">D. StarDist Fiji plugin — pretrained nuclear segmentation, one click</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-1-install-via-update-site">D.1 Install via update site</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-2-run-on-an-image">D.2 Run on an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-3-where-this-fits-the-workshop">D.3 Where this fits the workshop</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e-qupath-stardist-extension-h-e-nuclear-segmentation-at-wsi-scale">E. QuPath StarDist extension — H&amp;E nuclear segmentation at WSI scale</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-1-install-the-extension">E.1 Install the extension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-2-run-on-a-slide">E.2 Run on a slide</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-3-where-this-fits-the-workshop">E.3 Where this fits the workshop</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-this-notebook-connects-to-the-rest-of-the-workshop">How this notebook connects to the rest of the workshop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-which-tool">When to use which tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-not-in-this-notebook-and-where-to-look-instead">What is <strong>not</strong> in this notebook (and where to look instead)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screenshot-capture-checklist">Screenshot capture checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-exporting-sample-images-for-this-notebook">Appendix — Exporting sample images for this notebook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- colab-badge -->
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/05_desktop_gui_complements.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-05-desktop-gui-complements">
+<h1>Notebook 05 — Desktop GUI Complements<a class="headerlink" href="#notebook-05-desktop-gui-complements" title="Link to this heading">#</a></h1>
+<p><strong>Trainable Weka · QuPath Pixel Classifier · deepImageJ · StarDist (Fiji &amp; QuPath)</strong></p>
+<p>A walkthrough of five desktop-GUI workflows that complement the Colab labs. Unlike Notebooks 00–04, this notebook <strong>is not executable</strong>. It is a written + screenshot guide you read on workshop day and follow at your own laptop afterward.</p>
+<hr class="docutils" />
+<section id="why-this-notebook-exists">
+<h2>Why this notebook exists<a class="headerlink" href="#why-this-notebook-exists" title="Link to this heading">#</a></h2>
+<p>The workshop’s hands-on labs are Colab-first by design — zero install friction, identical environment for every attendee. That choice is the right one for the day, but it has a cost: three things that matter for real practice don’t fit inside a Colab notebook.</p>
+<ol class="arabic simple">
+<li><p><strong>The trainable-segmenter loop without writing training code.</strong> None of the Colab labs train a custom segmenter end-to-end. You run pretrained Cellpose-SAM, you prompt SAM, you watch CARE/fnet/pix2pix train on toy data — but you never paint your own labels and watch a model learn from them. <em>Trainable Weka Segmentation</em> (Fiji) and the <em>QuPath Pixel Classifier</em> close this gap with a brush tool and no Python.</p></li>
+<li><p><strong>Whole-slide pathology images.</strong> A typical H&amp;E slide is gigapixels. It does not fit in Colab memory; it does not stream well over a notebook UI. <em>QuPath</em> is the dominant open-source desktop tool for these images and is essential to the broader pathology track in the curriculum.</p></li>
+<li><p><strong>Pretrained DL models inside the imaging tool you already use.</strong> Many lab members will never run Python. <em>deepImageJ</em> lets them apply BioImage Model Zoo models from inside Fiji; <em>StarDist</em> and <em>μSAM</em> have Fiji and QuPath surfaces. The same model — different surface for a different audience.</p></li>
+</ol>
+<p>This notebook is the workshop’s deliberate desktop chapter. Read it on workshop day; install Fiji and QuPath at your own pace afterward.</p>
+</section>
+<section id="what-you-will-need">
+<h2>What you will need<a class="headerlink" href="#what-you-will-need" title="Link to this heading">#</a></h2>
+<p>You do not need any of this to read along on workshop day. You need it to <em>do</em> the walkthroughs at home.</p>
+<section id="fiji">
+<h3>Fiji<a class="headerlink" href="#fiji" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://fiji.sc/">Download Fiji</a> (≈ 400 MB; runs on macOS, Windows, Linux). Fiji is “ImageJ + a curated plugin distribution” — the standard tool in microscopy image analysis.</p>
+<p>After installing, open Fiji and update via <em>Help → Update…</em> before the first session. The update mechanism also lets you subscribe to <em>update sites</em> — separate plugin channels — which is how you install StarDist, deepImageJ, and CSBDeep below.</p>
+</section>
+<section id="qupath">
+<h3>QuPath<a class="headerlink" href="#qupath" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://qupath.github.io/">Download QuPath</a> (≈ 200 MB; same platforms). QuPath is the standard open-source tool for whole-slide pathology and is also useful for tiled fluorescence. Built-in pixel and object classifiers, scriptable via Groovy.</p>
+</section>
+<section id="sample-data">
+<h3>Sample data<a class="headerlink" href="#sample-data" title="Link to this heading">#</a></h3>
+<p>Most exercises in this notebook use either a built-in sample (Fiji’s <em>File → Open Samples → …</em>; QuPath’s bundled tutorial slides) or one of the public images we used in Notebook 01:</p>
+<ul class="simple">
+<li><p><strong>Fiji built-in</strong> — <em>File → Open Samples → HeLa Cells</em> (RGB fluorescence) or <em>Blobs</em> (single-channel test pattern).</p></li>
+<li><p><strong>scikit-image canonical samples</strong> — exported as TIFFs from Notebook 01: <code class="docutils literal notranslate"><span class="pre">cells3d</span></code> middle slice (DAPI + membrane), <code class="docutils literal notranslate"><span class="pre">human_mitosis</span></code>, <code class="docutils literal notranslate"><span class="pre">cell</span></code>. If you want these on disk, run the snippet in <em>Appendix — Exporting sample images</em> at the bottom of this notebook.</p></li>
+<li><p><strong>QuPath sample slides</strong> — the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/intro/getting_started.html#sample-data">QuPath tutorial slides</a> include a small H&amp;E and IHC slide that fit on a laptop.</p></li>
+</ul>
+</section>
+<section id="tool-versions-targeted-in-this-guide">
+<h3>Tool versions targeted in this guide<a class="headerlink" href="#tool-versions-targeted-in-this-guide" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Fiji: <strong>2.16+</strong> (any recent 2025 build)  ⚠ <em>menu paths verified against Fiji 2.16; older builds may differ</em></p></li>
+<li><p>QuPath: <strong>0.5+</strong>  ⚠ <em>menu paths verified against QuPath 0.5; the extension API changed in 0.4 → 0.5</em></p></li>
+</ul>
+<p>If you are on an older Fiji or QuPath, the workflow concepts are identical but the menu wording may not match exactly.</p>
+</section>
+</section>
+<section id="a-trainable-weka-segmentation-in-fiji-the-no-code-trainable-segmenter">
+<h2>A. Trainable Weka Segmentation in Fiji — the no-code trainable segmenter<a class="headerlink" href="#a-trainable-weka-segmentation-in-fiji-the-no-code-trainable-segmenter" title="Link to this heading">#</a></h2>
+<p>This is the section that most directly fills the “you never trained a segmenter” gap from the labs. Trainable Weka Segmentation (TWS) is a built-in Fiji plugin: you paint pixel labels with a brush, click <em>Train</em>, and a random-forest classifier learns to segment your image. Five minutes from “open image” to “first prediction.” Iterate by painting more labels where the model is wrong.</p>
+<p><strong>Citation.</strong> Arganda-Carreras et al., <em>Bioinformatics</em> 33(15):2424–2426, 2017. Open source.</p>
+<p><strong>When to reach for it.</strong></p>
+<ul class="simple">
+<li><p>You have unlabeled images and need pixel-class segmentation (foreground/background, or N tissue classes).</p></li>
+<li><p>The pretrained models (Cellpose-SAM, StarDist, μSAM) are out-of-distribution for your sample type.</p></li>
+<li><p>You want to demonstrate the full <em>label → train → predict → iterate</em> loop to a colleague who does not code.</p></li>
+<li><p>The trainable model needs to live as a portable artifact (Weka exports a <code class="docutils literal notranslate"><span class="pre">.model</span></code> file you can re-apply to thousands of images headlessly).</p></li>
+</ul>
+<p><strong>When not to reach for it.</strong></p>
+<ul class="simple">
+<li><p>Your images are gigapixel WSI — use QuPath’s pixel classifier (Section B) instead.</p></li>
+<li><p>You need instance segmentation (separating touching objects) — TWS produces semantic segmentation; you’ll need a downstream watershed or another instance step.</p></li>
+<li><p>You have plenty of paired labeled training data already — train a deep model (Cellpose fine-tune, StarDist, U-Net) for a higher ceiling.</p></li>
+</ul>
+<section id="a-1-open-and-prepare-an-image">
+<h3>A.1 Open and prepare an image<a class="headerlink" href="#a-1-open-and-prepare-an-image" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Launch Fiji.</p></li>
+<li><p><em>File → Open Samples → HeLa Cells</em>  — or open one of the sample TIFFs from the Appendix.   ⚠ <em>Confirm exact submenu name on your Fiji build.</em></p></li>
+<li><p>If the image is multi-channel and you only want one channel for the demo, <em>Image → Color → Split Channels</em>, then close all but the channel you want to segment.</p></li>
+<li><p>Convert to 8-bit if needed: <em>Image → Type → 8-bit</em>. TWS works best on 8-bit grayscale to start; you can layer extra channels in via the <em>Settings</em> dialog later.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 1]</strong> <em>HeLa Cells sample image opened in Fiji, single channel selected, showing the standard ImageJ window (image canvas + tool palette + status bar).</em></p>
+</div></blockquote>
+</section>
+<section id="a-2-launch-the-trainable-weka-segmentation-plugin">
+<h3>A.2 Launch the Trainable Weka Segmentation plugin<a class="headerlink" href="#a-2-launch-the-trainable-weka-segmentation-plugin" title="Link to this heading">#</a></h3>
+<p><em>Plugins → Segmentation → Trainable Weka Segmentation</em>.   ⚠ <em>In some Fiji builds the entry is under Plugins → Segmentation → Trainable Weka Segmentation; in others under a sub-folder. Search via Help → Find Commands… and type “Weka” if you can’t find it.</em></p>
+<p>The plugin opens its own window with: the image canvas in the center, two default classes (“class 1” and “class 2”) in the right panel, and the toolbar across the top with <em>Train classifier</em>, <em>Get probability</em>, <em>Create result</em>, <em>Save classifier</em>, <em>Settings</em>, and others.</p>
+<blockquote>
+<div><p><strong>[Screenshot 2]</strong> <em>TWS main window with the HeLa Cells image loaded, two default empty classes in the right panel, and the toolbar visible at the top.</em></p>
+</div></blockquote>
+</section>
+<section id="a-3-add-and-label-classes">
+<h3>A.3 Add and label classes<a class="headerlink" href="#a-3-add-and-label-classes" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Rename “class 1” to <strong><code class="docutils literal notranslate"><span class="pre">cell</span></code></strong> and “class 2” to <strong><code class="docutils literal notranslate"><span class="pre">background</span></code></strong>. Click on the class label to rename.</p></li>
+<li><p><em>(Optional)</em> Add a third class <strong><code class="docutils literal notranslate"><span class="pre">nucleus</span></code></strong> via <em>Add new class</em>. This is where TWS earns its keep — multi-class semantic segmentation is one click.</p></li>
+<li><p>Select the <strong>freehand line</strong> or <strong>brush</strong> tool from Fiji’s main tool palette. The brush radius can be set with <em>Edit → Options → Line Width</em>.</p></li>
+<li><p>With the <code class="docutils literal notranslate"><span class="pre">cell</span></code> class selected (click its name to make it active — it should highlight), draw inside several cells. You do not need to be perfect; a handful of strokes per class is enough to start. The plugin records the pixel coordinates of every stroke as labeled training pixels.</p></li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">background</span></code> and draw on several background regions.</p></li>
+<li><p><em>(If you added nucleus)</em> Click <code class="docutils literal notranslate"><span class="pre">nucleus</span></code> and draw inside a few nuclei.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 3]</strong> <em>TWS window after labeling: brush traces visible inside three cells (red), in the background (green), and inside two nuclei (blue), with the class panel on the right showing the three named classes.</em></p>
+</div></blockquote>
+</section>
+<section id="a-4-train-and-inspect-the-classifier">
+<h3>A.4 Train and inspect the classifier<a class="headerlink" href="#a-4-train-and-inspect-the-classifier" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Click <strong>Train classifier</strong>. The status bar shows feature extraction (Gaussian blur, Hessian, membrane projections, …) followed by random-forest training. On a laptop with a 512×512 image and ~50 brush strokes this takes 5–30 seconds.</p></li>
+<li><p>The classifier output appears as a translucent overlay on the image — each pixel painted with the class color most likely under the model. Toggle the overlay with the <strong>Toggle overlay</strong> button to compare against the raw image.</p></li>
+<li><p>Click <strong>Get probability</strong> to view per-class probability maps. This is the right way to inspect <em>uncertainty</em> — areas where the classifier hedges (probabilities near 0.5) are exactly where you want to add more brush strokes next.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 4]</strong> <em>TWS overlay after first Train click: red/green/blue regions covering the image. Cells are mostly red, background mostly green, but several boundary pixels are clearly mis-classified — a deliberate teaching moment.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>[Screenshot 5]</strong> <em>The probability map output (one image per class) opened as a stack, showing the cell-class probabilities ranging from 0 to 1 across the image.</em></p>
+</div></blockquote>
+</section>
+<section id="a-5-iterate">
+<h3>A.5 Iterate<a class="headerlink" href="#a-5-iterate" title="Link to this heading">#</a></h3>
+<p>The first training pass will be wrong somewhere. That is not a failure — it is the <em>point</em>. Find a region where the overlay disagrees with what you see, paint a few more brush strokes of the correct class on top of the error, then click <strong>Train classifier</strong> again. The model retrains in seconds.</p>
+<p>A useful loop:</p>
+<ul class="simple">
+<li><p><em>Train</em> → toggle overlay off → look for misclassified pixels → toggle overlay on → paint corrections → <em>Train</em>.</p></li>
+<li><p>Three or four iterations usually gets you from “obviously wrong” to “good enough for downstream metrics.”</p></li>
+</ul>
+<p><strong>Reflection.</strong> This is the supervised-learning loop in miniature. The brush strokes are your labeled training set; clicking <em>Train</em> fits a random forest on hand-engineered image features (Gaussian blur, Sobel, membrane projections, …) at multiple scales; the overlay is inference on the held-out pixels you did not label. Everything you learned about train/val/test in the lecture and Notebook 02 applies. <strong>The metrics from Notebook 02 (IoU, Dice, count error) are the right way to validate a TWS output, on a held-out test image.</strong></p>
+<blockquote>
+<div><p><strong>[Screenshot 6]</strong> <em>TWS window after three iterations of refinement, showing a clean overlay where cells, nuclei, and background are correctly separated.</em></p>
+</div></blockquote>
+</section>
+<section id="a-6-apply-export-save-the-classifier">
+<h3>A.6 Apply, export, save the classifier<a class="headerlink" href="#a-6-apply-export-save-the-classifier" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Create result</strong> produces a single labeled image (an 8-bit indexed image with one value per class) that you can save with <em>File → Save As → TIFF</em>. This is your final segmentation.</p></li>
+<li><p><strong>Save classifier</strong> writes a <code class="docutils literal notranslate"><span class="pre">.model</span></code> file. You can reload this on a different image with <em>Load classifier</em> — that is the GUI equivalent of “trained model artifact” we talked about in the lecture. Re-apply with <strong>Apply classifier</strong> on a new image stack to do batch inference.</p></li>
+<li><p>For headless / scripted batch processing, TWS exposes a Beanshell / Groovy / Python (Jython) scripting API. Search the <a class="reference external" href="https://imagej.net/plugins/tws/">Fiji TWS documentation</a> for <code class="docutils literal notranslate"><span class="pre">runWekaSegmentation</span></code>.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 7]</strong> <em>The “Create result” output: single-channel labeled image with three intensity levels (background, cell, nucleus), ready for export.</em></p>
+</div></blockquote>
+</section>
+<section id="a-7-going-further-labkit">
+<h3>A.7 Going further — Labkit<a class="headerlink" href="#a-7-going-further-labkit" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://imagej.net/plugins/labkit/">Labkit</a> is the modern successor to TWS. Same paint-and-train loop, but the labeling tools are faster (better undo/redo, SAM-assisted polygon labeling), it scales to larger images, and it has an optional deep-learning backend (U-Net training via <a class="reference external" href="https://imagej.net/plugins/bdv/">BigDataViewer</a>). Worth trying once you are comfortable with TWS — same mental model, smoother UX.</p>
+<p><strong>When TWS is enough.</strong> Random forests on hand-engineered features still beat tiny CNNs on small datasets, and TWS results are fast and interpretable. Don’t reach for Labkit / DL until you’ve confirmed TWS isn’t enough.</p>
+</section>
+</section>
+<section id="b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images">
+<h2>B. QuPath Pixel Classifier — the trainable segmenter for whole-slide images<a class="headerlink" href="#b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images" title="Link to this heading">#</a></h2>
+<p>QuPath ships with a built-in pixel classifier that is the pathology-track equivalent of Trainable Weka. Same brush-and-train loop, but designed for whole-slide images: tiled inference, multi-resolution annotation, and integration with QuPath’s object-detection and quantification pipeline.</p>
+<p><strong>Citation.</strong> Bankhead et al., <em>Scientific Reports</em> 7:16878, 2017 (the QuPath paper). The pixel-classifier feature is documented in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/pixel_classification.html">QuPath manual, “Pixel classification” chapter</a>.</p>
+<p><strong>Why it earns its own section.</strong> A typical H&amp;E whole-slide image is 50,000 × 50,000 pixels at 40× magnification. You cannot open one in Fiji without tiling it yourself. QuPath does the tiling for you, runs the classifier at the resolution you choose, and gives you a tissue-class segmentation that is downstream-ready for cell detection and quantification. <strong>For pathology, this is the canonical no-code workflow.</strong></p>
+<section id="b-1-open-a-slide-and-create-a-project">
+<h3>B.1 Open a slide and create a project<a class="headerlink" href="#b-1-open-a-slide-and-create-a-project" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Launch QuPath.</p></li>
+<li><p><em>File → Project → Create project</em> — pick an empty folder. Projects are how QuPath manages multiple slides + their annotations + classifiers; you almost always want one.</p></li>
+<li><p><em>Add images</em> → drag in a slide from the QuPath tutorial slides or one of your own. QuPath reads many WSI formats via Bio-Formats.</p></li>
+<li><p>Open the slide by double-clicking it in the project pane.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 8]</strong> <em>QuPath main window with a tutorial H&amp;E slide loaded, showing the slide canvas, project pane on the left, and overview thumbnail in the corner.</em></p>
+</div></blockquote>
+</section>
+<section id="b-2-annotate-tissue-classes">
+<h3>B.2 Annotate tissue classes<a class="headerlink" href="#b-2-annotate-tissue-classes" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><em>Annotate → Set class</em> — define the classes you want to segment. For a basic tissue map this might be <code class="docutils literal notranslate"><span class="pre">tumor</span></code>, <code class="docutils literal notranslate"><span class="pre">stroma</span></code>, <code class="docutils literal notranslate"><span class="pre">necrosis</span></code>, <code class="docutils literal notranslate"><span class="pre">background</span></code>. The class list is shared across the project, so you only set it up once.</p></li>
+<li><p>Pick the <strong>brush</strong> or <strong>wand</strong> tool from QuPath’s annotation toolbar. Brush is fixed-radius; wand is intensity-based and follows tissue boundaries.</p></li>
+<li><p>With your first class selected, draw on representative regions. As with TWS, a handful of strokes per class on a few different fields-of-view is enough to start.</p></li>
+<li><p>Switch to the next class, repeat.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 9]</strong> <em>The slide with tumor annotations (red), stroma (green), and background (blue) painted across several fields of view.</em></p>
+</div></blockquote>
+</section>
+<section id="b-3-train-and-preview-live">
+<h3>B.3 Train and preview live<a class="headerlink" href="#b-3-train-and-preview-live" title="Link to this heading">#</a></h3>
+<p>QuPath’s pixel classifier trains <em>live</em> — there is no explicit “train” button. You configure the classifier, and as you add or remove brush strokes the prediction updates.</p>
+<ol class="arabic simple">
+<li><p><em>Classify → Pixel classification → Train pixel classifier</em>  ⚠ <em>menu wording verified against QuPath 0.5; older builds use “Create classifier” or similar.</em></p></li>
+<li><p>The training dialog shows: <em>Classifier</em> (random-forest is the default; ANN and other options exist), <em>Resolution</em> (which downsample level to compute features at — start at “Moderate”), <em>Features</em> (which image features to extract; start with the default set), <em>Output</em> (which class to display).</p></li>
+<li><p>Click <strong>Live prediction</strong>. The slide canvas now shows the classifier’s prediction as a translucent overlay, updating as you paint.</p></li>
+<li><p>Iterate. Paint corrections; the live overlay updates within a second or two on most laptops.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 10]</strong> <em>Pixel-classifier dialog open with Live prediction enabled, the slide overlay showing tissue class predictions across the slide.</em></p>
+</div></blockquote>
+</section>
+<section id="b-4-apply-and-export">
+<h3>B.4 Apply and export<a class="headerlink" href="#b-4-apply-and-export" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Save</strong> the classifier (give it a name; it lives inside the project).</p></li>
+<li><p><strong>Create objects</strong> — turns the pixel prediction into geometric annotations (polygons) at a chosen minimum size. These objects are how QuPath does downstream quantification (area per class, density, …).</p></li>
+<li><p><strong>Measure</strong> — <em>Measure → Show annotation measurements</em> gives you per-class areas, fractions, and any quantitative measurements you’ve configured.</p></li>
+<li><p>For batch processing across all slides in the project, <em>Run for project</em> applies the classifier to every image at once.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 11]</strong> <em>Slide after Create objects: clean polygon annotations matching the tumor / stroma / background regions.</em></p>
+</div></blockquote>
+</section>
+<section id="b-5-what-this-enables">
+<h3>B.5 What this enables<a class="headerlink" href="#b-5-what-this-enables" title="Link to this heading">#</a></h3>
+<p>This single classifier is the input to the rest of QuPath’s pathology pipeline: cell detection inside <em>tumor</em> regions, quantification of marker positivity (IHC), spatial statistics across regions. The pixel classifier is the <em>foundation</em>; everything downstream is built on it.</p>
+<p><strong>Cross-reference.</strong> The validation framing from Notebook 02 — IoU per class, area-fraction error against ground truth on a held-out slide — applies identically here. The metrics do not care that the segmentation came from a GUI.</p>
+</section>
+<section id="b-6-object-classifier-train-a-downstream-classifier-on-top">
+<h3>B.6 Object classifier — train a downstream classifier on top<a class="headerlink" href="#b-6-object-classifier-train-a-downstream-classifier-on-top" title="Link to this heading">#</a></h3>
+<p>QuPath’s <em>object classifier</em> is the second half of the no-code loop. After cell detection, you assign training labels to a few cells of each type (e.g., “lymphocyte”, “tumor cell”, “fibroblast”) and QuPath trains a random forest on per-cell measurements. Same paint-and-train idiom, applied to objects rather than pixels.</p>
+<p>This is beyond the scope of this notebook but follows directly from B.4 — covered in the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/tutorials/cell_classification.html">QuPath object classification tutorial</a>.</p>
+</section>
+</section>
+<section id="c-deepimagej-bioimage-model-zoo-on-the-desktop">
+<h2>C. deepImageJ — BioImage Model Zoo on the desktop<a class="headerlink" href="#c-deepimagej-bioimage-model-zoo-on-the-desktop" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://deepimagej.github.io/">deepImageJ</a> is the Fiji surface for the <a class="reference external" href="https://bioimage.io">BioImage Model Zoo</a>. Anything you browsed via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> in Notebook 04 — the structured DL model registry — you can run here without writing a line of Python.</p>
+<p><strong>Citation.</strong> Gómez-de-Mariscal et al., <em>Nature Methods</em> 18(10):1192–1195, 2021. ⚠ <em>Verified Notebook 04 references the same paper.</em></p>
+<p><strong>Why this matters for the workshop.</strong> Notebook 04’s BiMZ section was a Python API browse. Many lab members will never run that browse. deepImageJ gives them the same registry, accessed through the menu of the imaging tool they already use.</p>
+<section id="c-1-install-via-fiji-updater">
+<h3>C.1 Install via Fiji updater<a class="headerlink" href="#c-1-install-via-fiji-updater" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><em>Help → Update…</em> opens the Fiji updater.</p></li>
+<li><p><em>Manage update sites</em> in the lower-left.</p></li>
+<li><p>Tick <strong>deepImageJ</strong> in the list.   ⚠ <em>If you don’t see it, click “Add update site” and enter <code class="docutils literal notranslate"><span class="pre">https://sites.imagej.net/deepImageJ/</span></code> — verify URL on the deepImageJ docs page before public release.</em></p></li>
+<li><p>Close the update-sites dialog and click <strong>Apply changes</strong>. Restart Fiji.</p></li>
+</ol>
+<p>After restart you should have a <em>Plugins → deepImageJ</em> submenu.</p>
+<blockquote>
+<div><p><strong>[Screenshot 12]</strong> <em>Fiji updater with the deepImageJ update site checked, after a successful update.</em></p>
+</div></blockquote>
+</section>
+<section id="c-2-browse-and-load-a-bimz-model">
+<h3>C.2 Browse and load a BiMZ model<a class="headerlink" href="#c-2-browse-and-load-a-bimz-model" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><em>Plugins → deepImageJ → deepImageJ Run</em>. ⚠ <em>Menu wording may differ on the version you install.</em></p></li>
+<li><p>The dialog lists models available locally. Click <strong>Add model</strong> to fetch from the BioImage Model Zoo. The browser shows model name, task tag (segmentation / restoration / …), and citation.</p></li>
+<li><p>Pick a model whose task matches your image. Good first choices: a 2D fluorescence segmentation model for the HeLa Cells sample, or a denoising model for a noisy fluorescence image.</p></li>
+<li><p>The download is a few hundred megabytes per model.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 13]</strong> <em>deepImageJ Run dialog open with a list of available BiMZ models, one selected with its citation and input/output specs visible.</em></p>
+</div></blockquote>
+</section>
+<section id="c-3-run-on-an-image">
+<h3>C.3 Run on an image<a class="headerlink" href="#c-3-run-on-an-image" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Open the image in Fiji first.</p></li>
+<li><p><em>Plugins → deepImageJ → deepImageJ Run</em> → select the model → <strong>Run</strong>. The plugin tiles the image automatically if it is bigger than the model’s expected input shape.</p></li>
+<li><p>The output is a new image (or stack) with the prediction. Save with <em>File → Save As → TIFF</em>.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 14]</strong> <em>Side-by-side: input image and deepImageJ-Run output for a segmentation model, with the model’s citation visible in the dialog.</em></p>
+</div></blockquote>
+</section>
+<section id="c-4-what-this-enables">
+<h3>C.4 What this enables<a class="headerlink" href="#c-4-what-this-enables" title="Link to this heading">#</a></h3>
+<p>The same model from the registry runs in three places now: Notebook 04 via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> (Python), deepImageJ (Fiji desktop), and several QuPath extensions (next sections). <strong>Same model, same outputs (within numerical precision), three audiences.</strong></p>
+<p>⚠ <strong>BiMZ spec compatibility.</strong> The BioImage Model Zoo’s <code class="docutils literal notranslate"><span class="pre">rdf.yaml</span></code> model description spec has gone through several versions (0.4 → 0.5). Older deepImageJ builds may not load v0.5 models; newer ones may not load v0.3 models. If a model fails to load, check the deepImageJ release notes for spec compatibility before assuming the model is broken.</p>
+</section>
+</section>
+<section id="d-stardist-fiji-plugin-pretrained-nuclear-segmentation-one-click">
+<h2>D. StarDist Fiji plugin — pretrained nuclear segmentation, one click<a class="headerlink" href="#d-stardist-fiji-plugin-pretrained-nuclear-segmentation-one-click" title="Link to this heading">#</a></h2>
+<p>StarDist is one of the workhorse pretrained models for fluorescence-microscopy nuclear segmentation. It predicts star-convex polygons rather than free-form masks, which is a strong inductive bias for nucleus shapes and gives clean instance segmentation out of the box.</p>
+<p><strong>Citation.</strong> Schmidt, Weigert, Broaddus, Myers, <em>MICCAI 2018</em>. ⚠ <em>Verified Notebook 04 catalogs the same paper.</em></p>
+<p><strong>Why include it here.</strong> Notebook 04 catalogs StarDist as a ZeroCostDL4Mic Colab. The Fiji plugin is the same pretrained model, accessible from the menu of Fiji. For nuclei in fluorescence images, this is often the fastest path from “open image” to “instance-segmented nuclei.”</p>
+<section id="d-1-install-via-update-site">
+<h3>D.1 Install via update site<a class="headerlink" href="#d-1-install-via-update-site" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><em>Help → Update…</em> → <em>Manage update sites</em>.</p></li>
+<li><p>Tick <strong>CSBDeep</strong> and <strong>StarDist</strong>.   ⚠ <em>Verify both update-site names on the StarDist Fiji docs before public release.</em></p></li>
+<li><p><strong>Apply changes</strong> → restart.</p></li>
+</ol>
+<p>After restart you should have a <em>Plugins → StarDist</em> submenu.</p>
+</section>
+<section id="d-2-run-on-an-image">
+<h3>D.2 Run on an image<a class="headerlink" href="#d-2-run-on-an-image" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Open a fluorescence image with nuclei (e.g., DAPI channel of HeLa Cells, or <code class="docutils literal notranslate"><span class="pre">human_mitosis</span></code> from the sample data).</p></li>
+<li><p><em>Plugins → StarDist → StarDist 2D</em>.   ⚠ <em>Exact submenu wording.</em></p></li>
+<li><p>The dialog lets you pick a pretrained model. Two safe defaults: <code class="docutils literal notranslate"><span class="pre">Versatile</span> <span class="pre">(fluorescent</span> <span class="pre">nuclei)</span></code> and <code class="docutils literal notranslate"><span class="pre">Versatile</span> <span class="pre">(H&amp;E</span> <span class="pre">nuclei)</span></code>. Pick the one that matches your modality.</p></li>
+<li><p>Run. The output is an instance-labeled image (one integer per nucleus) plus an ROI manager populated with one ROI per detected nucleus.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>[Screenshot 15]</strong> <em>StarDist 2D dialog with the pretrained model chosen, the source image visible, and the segmentation output overlay showing instance-segmented nuclei.</em></p>
+</div></blockquote>
+</section>
+<section id="d-3-where-this-fits-the-workshop">
+<h3>D.3 Where this fits the workshop<a class="headerlink" href="#d-3-where-this-fits-the-workshop" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Validation.</strong> The Notebook 02 metrics apply directly. Compute IoU, Dice, count error against a hand-labeled ground-truth ROI set.</p></li>
+<li><p><strong>When to pick StarDist over Cellpose-SAM.</strong> StarDist is faster on nuclei specifically and gives cleaner star-convex shapes; Cellpose-SAM generalizes more broadly across morphologies. Try both on your data; the lecture’s “show failures” framing applies — pick whichever fails <em>less</em> on your samples.</p></li>
+<li><p><strong>The 3D variant.</strong> StarDist also has a 3D model, exposed as <em>Plugins → StarDist → StarDist 3D</em>. Use it on confocal stacks; the inductive bias still helps.</p></li>
+</ul>
+</section>
+</section>
+<section id="e-qupath-stardist-extension-h-e-nuclear-segmentation-at-wsi-scale">
+<h2>E. QuPath StarDist extension — H&amp;E nuclear segmentation at WSI scale<a class="headerlink" href="#e-qupath-stardist-extension-h-e-nuclear-segmentation-at-wsi-scale" title="Link to this heading">#</a></h2>
+<p>The QuPath StarDist extension brings the same StarDist models into QuPath, where they run <em>across whole-slide images</em> with proper tiling. For pathology, the H&amp;E nucleus model is the canonical first step in any cell-based quantification pipeline.</p>
+<p><strong>Citation.</strong> Same StarDist paper (Schmidt et al., 2018) plus the QuPath extension authored by Pete Bankhead’s group. ⚠ <em>Verify the extension’s current GitHub repo and maintainer before public release; QuPath’s extension API changed at 0.4 → 0.5 and not all extensions track every release.</em></p>
+<p><strong>Why include it here.</strong> A pathology slide has hundreds of thousands of nuclei. You cannot open it in Fiji and click <em>Plugins → StarDist</em>. QuPath’s extension does the tiling, runs StarDist on each tile, and merges the results into proper QuPath cell objects ready for downstream quantification.</p>
+<section id="e-1-install-the-extension">
+<h3>E.1 Install the extension<a class="headerlink" href="#e-1-install-the-extension" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Download the extension JAR from its GitHub releases page. ⚠ <em>Confirm the canonical repo at install time — historically <code class="docutils literal notranslate"><span class="pre">qupath/qupath-extension-stardist</span></code>, but verify before publishing this notebook.</em></p></li>
+<li><p><em>Edit → Preferences → Extensions</em> in QuPath, or simply drag the JAR onto the QuPath window.</p></li>
+<li><p>QuPath copies the JAR into its extensions folder and restarts.</p></li>
+</ol>
+<p>After restart you should have an <em>Extensions → StarDist</em> menu, and the extension exposes a Groovy API for scripting.</p>
+<blockquote>
+<div><p><strong>[Screenshot 16]</strong> <em>QuPath Preferences → Extensions panel showing the StarDist extension installed.</em></p>
+</div></blockquote>
+</section>
+<section id="e-2-run-on-a-slide">
+<h3>E.2 Run on a slide<a class="headerlink" href="#e-2-run-on-a-slide" title="Link to this heading">#</a></h3>
+<p>The QuPath StarDist extension is most commonly invoked from a Groovy script rather than a dialog (this gives reproducibility and lets you batch across a project). A minimal H&amp;E-nuclei script looks roughly like:</p>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="c1">// QuPath Groovy — illustrative skeleton; consult the extension&#39;s docs</span>
+<span class="c1">// for the exact API current to your QuPath + extension versions.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">qupath.ext.stardist.StarDist2D</span>
+
+<span class="kt">def</span><span class="w"> </span><span class="n">stardist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StarDist2D</span><span class="o">.</span><span class="na">builder</span><span class="o">(</span><span class="s1">&#39;he_heavy_augment.pb&#39;</span><span class="o">)</span><span class="w">   </span><span class="c1">// a bundled model</span>
+<span class="w">    </span><span class="o">.</span><span class="na">threshold</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span>
+<span class="w">    </span><span class="o">.</span><span class="na">normalizePercentiles</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="w"> </span><span class="mi">99</span><span class="o">)</span>
+<span class="w">    </span><span class="o">.</span><span class="na">pixelSize</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span>
+<span class="w">    </span><span class="o">.</span><span class="na">cellExpansion</span><span class="o">(</span><span class="mf">5.0</span><span class="o">)</span>
+<span class="w">    </span><span class="o">.</span><span class="na">build</span><span class="o">()</span>
+
+<span class="kt">def</span><span class="w"> </span><span class="n">selected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getSelectedObjects</span><span class="o">()</span>
+<span class="n">stardist</span><span class="o">.</span><span class="na">detectObjects</span><span class="o">(</span><span class="n">getCurrentImageData</span><span class="o">(),</span><span class="w"> </span><span class="n">selected</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>⚠ <em>The exact builder method names and the bundled model filename change between extension releases. Treat the snippet above as a placeholder — copy from the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/deep/stardist.html">QuPath StarDist documentation</a> at the time you install.</em></p>
+<blockquote>
+<div><p><strong>[Screenshot 17]</strong> <em>QuPath script editor with a StarDist H&amp;E script loaded, executed across a slide region, and the resulting cell objects visible on the canvas.</em></p>
+</div></blockquote>
+</section>
+<section id="e-3-where-this-fits-the-workshop">
+<h3>E.3 Where this fits the workshop<a class="headerlink" href="#e-3-where-this-fits-the-workshop" title="Link to this heading">#</a></h3>
+<p>This is the gateway exercise into the <strong>pathology track</strong> of the broader curriculum. The morphology metrics, validation framing, and stewardship questions from the lecture all apply at slide scale: a whole-slide segmentation that drops 5% of nuclei translates to thousands of missed cells per slide, and the per-class IoU on H&amp;E is the right number to report alongside any biological claim.</p>
+<p>For attendees on a pure microscopy track this section is optional. For anyone whose data is pathology, it is essential.</p>
+</section>
+</section>
+<section id="how-this-notebook-connects-to-the-rest-of-the-workshop">
+<h2>How this notebook connects to the rest of the workshop<a class="headerlink" href="#how-this-notebook-connects-to-the-rest-of-the-workshop" title="Link to this heading">#</a></h2>
+<p>The five GUI workflows above are not a parallel curriculum — they are the desktop counterparts of things you already touched in the labs and the lecture. Cross-references:</p>
+<ul class="simple">
+<li><p><strong>Notebook 01 (Cellpose-SAM segmentation)</strong>: same pretrained-model paradigm, different surface. The Cellpose authors maintain Fiji and napari plugins; the <a class="reference external" href="https://github.com/MouseLand/cellpose">Cellpose Fiji plugin</a> is the GUI counterpart of Notebook 01. ⚠ <em>Plugin status changes; verify which Fiji entry-point is canonical at install time.</em></p></li>
+<li><p><strong>Notebook 02 (validation)</strong>: every metric in Notebook 02 — IoU, Dice, count error, area-fraction error — applies identically to the outputs of TWS, QuPath Pixel Classifier, deepImageJ, and StarDist. <strong>The validation framework does not change because the model came from a GUI.</strong> Bring a held-out test image with ground-truth labels, compute the same numbers.</p></li>
+<li><p><strong>Notebook 03a (denoising)</strong>: the <a class="reference external" href="https://github.com/CSBDeep/CSBDeep_website">CARE Fiji plugin</a> (CSBDeep update site) runs the same denoising model from inside Fiji. If you trained a CARE model in ZeroCostDL4Mic, you can deploy it in Fiji.</p></li>
+<li><p><strong>Notebook 03b (foundation models)</strong>: the <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam">μSAM plugin</a> has both a napari interface and a <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam">QuPath extension</a> — the desktop counterparts of the foundation-model lab.</p></li>
+<li><p><strong>Notebook 04 (community platforms)</strong>: deepImageJ (Section C above) is the Fiji surface for the same BioImage Model Zoo registry that Notebook 04 browsed via <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code>.</p></li>
+<li><p><strong>Lecture 1</strong>: the “responsible use &amp; validation” pillar carries verbatim. A trainable Weka classifier without a held-out test set has the same problem as a CNN without a held-out test set. The “show failures” framing applies — try TWS or the QuPath Pixel Classifier on a deliberately out-of-distribution sample and watch it fail.</p></li>
+<li><p><strong>Lecture 2</strong>: the bridge talk between the morning lecture and the labs is the natural home for a 10-minute live GUI demo. <em>Trainable Weka → deepImageJ paired demo</em> in Fiji is the highest-pedagogical-value content this notebook supports — see the workshop schedule.</p></li>
+</ul>
+</section>
+<section id="when-to-use-which-tool">
+<h2>When to use which tool<a class="headerlink" href="#when-to-use-which-tool" title="Link to this heading">#</a></h2>
+<p>A short decision aid for “which GUI for this task”:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>You want…</p></th>
+<th class="head"><p>Reach for</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>To paint labels and train a segmenter on a single fluorescence image</p></td>
+<td><p><strong>Trainable Weka</strong> (Fiji)</p></td>
+<td><p>Built-in, fast, interpretable, exports a portable classifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Same as above but on a whole-slide H&amp;E or IHC</p></td>
+<td><p><strong>QuPath Pixel Classifier</strong></p></td>
+<td><p>WSI-aware tiling, integrates with QuPath quantification.</p></td>
+</tr>
+<tr class="row-even"><td><p>To run a community-maintained pretrained DL model from inside Fiji</p></td>
+<td><p><strong>deepImageJ</strong></p></td>
+<td><p>Direct surface for the BioImage Model Zoo registry.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pretrained nucleus segmentation, one click, fluorescence</p></td>
+<td><p><strong>StarDist Fiji plugin</strong></p></td>
+<td><p>Star-convex shape prior, clean instance output.</p></td>
+</tr>
+<tr class="row-even"><td><p>Pretrained nucleus segmentation, one script, H&amp;E whole slide</p></td>
+<td><p><strong>QuPath StarDist extension</strong></p></td>
+<td><p>Tiles the slide, merges into QuPath cell objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p>To label and train at WSI scale, including tracking</p></td>
+<td><p>The other QuPath classifiers + (eventually) Labkit / DL backends</p></td>
+<td><p>Active area; check the <a class="reference external" href="https://qupath.readthedocs.io/">QuPath docs</a> for what’s current.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="what-is-not-in-this-notebook-and-where-to-look-instead">
+<h2>What is <strong>not</strong> in this notebook (and where to look instead)<a class="headerlink" href="#what-is-not-in-this-notebook-and-where-to-look-instead" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Cellpose human-in-the-loop fine-tuning.</strong> Cellpose 2.0+ supports a GUI-driven fine-tune workflow inside the Cellpose desktop app. If you want a <em>deep-learning</em> trainable segmenter (rather than the random-forest TWS), this is the canonical path. Documented in the <a class="reference external" href="https://cellpose.readthedocs.io/">Cellpose docs</a>.</p></li>
+<li><p><strong>napari + plugins.</strong> napari is the modern Python-native viewer with a deep plugin ecosystem ([napari-segment-anything], [napari-cellpose], [napari-cellseg3d], …). It bridges code-first and GUI workflows in a way Fiji cannot. A separate notebook is warranted.</p></li>
+<li><p><strong>Tracking GUIs.</strong> TrackMate (Fiji) and ELEPHANT, Mastodon, btrack — out of scope for this workshop’s segmentation focus.</p></li>
+<li><p><strong>Slide-management infrastructure.</strong> OMERO, BIA Image Archive, MoBIE — adjacent to the analysis tools above but a different workflow concern.</p></li>
+</ul>
+</section>
+<section id="screenshot-capture-checklist">
+<h2>Screenshot capture checklist<a class="headerlink" href="#screenshot-capture-checklist" title="Link to this heading">#</a></h2>
+<p>The 17 placeholder boxes above need real screenshots before this notebook is published. Capture them in a single session against the tool versions noted above (Fiji 2.16+, QuPath 0.5+) and replace the <code class="docutils literal notranslate"><span class="pre">[Screenshot</span> <span class="pre">N:</span> <span class="pre">…]</span></code> markers in the source markdown.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Tool</p></th>
+<th class="head"><p>Where</p></th>
+<th class="head"><p>What to capture</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Fiji</p></td>
+<td><p>Section A.1</p></td>
+<td><p>HeLa Cells sample image, single channel selected, full Fiji window.</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.2</p></td>
+<td><p>TWS main window, two empty default classes, toolbar visible.</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.3</p></td>
+<td><p>TWS window after labeling: brush traces visible for <code class="docutils literal notranslate"><span class="pre">cell</span></code> (red), <code class="docutils literal notranslate"><span class="pre">background</span></code> (green), <code class="docutils literal notranslate"><span class="pre">nucleus</span></code> (blue). Three-class panel on the right.</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.4</p></td>
+<td><p>First Train output overlay — deliberately imperfect, with visible boundary errors.</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.4</p></td>
+<td><p>Probability map output as a stack, one image per class, full intensity range.</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.5</p></td>
+<td><p>TWS overlay after 3 iterations of refinement — clean class separation.</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>Fiji TWS</p></td>
+<td><p>Section A.6</p></td>
+<td><p>“Create result” output: 8-bit indexed image with one value per class.</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section B.1</p></td>
+<td><p>Tutorial H&amp;E slide loaded, project pane left, overview thumbnail.</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section B.2</p></td>
+<td><p>Slide with <code class="docutils literal notranslate"><span class="pre">tumor</span></code> (red), <code class="docutils literal notranslate"><span class="pre">stroma</span></code> (green), <code class="docutils literal notranslate"><span class="pre">background</span></code> (blue) brush annotations.</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section B.3</p></td>
+<td><p>Pixel-classifier dialog open, Live prediction enabled, overlay visible.</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section B.4</p></td>
+<td><p>Slide after Create objects — clean polygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>Fiji updater</p></td>
+<td><p>Section C.1</p></td>
+<td><p>Updater dialog with deepImageJ update site checked.</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>Fiji deepImageJ</p></td>
+<td><p>Section C.2</p></td>
+<td><p>deepImageJ Run dialog with BiMZ models listed, one selected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>Fiji deepImageJ</p></td>
+<td><p>Section C.3</p></td>
+<td><p>Side-by-side: input image and deepImageJ output, with citation visible.</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>Fiji StarDist</p></td>
+<td><p>Section D.2</p></td>
+<td><p>StarDist 2D dialog with pretrained model chosen, segmentation overlay.</p></td>
+</tr>
+<tr class="row-odd"><td><p>16</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section E.1</p></td>
+<td><p>Preferences → Extensions panel showing StarDist installed.</p></td>
+</tr>
+<tr class="row-even"><td><p>17</p></td>
+<td><p>QuPath</p></td>
+<td><p>Section E.2</p></td>
+<td><p>Script editor with StarDist H&amp;E Groovy script, executed across a slide region, cell objects visible.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Suggested capture protocol:</strong></p>
+<ol class="arabic simple">
+<li><p>Run Fiji and QuPath on a stable laptop/desktop with a 1920×1200 (or larger) display so windows aren’t cropped.</p></li>
+<li><p>Use the same sample image across Sections A and D (HeLa Cells with a clear DAPI channel) for visual continuity.</p></li>
+<li><p>For QuPath sections (B, E), use the tutorial H&amp;E slide so anyone replicating can match.</p></li>
+<li><p>PNG, full-window screenshots; crop after the fact rather than capturing partial windows.</p></li>
+<li><p>After capture, save under <code class="docutils literal notranslate"><span class="pre">notebooks/figures/05/</span></code> and replace each <code class="docutils literal notranslate"><span class="pre">[Screenshot</span> <span class="pre">N:</span> <span class="pre">...]</span></code> in the source markdown with a Markdown image link of the form <code class="docutils literal notranslate"><span class="pre">![Screenshot</span> <span class="pre">N</span> <span class="pre">—</span> <span class="pre">short</span> <span class="pre">title](figures/05/screenshot_N.png)</span></code>.</p></li>
+</ol>
+</section>
+<section id="appendix-exporting-sample-images-for-this-notebook">
+<h2>Appendix — Exporting sample images for this notebook<a class="headerlink" href="#appendix-exporting-sample-images-for-this-notebook" title="Link to this heading">#</a></h2>
+<p>If you want the same canonical samples Notebook 01 uses on disk for Fiji to open, run this snippet in any Python environment with <code class="docutils literal notranslate"><span class="pre">scikit-image</span></code> installed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">imsave</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;sample_data&quot;</span><span class="p">)</span>
+<span class="n">out</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 2D fluorescence — single nuclei field</span>
+<span class="n">imsave</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;human_mitosis.tif&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">human_mitosis</span><span class="p">())</span>
+
+<span class="c1"># 2D fluorescence — single cell</span>
+<span class="n">imsave</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;cell.tif&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">cell</span><span class="p">())</span>
+
+<span class="c1"># 3D confocal — middle slice</span>
+<span class="n">cells</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cells3d</span><span class="p">()</span>  <span class="c1"># (z, c, y, x) = (60, 2, 256, 256)</span>
+<span class="n">mid</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="n">cells</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>   <span class="c1"># (c, y, x)</span>
+<span class="n">imsave</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;cells3d_mid_dapi.tif&quot;</span><span class="p">,</span> <span class="n">mid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">imsave</span><span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;cells3d_mid_membrane.tif&quot;</span><span class="p">,</span> <span class="n">mid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrote sample images to:&quot;</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Drop the resulting TIFFs onto the Fiji or QuPath window to open.</p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Arganda-Carreras, I., Kaynig, V., Rueden, C., Eliceiri, K. W., Schindelin, J., Cardona, A., Sebastian Seung, H. <strong>Trainable Weka Segmentation: a machine learning tool for microscopy pixel classification.</strong> <em>Bioinformatics</em> 33(15):2424–2426, 2017. ✓</p></li>
+<li><p>Bankhead, P. et al. <strong>QuPath: open source software for digital pathology image analysis.</strong> <em>Scientific Reports</em> 7:16878, 2017. ✓</p></li>
+<li><p>Gómez-de-Mariscal, E. et al. <strong>DeepImageJ: a user-friendly environment to run deep learning models in ImageJ.</strong> <em>Nature Methods</em> 18(10):1192–1195, 2021. ⚠ <em>Citation cross-checked against Notebook 04; verify volume/issue at publication time.</em></p></li>
+<li><p>Schmidt, U., Weigert, M., Broaddus, C., Myers, G. <strong>Cell Detection with Star-convex Polygons.</strong> <em>MICCAI</em> 2018. ✓</p></li>
+<li><p>Stringer, C., Wang, T., Michaelos, M., Pachitariu, M. <strong>Cellpose: a generalist algorithm for cellular segmentation.</strong> <em>Nature Methods</em> 18:100–106, 2021. ✓ (background reference for the Cellpose Fiji plugin pointer in Section C.)</p></li>
+</ul>
+<p>For the corresponding Colab labs, see Notebooks 01–04 in the sidebar.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04_community_platforms.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 04 — Community Platforms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="06_virtual_staining.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 06 — Virtual Staining and Label-Free Prediction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-notebook-exists">Why this notebook exists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-will-need">What you will need</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fiji">Fiji</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qupath">QuPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-data">Sample data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-versions-targeted-in-this-guide">Tool versions targeted in this guide</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-trainable-weka-segmentation-in-fiji-the-no-code-trainable-segmenter">A. Trainable Weka Segmentation in Fiji — the no-code trainable segmenter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1-open-and-prepare-an-image">A.1 Open and prepare an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-2-launch-the-trainable-weka-segmentation-plugin">A.2 Launch the Trainable Weka Segmentation plugin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-3-add-and-label-classes">A.3 Add and label classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-4-train-and-inspect-the-classifier">A.4 Train and inspect the classifier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-5-iterate">A.5 Iterate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-6-apply-export-save-the-classifier">A.6 Apply, export, save the classifier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-7-going-further-labkit">A.7 Going further — Labkit</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#b-qupath-pixel-classifier-the-trainable-segmenter-for-whole-slide-images">B. QuPath Pixel Classifier — the trainable segmenter for whole-slide images</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-1-open-a-slide-and-create-a-project">B.1 Open a slide and create a project</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-2-annotate-tissue-classes">B.2 Annotate tissue classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-3-train-and-preview-live">B.3 Train and preview live</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-4-apply-and-export">B.4 Apply and export</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-5-what-this-enables">B.5 What this enables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-6-object-classifier-train-a-downstream-classifier-on-top">B.6 Object classifier — train a downstream classifier on top</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-deepimagej-bioimage-model-zoo-on-the-desktop">C. deepImageJ — BioImage Model Zoo on the desktop</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-1-install-via-fiji-updater">C.1 Install via Fiji updater</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-2-browse-and-load-a-bimz-model">C.2 Browse and load a BiMZ model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-3-run-on-an-image">C.3 Run on an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-4-what-this-enables">C.4 What this enables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-stardist-fiji-plugin-pretrained-nuclear-segmentation-one-click">D. StarDist Fiji plugin — pretrained nuclear segmentation, one click</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-1-install-via-update-site">D.1 Install via update site</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-2-run-on-an-image">D.2 Run on an image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-3-where-this-fits-the-workshop">D.3 Where this fits the workshop</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e-qupath-stardist-extension-h-e-nuclear-segmentation-at-wsi-scale">E. QuPath StarDist extension — H&amp;E nuclear segmentation at WSI scale</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-1-install-the-extension">E.1 Install the extension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-2-run-on-a-slide">E.2 Run on a slide</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e-3-where-this-fits-the-workshop">E.3 Where this fits the workshop</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-this-notebook-connects-to-the-rest-of-the-workshop">How this notebook connects to the rest of the workshop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-which-tool">When to use which tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-not-in-this-notebook-and-where-to-look-instead">What is <strong>not</strong> in this notebook (and where to look instead)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screenshot-capture-checklist">Screenshot capture checklist</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-exporting-sample-images-for-this-notebook">Appendix — Exporting sample images for this notebook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

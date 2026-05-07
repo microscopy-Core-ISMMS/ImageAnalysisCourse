@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Git commit plan — first push &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'git_commit_plan';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/git_commit_plan.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Git commit plan — first push</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-flight">Pre-flight</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confirm-git-lfs-is-installed">1. Confirm Git LFS is installed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-github-remote">2. Add the GitHub remote</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config-yml-already-updated">3. <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code> already updated</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-and-commit">Stage and commit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-git-lfs-in-the-repo">4. Initialize Git LFS in the repo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-everything-in-two-commits-cleaner-history">5. Stage everything in two commits (cleaner history)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#push-to-github">6. Push to GitHub</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#after-the-first-push">After the first push</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-github-web-ui">7. Verify GitHub web UI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-follow-ups-do-later-not-blocking-the-first-push">8. Optional follow-ups (do later, not blocking the first push)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-was-staged-but-not-committed">What was staged but NOT committed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-commands">Sanity-check commands</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="git-commit-plan-first-push">
+<h1>Git commit plan — first push<a class="headerlink" href="#git-commit-plan-first-push" title="Link to this heading">#</a></h1>
+<p><strong>Repo path on this Mac:</strong> <code class="docutils literal notranslate"><span class="pre">Claude_Workspace/Git/</span></code>
+<strong>Workflow:</strong> I’ve staged all files. You run the commands below from the repo folder in your terminal. No credentials in the sandbox.</p>
+<hr class="docutils" />
+<section id="pre-flight">
+<h2>Pre-flight<a class="headerlink" href="#pre-flight" title="Link to this heading">#</a></h2>
+<section id="confirm-git-lfs-is-installed">
+<h3>1. Confirm Git LFS is installed<a class="headerlink" href="#confirm-git-lfs-is-installed" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>lfs<span class="w"> </span>version
+<span class="c1"># → git-lfs/3.x.y or similar</span>
+</pre></div>
+</div>
+<p>If not installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>git-lfs<span class="w">        </span><span class="c1"># macOS with Homebrew</span>
+git<span class="w"> </span>lfs<span class="w"> </span>install<span class="w">             </span><span class="c1"># one-time, per machine, hooks into git</span>
+</pre></div>
+</div>
+</section>
+<section id="add-the-github-remote">
+<h3>2. Add the GitHub remote<a class="headerlink" href="#add-the-github-remote" title="Link to this heading">#</a></h3>
+<p>You haven’t added a remote yet. The repo is <strong><code class="docutils literal notranslate"><span class="pre">microscopy-Core-ISMMS/ImageAnalysisCourse</span></code></strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>path/to/Claude_Workspace/Git<span class="w">    </span><span class="c1"># ← your local clone path on the Mac</span>
+git<span class="w"> </span>remote<span class="w"> </span>-v
+<span class="c1"># → (empty)</span>
+
+<span class="c1"># SSH (recommended if you have a key set up):</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>git@github.com:microscopy-Core-ISMMS/ImageAnalysisCourse.git
+
+<span class="c1"># OR HTTPS (will prompt for username + Personal Access Token at push):</span>
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse.git
+
+<span class="c1"># Confirm:</span>
+git<span class="w"> </span>remote<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="config-yml-already-updated">
+<h3>3. <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code> already updated<a class="headerlink" href="#config-yml-already-updated" title="Link to this heading">#</a></h3>
+<p>The repository URL placeholder in <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code> has been replaced with the real URL. No further edit needed. JB’s “View on GitHub” buttons and Colab launch links will resolve to the live repo after first push.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="stage-and-commit">
+<h2>Stage and commit<a class="headerlink" href="#stage-and-commit" title="Link to this heading">#</a></h2>
+<section id="initialize-git-lfs-in-the-repo">
+<h3>4. Initialize Git LFS in the repo<a class="headerlink" href="#initialize-git-lfs-in-the-repo" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>path/to/Claude_Workspace/Git
+git<span class="w"> </span>lfs<span class="w"> </span>install<span class="w">              </span><span class="c1"># if not already done globally</span>
+git<span class="w"> </span>lfs<span class="w"> </span>track<span class="w">                </span><span class="c1"># show currently tracked patterns (should match .gitattributes)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.gitattributes</span></code> is already populated. Patterns covered: <code class="docutils literal notranslate"><span class="pre">*.tif</span></code>, <code class="docutils literal notranslate"><span class="pre">*.TIF</span></code>, <code class="docutils literal notranslate"><span class="pre">*.tiff</span></code>, <code class="docutils literal notranslate"><span class="pre">*.lsm</span></code>, <code class="docutils literal notranslate"><span class="pre">*.LSM</span></code>, <code class="docutils literal notranslate"><span class="pre">*.zvi</span></code>, <code class="docutils literal notranslate"><span class="pre">*.czi</span></code>, <code class="docutils literal notranslate"><span class="pre">*.nd2</span></code>, <code class="docutils literal notranslate"><span class="pre">*.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">*.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">*.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">*.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">*.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">*.xls</span></code>, <code class="docutils literal notranslate"><span class="pre">*.potx</span></code>, <code class="docutils literal notranslate"><span class="pre">*.pdf</span></code>. Notebooks (<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code>) intentionally NOT in LFS so diffs stay readable. Small PNG/JPG also not in LFS.</p>
+</section>
+<section id="stage-everything-in-two-commits-cleaner-history">
+<h3>5. Stage everything in two commits (cleaner history)<a class="headerlink" href="#stage-everything-in-two-commits-cleaner-history" title="Link to this heading">#</a></h3>
+<p><strong>Commit A — Day 3 Jupyter Book scaffold</strong> (the existing files you already had):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>.gitignore<span class="w"> </span>.gitattributes
+git<span class="w"> </span>add<span class="w"> </span>LICENSE<span class="w"> </span>CONTENT_LICENSE.md<span class="w"> </span>README.md
+git<span class="w"> </span>add<span class="w"> </span>_config.yml<span class="w"> </span>_toc.yml
+git<span class="w"> </span>add<span class="w"> </span>intro.md<span class="w"> </span>prerequisites.md<span class="w"> </span>schedule.md<span class="w"> </span>handout.md<span class="w"> </span>acknowledgments.md<span class="w"> </span>resources.md
+git<span class="w"> </span>add<span class="w"> </span>_static/
+git<span class="w"> </span>add<span class="w"> </span>data/
+git<span class="w"> </span>add<span class="w"> </span>env/
+git<span class="w"> </span>add<span class="w"> </span>lectures/
+git<span class="w"> </span>add<span class="w"> </span>notebooks/
+git<span class="w"> </span>add<span class="w"> </span>ramp-up/
+git<span class="w"> </span>add<span class="w"> </span>scripts/
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Initial commit: Day 3 — AI for Microscopy Image Analysis Jupyter Book scaffold + lecture + lab notebooks (00-15)&quot;</span>
+</pre></div>
+</div>
+<p><strong>Commit B — Day 2 Fiji student package</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>day-2-fiji/
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add Day 2 — ImageJ/Fiji Hands-On student package (handout v5 + 23 images + 7 macros + 3 reference PDFs)&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="push-to-github">
+<h3>6. Push to GitHub<a class="headerlink" href="#push-to-github" title="Link to this heading">#</a></h3>
+<p>If your local default branch isn’t <code class="docutils literal notranslate"><span class="pre">main</span></code> (rare on a fresh clone), rename:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>branch<span class="w"> </span>-M<span class="w"> </span>main
+</pre></div>
+</div>
+<p>Push the first time with <code class="docutils literal notranslate"><span class="pre">-u</span></code> to set upstream tracking:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main
+</pre></div>
+</div>
+<p>LFS files will be transferred automatically. Expect this push to take a minute or two — the <code class="docutils literal notranslate"><span class="pre">day-2-fiji/Exercise</span> <span class="pre">Images/</span></code> folder is ~58 MB across 23 files.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="after-the-first-push">
+<h2>After the first push<a class="headerlink" href="#after-the-first-push" title="Link to this heading">#</a></h2>
+<section id="verify-github-web-ui">
+<h3>7. Verify GitHub web UI<a class="headerlink" href="#verify-github-web-ui" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Open the repo on <a class="reference external" href="http://github.com">github.com</a>.</p></li>
+<li><p>Browse to <code class="docutils literal notranslate"><span class="pre">day-2-fiji/</span></code>. You should see the rendered <strong><a class="reference external" href="http://README.md">README.md</a></strong> as the folder landing page.</p></li>
+<li><p>Click <code class="docutils literal notranslate"><span class="pre">MABC_IAWorkshop2026_Day2_Fiji_HandsOn.pdf</span></code>. GitHub should show <code class="docutils literal notranslate"><span class="pre">Stored</span> <span class="pre">with</span> <span class="pre">Git</span> <span class="pre">LFS</span></code> and offer a download.</p></li>
+<li><p>Confirm the JB rendering links work via README → “Building the Jupyter Book” section (or via GitHub Pages if you enable it later).</p></li>
+</ul>
+</section>
+<section id="optional-follow-ups-do-later-not-blocking-the-first-push">
+<h3>8. Optional follow-ups (do later, not blocking the first push)<a class="headerlink" href="#optional-follow-ups-do-later-not-blocking-the-first-push" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Enable <strong>GitHub Pages</strong> to serve the JB build (<code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">→</span> <span class="pre">Pages</span> <span class="pre">→</span> <span class="pre">Branch:</span> <span class="pre">gh-pages</span></code> after first JB build).</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code>’s <code class="docutils literal notranslate"><span class="pre">repository.url</span></code> from the placeholder once the URL is finalized — JB’s “View on GitHub” + Colab launch buttons depend on it.</p></li>
+<li><p>Decide whether to <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">rm</span></code> the early-outline <code class="docutils literal notranslate"><span class="pre">lectures/01_intro_ai_imaging.md</span></code> and <code class="docutils literal notranslate"><span class="pre">lectures/02_walking_the_day.md</span></code> (the <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code> already excludes them from JB rendering; deleting cleans the tree).</p></li>
+<li><p>If you ever rename the repo title to something broader (e.g., “2026 MABC Image Analysis Workshop — Companion”), update <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code>’s <code class="docutils literal notranslate"><span class="pre">title:</span></code> field and <code class="docutils literal notranslate"><span class="pre">README.md</span></code>’s top heading accordingly.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="what-was-staged-but-not-committed">
+<h2>What was staged but NOT committed<a class="headerlink" href="#what-was-staged-but-not-committed" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> excludes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_build/</span></code> — Jupyter Book HTML output (regenerated by <code class="docutils literal notranslate"><span class="pre">jupyter-book</span> <span class="pre">build</span> <span class="pre">.</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.ipynb_checkpoints/</span></code>, <code class="docutils literal notranslate"><span class="pre">__pycache__/</span></code>, <code class="docutils literal notranslate"><span class="pre">.DS_Store</span></code>, <code class="docutils literal notranslate"><span class="pre">Thumbs.db</span></code></p></li>
+<li><p>Conda/venv: <code class="docutils literal notranslate"><span class="pre">env/</span></code> content except <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>, <code class="docutils literal notranslate"><span class="pre">check_lecture_env.py</span></code>, <code class="docutils literal notranslate"><span class="pre">README.md</span></code></p></li>
+<li><p>Large model checkpoints (<code class="docutils literal notranslate"><span class="pre">*.pth</span></code>, <code class="docutils literal notranslate"><span class="pre">*.pt</span></code>, <code class="docutils literal notranslate"><span class="pre">*.ckpt</span></code>, <code class="docutils literal notranslate"><span class="pre">cellpose_models/</span></code>)</p></li>
+<li><p>Per-run lab outputs (<code class="docutils literal notranslate"><span class="pre">masks_*.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">features.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">sample*.png</span></code>, <code class="docutils literal notranslate"><span class="pre">test.tif</span></code>, <code class="docutils literal notranslate"><span class="pre">care_outputs/</span></code>)</p></li>
+<li><p>Workshop scratch / Claude session artifacts (<code class="docutils literal notranslate"><span class="pre">handoff.md</span></code>, <code class="docutils literal notranslate"><span class="pre">deliverables.*</span></code>, <code class="docutils literal notranslate"><span class="pre">qa_v*/</span></code>, <code class="docutils literal notranslate"><span class="pre">audit_text/</span></code>, <code class="docutils literal notranslate"><span class="pre">LabkitScreenshots/</span></code>, etc.)</p></li>
+<li><p>Attendee/registration data (<code class="docutils literal notranslate"><span class="pre">*roster*</span></code>, <code class="docutils literal notranslate"><span class="pre">attendees.*</span></code>, <code class="docutils literal notranslate"><span class="pre">registrations.*</span></code>)</p></li>
+<li><p>Build temp (<code class="docutils literal notranslate"><span class="pre">/tmp/</span></code>, <code class="docutils literal notranslate"><span class="pre">*.tmp</span></code>)</p></li>
+</ul>
+<p>If <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">status</span></code> shows anything you expected to be ignored, double-check the patterns in <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="sanity-check-commands">
+<h2>Sanity-check commands<a class="headerlink" href="#sanity-check-commands" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># All three: should be present and tracked</span>
+git<span class="w"> </span>ls-files<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;(README|_config|_toc|day-2-fiji)&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+
+<span class="c1"># LFS-tracked files (after `git add`):</span>
+git<span class="w"> </span>lfs<span class="w"> </span>ls-files
+
+<span class="c1"># Repo size (working tree):</span>
+du<span class="w"> </span>-sh<span class="w"> </span>.
+
+<span class="c1"># Files under the Day 2 folder:</span>
+find<span class="w"> </span>day-2-fiji<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="w">   </span><span class="c1"># → 38</span>
+</pre></div>
+</div>
+<p>If any of those are surprising before you push, ping me and I’ll diagnose.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-flight">Pre-flight</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confirm-git-lfs-is-installed">1. Confirm Git LFS is installed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-github-remote">2. Add the GitHub remote</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config-yml-already-updated">3. <code class="docutils literal notranslate"><span class="pre">_config.yml</span></code> already updated</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-and-commit">Stage and commit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initialize-git-lfs-in-the-repo">4. Initialize Git LFS in the repo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-everything-in-two-commits-cleaner-history">5. Stage everything in two commits (cleaner history)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#push-to-github">6. Push to GitHub</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#after-the-first-push">After the first push</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-github-web-ui">7. Verify GitHub web UI</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-follow-ups-do-later-not-blocking-the-first-push">8. Optional follow-ups (do later, not blocking the first push)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-was-staged-but-not-committed">What was staged but NOT committed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-commands">Sanity-check commands</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/10_3d_segmentation';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)" href="11_dl_tracking.html" />
+    <link rel="prev" title="Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)" href="09_cellpose_finetune.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/10_3d_segmentation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-3d-volume">Load the 3D volume</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-three-z-slices-through-the-volume">Visualize three Z-slices through the volume</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-per-slice-baseline-apply-cellpose-2d-to-each-z-independently">2D-per-slice baseline: apply Cellpose 2D to each Z independently</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-3d-3d-aware-segmentation">Cellpose 3D: 3D-aware segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-cellpose-3d-output-three-orthogonal-mid-slices">Visualize Cellpose 3D output: three orthogonal mid-slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stardist-3d-star-convex-shape-priors-in-3d">StarDist 3D: star-convex shape priors in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-stardist-3d-output-three-orthogonal-mid-slices">Visualize StarDist 3D output: three orthogonal mid-slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-a-method-and-analyze">Choose a method and analyze</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantify-per-object-statistics">Quantify per-object statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-all-available-methods-side-by-side">Compare all available methods side-by-side</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-3d-segmentation-max-projection-orthogonal-slices">Visualize the 3D segmentation: max-projection + orthogonal slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-3d-segmentation-worth-it">When is 3D segmentation worth it?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- colab-badge -->
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/10_3d_segmentation.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-10-3d-segmentation-cellpose-3d-stardist-3d">
+<h1>Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D<a class="headerlink" href="#notebook-10-3d-segmentation-cellpose-3d-stardist-3d" title="Link to this heading">#</a></h1>
+<p><strong>Status.</strong> Post-workshop self-paced extension. Recommended after Notebook 01 (2D Cellpose).
+<strong>Estimated time.</strong> 30–45 minutes on Colab T4.
+<strong>Prerequisites.</strong> Notebook 01 (basic Cellpose workflow), comfort with volumetric microscopy data.</p>
+<p><strong>Learning goals.</strong></p>
+<ol class="arabic simple">
+<li><p>Understand the difference between 2D-per-slice and true 3D segmentation: 2D stacking loses through-plane connectivity; 3D enforces it.</p></li>
+<li><p>Run Cellpose 3D and StarDist 3D on the same 3D volume; observe how their inductive biases differ.</p></li>
+<li><p>Quantify 3D outputs: per-object volume, equivalent diameter, count — compare models statistically.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">#&#64;param</span></code> dropdowns to choose segmentation method and re-run the same analysis.</p></li>
+<li><p>Decide when true 3D segmentation is worth the computational cost versus slice-by-slice 2D or classical approaches.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>The 3D segmentation challenge.</strong> In 2D, instance separation is a 2D problem: find connected components in a 2D label image. In 3D, it’s harder: you need consistency across Z. Cellpose 3D and StarDist 3D tackle this differently — one via recurrent convolutions over Z, the other via star-convex shape priors in 3D. Both are expensive; we measure whether that cost is justified on a realistic volume.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>A note on the form widgets.</strong> Several cells below use <code class="docutils literal notranslate"><span class="pre">#&#64;param</span></code> comments. In <strong>Google Colab</strong> these render as interactive form widgets (dropdowns) at the top of the cell. In <strong>other environments</strong> they appear as plain Python comments — edit the values directly and re-run the cell.</p>
+</div></blockquote>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<p>GPU is recommended. On Colab: <code class="docutils literal notranslate"><span class="pre">Runtime</span> <span class="pre">→</span> <span class="pre">Change</span> <span class="pre">runtime</span> <span class="pre">type</span> <span class="pre">→</span> <span class="pre">T4</span> <span class="pre">GPU</span></code>. Both Cellpose 3D and StarDist 3D run on T4 memory without issue on the full <code class="docutils literal notranslate"><span class="pre">cells3d()</span></code> volume (60 × 256 × 256).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+
+<span class="c1"># Install 3D-capable libraries</span>
+<span class="o">%</span><span class="k">pip</span> install --quiet &quot;cellpose&gt;=3.0&quot; &quot;stardist&gt;=0.8&quot; csbdeep scikit-image matplotlib numpy scipy
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">skdata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.measure</span><span class="w"> </span><span class="kn">import</span> <span class="n">regionprops_table</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Imports OK.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># GPU detection — informational only; each library handles fallback automatically</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;torch          :&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CUDA available :&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device         :&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;torch not installed (cellpose will install it)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-3d-volume">
+<h2>Load the 3D volume<a class="headerlink" href="#load-the-3d-volume" title="Link to this heading">#</a></h2>
+<p>We use scikit-image’s canonical <code class="docutils literal notranslate"><span class="pre">cells3d()</span></code> dataset: shape (z=60, c=2, y=256, x=256).</p>
+<ul class="simple">
+<li><p>Channel 0: membrane stain</p></li>
+<li><p>Channel 1: DAPI (nuclei)</p></li>
+</ul>
+<p>We will segment the nuclei channel (channel 1) because it’s cleaner and more interpretable.
+The 60 Z-slices span the full depth of a confocal stack, so connectivity through Z is real and matters.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the reference 3D dataset</span>
+<span class="n">cells_volume</span> <span class="o">=</span> <span class="n">skdata</span><span class="o">.</span><span class="n">cells3d</span><span class="p">()</span>  <span class="c1"># shape (z=60, c=2, y=256, x=256)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cells3d() shape: </span><span class="si">{</span><span class="n">cells_volume</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">  dtype=</span><span class="si">{</span><span class="n">cells_volume</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Channel 0 (membrane): range=[</span><span class="si">{</span><span class="n">cells_volume</span><span class="p">[:,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cells_volume</span><span class="p">[:,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Channel 1 (DAPI):     range=[</span><span class="si">{</span><span class="n">cells_volume</span><span class="p">[:,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">cells_volume</span><span class="p">[:,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+<span class="c1"># Extract the nuclei channel (channel 1) for segmentation</span>
+<span class="n">volume_zyx</span> <span class="o">=</span> <span class="n">cells_volume</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># shape (z=60, y=256, x=256)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Nuclei volume (channel 1): shape=</span><span class="si">{</span><span class="n">volume_zyx</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">  dtype=</span><span class="si">{</span><span class="n">volume_zyx</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-three-z-slices-through-the-volume">
+<h2>Visualize three Z-slices through the volume<a class="headerlink" href="#visualize-three-z-slices-through-the-volume" title="Link to this heading">#</a></h2>
+<p>Show the geometry: what does the 3D data look like at different depths? This is the context for all downstream analysis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show three slices from the volume</span>
+<span class="n">z_slices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">]</span>  <span class="c1"># three representative Z positions</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">z_slices</span><span class="p">):</span>
+    <span class="n">p1</span><span class="p">,</span> <span class="n">p99</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">volume_zyx</span><span class="p">[</span><span class="n">z</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">volume_zyx</span><span class="p">[</span><span class="n">z</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues_r&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">p99</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Z = </span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="d-per-slice-baseline-apply-cellpose-2d-to-each-z-independently">
+<h2>2D-per-slice baseline: apply Cellpose 2D to each Z independently<a class="headerlink" href="#d-per-slice-baseline-apply-cellpose-2d-to-each-z-independently" title="Link to this heading">#</a></h2>
+<p>This is the naive approach: run 2D segmentation on each Z-slice, stack the results. The problem is that instance labels don’t carry meaning across Z — each slice gets fresh label IDs, even when the same cell spans multiple slices.</p>
+<p><strong>Predict before you run.</strong> If you manually traced nuclei through the 60 Z-slices and wrote down instance IDs that matched across slices (e.g., nucleus #3 spans Z=20–28), then stacked 2D results, would you expect the same instance IDs? Why or why not?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cellpose</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">core</span>
+
+<span class="c1"># Load Cellpose 2D model</span>
+<span class="n">use_gpu</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">use_gpu</span><span class="p">()</span>
+<span class="n">model_2d</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CellposeModel</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">use_gpu</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;nuclei&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded Cellpose 2D model (GPU: </span><span class="si">{</span><span class="n">use_gpu</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Apply 2D segmentation to each Z independently, stack into a fake 3D label volume</span>
+<span class="n">masks_2d_stack</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running Cellpose 2D on each Z slice...&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">volume_zyx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">img_z</span> <span class="o">=</span> <span class="n">volume_zyx</span><span class="p">[</span><span class="n">z</span><span class="p">]</span>
+    <span class="n">masks_z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model_2d</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">img_z</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">masks_2d_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">masks_z</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Z=</span><span class="si">{</span><span class="n">z</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">volume_zyx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Stack into (z, y, x) array</span>
+<span class="n">masks_2d_stacked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">masks_2d_stack</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">2D-stacked masks shape: </span><span class="si">{</span><span class="n">masks_2d_stacked</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unique labels across volume: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">masks_2d_stacked</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (Note: same cell may have different IDs in different slices)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>What you should be seeing.</strong> The cell count is high because each Z-slice resets the label ID counter. If we truly stacked 3D results, we’d expect one label per object across all Z; here we get many more labels because the same cell gets a different ID in each slice it appears in.</p>
+<p>This inefficiency motivates true 3D segmentation.</p>
+</section>
+<section id="cellpose-3d-3d-aware-segmentation">
+<h2>Cellpose 3D: 3D-aware segmentation<a class="headerlink" href="#cellpose-3d-3d-aware-segmentation" title="Link to this heading">#</a></h2>
+<p>Cellpose 3D extends the 2D model with recurrent connections over Z, enforcing consistency across slices. Input shape: (z, y, x) or (z, c, y, x) if you have multiple channels.</p>
+<p><strong>Predict before you run.</strong> Cellpose 3D should return <em>fewer</em> labels than the 2D stack, because it enforces that the same cell has the same ID across Z. Should the count match the true number of nuclei? (Spoiler: not exactly — model errors still happen — but it should be more stable.)**</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cellpose.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">CellposeModel</span>
+
+<span class="c1"># Load Cellpose 3D model</span>
+<span class="n">model_3d</span> <span class="o">=</span> <span class="n">CellposeModel</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">use_gpu</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;nuclei&#39;</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loaded Cellpose 3D model&quot;</span><span class="p">)</span>
+
+<span class="c1"># Run inference on the full 3D volume</span>
+<span class="c1"># Input: (z, y, x) array</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running Cellpose 3D on the full volume...&quot;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">masks_cellpose_3d</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model_3d</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span>
+    <span class="n">volume_zyx</span><span class="p">,</span>
+    <span class="n">diameter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">do_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cellpose 3D masks shape: </span><span class="si">{</span><span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cellpose 3D found: </span><span class="si">{</span><span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-cellpose-3d-output-three-orthogonal-mid-slices">
+<h2>Visualize Cellpose 3D output: three orthogonal mid-slices<a class="headerlink" href="#visualize-cellpose-3d-output-three-orthogonal-mid-slices" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show three orthogonal slices through the 3D label volume</span>
+<span class="n">z_mid</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">y_mid</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">x_mid</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+
+<span class="c1"># Colormap for labels</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;black&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;tab20&#39;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="c1"># XY (Z-mid)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_cellpose_3d</span><span class="p">[</span><span class="n">z_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XY plane (Z=</span><span class="si">{</span><span class="n">z_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="c1"># XZ (Y-mid)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_cellpose_3d</span><span class="p">[:,</span> <span class="n">y_mid</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XZ plane (Y=</span><span class="si">{</span><span class="n">y_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="c1"># YZ (X-mid)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_cellpose_3d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">x_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;YZ plane (X=</span><span class="si">{</span><span class="n">x_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stardist-3d-star-convex-shape-priors-in-3d">
+<h2>StarDist 3D: star-convex shape priors in 3D<a class="headerlink" href="#stardist-3d-star-convex-shape-priors-in-3d" title="Link to this heading">#</a></h2>
+<p>StarDist predicts star-convex distance maps in 3D: from each nucleus center, measure the distance to the boundary in many radial directions (e.g., 32 rays). Instance segmentation is then a watershed post-processing step. The advantage: the shape prior is built into the loss, so StarDist often handles dense nuclei better. The drawback: it assumes star-convex morphology (not always true for irregular cells).</p>
+<p><strong>Note on pretrained models.</strong> StarDist 3D comes with several pretrained models. We try <code class="docutils literal notranslate"><span class="pre">'3D_demo'</span></code> first; if that fails, we list alternatives. StarDist model names have changed in recent releases, so defensive error handling is important.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">stardist.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarDist3D</span>
+
+<span class="c1"># Try to load the default 3D model</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading StarDist 3D pretrained model...&quot;</span><span class="p">)</span>
+    <span class="n">stardist_model</span> <span class="o">=</span> <span class="n">StarDist3D</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;3D_demo&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded StarDist 3D model: 3D_demo&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not load &#39;3D_demo&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Available StarDist 3D models:&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">available_models</span> <span class="o">=</span> <span class="n">StarDist3D</span><span class="o">.</span><span class="n">list_pretrained</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">available_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;3d&#39;</span> <span class="ow">in</span> <span class="n">model_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;3D&#39;</span> <span class="ow">in</span> <span class="n">model_name</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  (could not list models; check StarDist GitHub for current names)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Falling back to brief explanation — see StarDist docs for model registry.&quot;</span><span class="p">)</span>
+    <span class="n">stardist_model</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">stardist_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Run inference</span>
+    <span class="c1"># Input: (z, y, x) array; normalize via csbdeep</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">csbdeep.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running StarDist 3D inference...&quot;</span><span class="p">)</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Normalize for csbdeep (1st and 99.8th percentile)</span>
+    <span class="n">volume_norm</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">volume_zyx</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">99.8</span><span class="p">)</span>
+
+    <span class="c1"># Predict: returns (labels, distances) where labels is the instance mask</span>
+    <span class="n">labels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stardist_model</span><span class="o">.</span><span class="n">predict_instances</span><span class="p">(</span><span class="n">volume_norm</span><span class="p">)</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="n">masks_stardist_3d</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;StarDist 3D masks shape: </span><span class="si">{</span><span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;StarDist 3D found: </span><span class="si">{</span><span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Skipping StarDist 3D inference because model load failed.&quot;</span><span class="p">)</span>
+    <span class="n">masks_stardist_3d</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-stardist-3d-output-three-orthogonal-mid-slices">
+<h2>Visualize StarDist 3D output: three orthogonal mid-slices<a class="headerlink" href="#visualize-stardist-3d-output-three-orthogonal-mid-slices" title="Link to this heading">#</a></h2>
+<p>(Only if the model loaded successfully)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">masks_stardist_3d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">z_mid</span> <span class="o">=</span> <span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">y_mid</span> <span class="o">=</span> <span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">x_mid</span> <span class="o">=</span> <span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+    <span class="c1"># XY (Z-mid)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_stardist_3d</span><span class="p">[</span><span class="n">z_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XY plane (Z=</span><span class="si">{</span><span class="n">z_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="c1"># XZ (Y-mid)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_stardist_3d</span><span class="p">[:,</span> <span class="n">y_mid</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XZ plane (Y=</span><span class="si">{</span><span class="n">y_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="c1"># YZ (X-mid)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_stardist_3d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">x_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;YZ plane (X=</span><span class="si">{</span><span class="n">x_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StarDist 3D model did not load; skipping visualization.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="choose-a-method-and-analyze">
+<h2>Choose a method and analyze<a class="headerlink" href="#choose-a-method-and-analyze" title="Link to this heading">#</a></h2>
+<p><strong>Predict before you choose.</strong> Look at the Cellpose 3D and StarDist 3D counts above. If they differ by a lot, which one do you expect to be more accurate? Why?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># @title Pick segmentation method { run: &quot;auto&quot; }</span>
+<span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;Cellpose 3D&quot;</span>  <span class="c1"># @param [&quot;Cellpose 3D&quot;, &quot;StarDist 3D&quot;, &quot;Both side-by-side (2D-stacked, Cellpose, StarDist)&quot;]</span>
+
+<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Cellpose 3D&quot;</span><span class="p">:</span>
+    <span class="n">chosen_mask</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;Cellpose 3D&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected: </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Objects: </span><span class="si">{</span><span class="n">chosen_mask</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;StarDist 3D&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">masks_stardist_3d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chosen_mask</span> <span class="o">=</span> <span class="n">masks_stardist_3d</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;StarDist 3D&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected: </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Objects: </span><span class="si">{</span><span class="n">chosen_mask</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StarDist 3D model did not load; falling back to Cellpose 3D&quot;</span><span class="p">)</span>
+        <span class="n">chosen_mask</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;Cellpose 3D&quot;</span>
+
+<span class="k">else</span><span class="p">:</span>  <span class="c1"># Both</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comparing all three methods:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  2D-stacked (fake 3D): </span><span class="si">{</span><span class="n">masks_2d_stacked</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> unique labels (but labels repeat across Z)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Cellpose 3D:          </span><span class="si">{</span><span class="n">masks_cellpose_3d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">masks_stardist_3d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  StarDist 3D:          </span><span class="si">{</span><span class="n">masks_stardist_3d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  StarDist 3D:          (model did not load)&quot;</span><span class="p">)</span>
+    <span class="n">chosen_mask</span> <span class="o">=</span> <span class="n">masks_cellpose_3d</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;Cellpose 3D (showing first; see next cell for comparison table)&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Showing Cellpose 3D for detailed analysis below.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="quantify-per-object-statistics">
+<h2>Quantify per-object statistics<a class="headerlink" href="#quantify-per-object-statistics" title="Link to this heading">#</a></h2>
+<p>Use scikit-image’s <code class="docutils literal notranslate"><span class="pre">regionprops_table</span></code> to compute volume, equivalent diameter, and other morphological features from the 3D label mask.</p>
+<p><strong>What these metrics mean:</strong></p>
+<ul class="simple">
+<li><p><strong>Volume (voxels)</strong>: total number of voxels in each object. Beware: volume in voxels depends on voxel size (isotropic here, but not always).</p></li>
+<li><p><strong>Equivalent diameter (voxels)</strong>: diameter of a sphere with the same volume. Useful for comparing object sizes.</p></li>
+<li><p><strong>Count</strong>: total number of objects found.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skimage.measure</span><span class="w"> </span><span class="kn">import</span> <span class="n">regionprops_table</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_3d_mask</span><span class="p">(</span><span class="n">mask_3d</span><span class="p">,</span> <span class="n">method_label</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze a 3D label mask and return a DataFrame of per-object stats.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mask_3d</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="n">regionprops_table</span><span class="p">(</span>
+        <span class="n">mask_3d</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;volume&#39;</span><span class="p">,</span> <span class="s1">&#39;equivalent_diameter_3d&#39;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method_label</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="c1"># Analyze the chosen method</span>
+<span class="n">df_chosen</span> <span class="o">=</span> <span class="n">analyze_3d_mask</span><span class="p">(</span><span class="n">chosen_mask</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> statistics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_chosen</span><span class="p">[[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;volume&#39;</span><span class="p">,</span> <span class="s1">&#39;equivalent_diameter_3d&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total objects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_chosen</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean volume per object: </span><span class="si">{</span><span class="n">df_chosen</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> voxels&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean equivalent diameter: </span><span class="si">{</span><span class="n">df_chosen</span><span class="p">[</span><span class="s1">&#39;equivalent_diameter_3d&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> voxels&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compare-all-available-methods-side-by-side">
+<h2>Compare all available methods side-by-side<a class="headerlink" href="#compare-all-available-methods-side-by-side" title="Link to this heading">#</a></h2>
+<p>Tabulate per-object stats from each method. Compare object counts, mean volumes, and distributions.</p>
+<p><strong>Key question:</strong> Do the methods agree on how many nuclei there are? If they disagree by a lot (e.g., Cellpose 3D says 50 but StarDist 3D says 80), that’s a red flag: at least one of them is wrong in a way the other isn’t. That’s the failure mode we need to catch in validation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare counts and mean statistics across methods</span>
+<span class="n">results_summary</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># 2D-stacked</span>
+<span class="n">results_summary</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;2D-stacked&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;n_objects&#39;</span><span class="p">:</span> <span class="n">masks_2d_stacked</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+    <span class="s1">&#39;mean_volume&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># not computed; labels repeat across Z</span>
+    <span class="s1">&#39;note&#39;</span><span class="p">:</span> <span class="s1">&#39;labels repeat across Z; counts unreliable&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># Cellpose 3D</span>
+<span class="n">df_cp3d</span> <span class="o">=</span> <span class="n">analyze_3d_mask</span><span class="p">(</span><span class="n">masks_cellpose_3d</span><span class="p">,</span> <span class="s1">&#39;Cellpose 3D&#39;</span><span class="p">)</span>
+<span class="n">results_summary</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;Cellpose 3D&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;n_objects&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_cp3d</span><span class="p">),</span>
+    <span class="s1">&#39;mean_volume&#39;</span><span class="p">:</span> <span class="n">df_cp3d</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_cp3d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;note&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># StarDist 3D (if available)</span>
+<span class="k">if</span> <span class="n">masks_stardist_3d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">df_sd3d</span> <span class="o">=</span> <span class="n">analyze_3d_mask</span><span class="p">(</span><span class="n">masks_stardist_3d</span><span class="p">,</span> <span class="s1">&#39;StarDist 3D&#39;</span><span class="p">)</span>
+    <span class="n">results_summary</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;StarDist 3D&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;n_objects&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_sd3d</span><span class="p">),</span>
+        <span class="s1">&#39;mean_volume&#39;</span><span class="p">:</span> <span class="n">df_sd3d</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_sd3d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;note&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="p">})</span>
+
+<span class="n">df_compare</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_summary</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comparison of methods:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_compare</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualize-the-3d-segmentation-max-projection-orthogonal-slices">
+<h2>Visualize the 3D segmentation: max-projection + orthogonal slices<a class="headerlink" href="#visualize-the-3d-segmentation-max-projection-orthogonal-slices" title="Link to this heading">#</a></h2>
+<p>A max-projection collapses the 3D volume to 2D along the Z-axis, showing all nuclei in one image. Orthogonal slices show internal structure.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Max-projection along Z (collapse 3D -&gt; 2D)</span>
+<span class="n">max_proj</span> <span class="o">=</span> <span class="n">chosen_mask</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># max label along Z</span>
+
+<span class="n">z_mid</span> <span class="o">=</span> <span class="n">chosen_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">y_mid</span> <span class="o">=</span> <span class="n">chosen_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">x_mid</span> <span class="o">=</span> <span class="n">chosen_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+
+<span class="c1"># Max-projection (top-left)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">max_proj</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max-projection (Z-collapse)</span><span class="se">\n</span><span class="si">{</span><span class="n">chosen_mask</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="c1"># XY mid-plane (top-right)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">chosen_mask</span><span class="p">[</span><span class="n">z_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XY plane (Z=</span><span class="si">{</span><span class="n">z_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="c1"># XZ mid-plane (bottom-left)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">chosen_mask</span><span class="p">[:,</span> <span class="n">y_mid</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;XZ plane (Y=</span><span class="si">{</span><span class="n">y_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="c1"># YZ mid-plane (bottom-right)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">chosen_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">x_mid</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;YZ plane (X=</span><span class="si">{</span><span class="n">x_mid</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="when-is-3d-segmentation-worth-it">
+<h2>When is 3D segmentation worth it?<a class="headerlink" href="#when-is-3d-segmentation-worth-it" title="Link to this heading">#</a></h2>
+<p>We’ve now run three approaches on the same volume:</p>
+<ol class="arabic simple">
+<li><p><strong>2D-stacked:</strong> Apply 2D segmentation to each Z independently, stack results. Fast, but loses through-plane connectivity. Instance labels don’t carry meaning across Z.</p></li>
+<li><p><strong>Cellpose 3D:</strong> Uses recurrent 3D convolutions to enforce consistency across Z. More expensive (20–100× slower than 2D per-slice), but returns true 3D instances.</p></li>
+<li><p><strong>StarDist 3D:</strong> Uses star-convex distance maps in 3D. Also expensive, but often better on dense nuclei because the shape prior is enforced in the loss.</p></li>
+</ol>
+<p><strong>Trade-offs:</strong></p>
+<ul class="simple">
+<li><p><strong>Speed:</strong> 2D-stacked &lt;&lt; Cellpose 3D ≈ StarDist 3D (both heavy).</p></li>
+<li><p><strong>Connectivity:</strong> 2D-stacked has none; Cellpose 3D and StarDist 3D both enforce it.</p></li>
+<li><p><strong>Accuracy:</strong> Depends on morphology. StarDist often wins on <em>densely packed</em> nuclei (shapes are star-convex). Cellpose 3D is more flexible for irregular morphologies.</p></li>
+<li><p><strong>Robustness:</strong> When in doubt, use the method closest to your sample type. If the two disagree, that’s a red flag.</p></li>
+</ul>
+<p><strong>When to use each:</strong></p>
+<ul class="simple">
+<li><p><strong>2D-stacked (2D per-slice, no 3D tracking):</strong> Quick prototyping, large volumes where memory is tight, or when you don’t care about through-plane connectivity (e.g., if you’re counting nuclei per slice, not tracing them through the volume).</p></li>
+<li><p><strong>True 3D (Cellpose 3D or StarDist 3D):</strong> When connectivity matters (e.g., measuring nuclear volume, tracing cell morphology through depth, time-lapse tracking), or when dense packing requires shape awareness. Accept the compute cost.</p></li>
+<li><p><strong>Classical 3D segmentation (watershed, level-sets):</strong> When the data is very far from the training distribution of neural models, and you have domain knowledge about the morphology (e.g., intensity-based watershed on high-contrast images). Not covered in this lab.</p></li>
+</ul>
+<p><strong>A note on validation:</strong> The methods may disagree on the count. <strong>Disagreement is informative — it tells you the count depends on the model choice.</strong> If you have ground truth (manually traced nuclei), validate both and pick the winner. If you don’t have ground truth, the disagreement itself is a signal to do manual QA before publishing.</p>
+<p>This is exactly the validation pattern Notebook 02 (and later, Notebook 13) makes systematic.</p>
+</section>
+<section id="closing-reflection">
+<h2>Closing reflection<a class="headerlink" href="#closing-reflection" title="Link to this heading">#</a></h2>
+<p>This notebook demonstrated the full 3D segmentation workflow:</p>
+<ol class="arabic simple">
+<li><p>Load a real 3D volume (cells3d() nuclei channel).</p></li>
+<li><p>Run a naive baseline (2D per-slice) to show why connectivity matters.</p></li>
+<li><p>Run two 3D methods (Cellpose 3D, StarDist 3D) with different inductive biases.</p></li>
+<li><p>Quantify outputs: per-object volume, equivalent diameter, count.</p></li>
+<li><p>Compare methods and discuss trade-offs.</p></li>
+</ol>
+<p><strong>The big question left unanswered here:</strong> Which model is <em>correct</em> for this data? We don’t have ground truth, so we can’t answer that yet. In a real project, you would:</p>
+<ul class="simple">
+<li><p>Use inter-model agreement as a triage signal (regions all methods agree on are high-confidence).</p></li>
+<li><p>Annotate a small subset of slices as ground truth (20–40 nuclei across 3–5 slices is often enough).</p></li>
+<li><p>Apply Notebook 02’s validation metrics to both models.</p></li>
+<li><p>Pick the winner, or fine-tune the loser.</p></li>
+</ul>
+<p>That validation workflow is the core of Notebook 02 (for 2D) and would extend naturally to 3D.</p>
+<p><strong>Where to go next on your own:</strong></p>
+<ul class="simple">
+<li><p><strong>Notebook 01</strong> — review the 2D Cellpose workflow and parameter tuning if 3D feels abstract.</p></li>
+<li><p><strong>Notebook 02</strong> (Validation quantification) — the metrics that turn “which model is better?” from a visual judgment into a number. Essential if you’re publishing 3D segmentation results.</p></li>
+<li><p><strong>Notebook 09</strong> (Cellpose fine-tuning) — if the 3D pretrained model doesn’t fit your data, train your own on a small set of your images.</p></li>
+<li><p><strong>StarDist GitHub</strong> (<a class="reference external" href="https://stardist.net">stardist.net</a>) — training and advanced usage of StarDist 3D.</p></li>
+<li><p><strong>μSAM for 3D</strong> (Notebook 03b extended) — segment-anything adapted to 3D; useful when models don’t exist for your sample type.</p></li>
+</ul>
+<p>The 3D-to-validation pipeline is young; methods and best practices are still evolving. The pattern in this lab — pick a method, measure it, pick a winner — is timeless.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="09_cellpose_finetune.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="11_dl_tracking.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-3d-volume">Load the 3D volume</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-three-z-slices-through-the-volume">Visualize three Z-slices through the volume</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-per-slice-baseline-apply-cellpose-2d-to-each-z-independently">2D-per-slice baseline: apply Cellpose 2D to each Z independently</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-3d-3d-aware-segmentation">Cellpose 3D: 3D-aware segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-cellpose-3d-output-three-orthogonal-mid-slices">Visualize Cellpose 3D output: three orthogonal mid-slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stardist-3d-star-convex-shape-priors-in-3d">StarDist 3D: star-convex shape priors in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-stardist-3d-output-three-orthogonal-mid-slices">Visualize StarDist 3D output: three orthogonal mid-slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-a-method-and-analyze">Choose a method and analyze</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantify-per-object-statistics">Quantify per-object statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-all-available-methods-side-by-side">Compare all available methods side-by-side</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-3d-segmentation-max-projection-orthogonal-slices">Visualize the 3D segmentation: max-projection + orthogonal slices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-3d-segmentation-worth-it">When is 3D segmentation worth it?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

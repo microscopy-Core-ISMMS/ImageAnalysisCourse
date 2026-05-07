@@ -1,0 +1,984 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 02 — Validation and Quantification (Lab 2) &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/02_validation_quantification';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)" href="03a_denoising_n2v.html" />
+    <link rel="prev" title="Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)" href="01_cellpose_segmentation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/02_validation_quantification.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 02 — Validation and Quantification (Lab 2)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-load-lab-1-outputs">Setup and load Lab 1 outputs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-helpers">Visualization helpers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-ground-truth">Generate ground truth</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-pixel-level-metrics-iou-dice">Compute pixel-level metrics (IoU, Dice)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-instance-level-metrics">Compute instance-level metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-biological-measurements">Compute biological measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-metricbiology-plot">The metric–biology plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-key-insight">The key insight</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- colab-badge -->
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/02_validation_quantification.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-02-validation-and-quantification-lab-2">
+<h1>Notebook 02 — Validation and Quantification (Lab 2)<a class="headerlink" href="#notebook-02-validation-and-quantification-lab-2" title="Link to this heading">#</a></h1>
+<p><strong>Lab time.</strong> 75 minutes.
+<strong>Prerequisites.</strong> Notebook 01 completed; segmentation outputs saved.</p>
+<p><strong>Learning goals.</strong></p>
+<ol class="arabic simple">
+<li><p>Compute pixel-level (IoU, Dice) and instance-level (precision, recall) metrics.</p></li>
+<li><p>Compare predicted segmentations to ground truth.</p></li>
+<li><p>Demonstrate the <strong>metrics versus biology</strong> gap: a model can have high IoU and still produce wrong biological measurements.</p></li>
+<li><p>Choose validation metrics that match the biological question.</p></li>
+</ol>
+<p>The lab’s central learning moment is in Step 5 — pay attention there.</p>
+<blockquote>
+<div><p><strong>A note on the form widgets.</strong> Several cells below use <code class="docutils literal notranslate"><span class="pre">#&#64;param</span></code> comments. In <strong>Google Colab</strong> these render as interactive form widgets (sliders, dropdowns) at the top of the cell. In <strong>other environments</strong> (JupyterLab, VS Code, the JB rendered HTML) they appear as plain Python comments — edit the values directly and re-run the cell.</p>
+</div></blockquote>
+<section id="setup-and-load-lab-1-outputs">
+<h2>Setup and load Lab 1 outputs<a class="headerlink" href="#setup-and-load-lab-1-outputs" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install --quiet numpy scikit-image matplotlib pandas seaborn scipy
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Load Lab 1 outputs. If they don&#39;t exist, fall back to synthetic data so</span>
+<span class="c1"># the lab can still be completed.</span>
+<span class="n">have_lab1</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;masks_easy.npy&quot;</span><span class="p">,</span> <span class="s2">&quot;masks_hard.npy&quot;</span><span class="p">])</span>
+<span class="k">if</span> <span class="n">have_lab1</span><span class="p">:</span>
+    <span class="n">masks_easy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;masks_easy.npy&quot;</span><span class="p">)</span>
+    <span class="n">masks_hard</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;masks_hard.npy&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loaded Lab 1 outputs.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Lab 1 outputs not found. Generating synthetic data for the lab.&quot;</span><span class="p">)</span>
+    <span class="c1"># Synthetic fallback: a &#39;predicted&#39; segmentation we can score</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">masks_easy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+        <span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[:</span><span class="mi">200</span><span class="p">,</span> <span class="p">:</span><span class="mi">200</span><span class="p">]</span>
+        <span class="n">masks_easy</span><span class="p">[(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">masks_hard</span> <span class="o">=</span> <span class="n">masks_easy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">masks_hard</span><span class="p">[</span><span class="n">masks_hard</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># merge two cells</span>
+    <span class="n">masks_hard</span><span class="p">[</span><span class="n">masks_hard</span> <span class="o">==</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># delete a cell</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;masks_easy: </span><span class="si">{</span><span class="n">masks_easy</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">masks_easy</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;masks_hard: </span><span class="si">{</span><span class="n">masks_hard</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">masks_hard</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="visualization-helpers">
+<h3>Visualization helpers<a class="headerlink" href="#visualization-helpers" title="Link to this heading">#</a></h3>
+<p>We define three small helpers used throughout the lab. Run this cell once; every subsequent visualization calls them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
+
+<span class="c1"># Categorical colormap for instance labels (background black, then qualitative)</span>
+<span class="n">_label_cmap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;black&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;tab20&#39;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show_mask</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_label_cmap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render an integer-label mask with one color per instance.&quot;&quot;&quot;</span>
+    <span class="n">n_lbl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">n_lbl</span><span class="si">}</span><span class="s2"> obj)&quot;</span> <span class="k">if</span> <span class="n">title</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_lbl</span><span class="si">}</span><span class="s2"> obj&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pixel_agreement_rgb</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">gt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Color-code per-pixel agreement: green=TP, red=FP, blue=FN.&quot;&quot;&quot;</span>
+    <span class="n">pred_bin</span> <span class="o">=</span> <span class="n">pred</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">gt_bin</span> <span class="o">=</span> <span class="n">gt</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>   <span class="c1"># red   = FP</span>
+    <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">&amp;</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>    <span class="c1"># green = TP</span>
+    <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">pred_bin</span> <span class="o">&amp;</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>   <span class="c1"># blue  = FN</span>
+    <span class="k">return</span> <span class="n">rgb</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">instance_match_status</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return per-cell match status for both pred and gt.</span>
+
+<span class="sd">    Returns (pred_status, gt_status) as integer images:</span>
+<span class="sd">      pred_status: 0=bg, 1=TP, 2=FP</span>
+<span class="sd">      gt_status:   0=bg, 1=TP, 3=FN  (3 just to keep colors distinct)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pred_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">gt_ids</span>   <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gt</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">matched_pred</span><span class="p">,</span> <span class="n">matched_gt</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pred_ids</span><span class="p">:</span>
+        <span class="n">pb</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred</span> <span class="o">==</span> <span class="n">p</span><span class="p">);</span> <span class="n">best_iou</span><span class="p">,</span> <span class="n">best_g</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gt_ids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">matched_gt</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">gb</span> <span class="o">=</span> <span class="p">(</span><span class="n">gt</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+            <span class="n">inter</span> <span class="o">=</span> <span class="p">(</span><span class="n">pb</span> <span class="o">&amp;</span> <span class="n">gb</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">();</span> <span class="n">union</span> <span class="o">=</span> <span class="p">(</span><span class="n">pb</span> <span class="o">|</span> <span class="n">gb</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">iou_val</span> <span class="o">=</span> <span class="n">inter</span> <span class="o">/</span> <span class="n">union</span>
+            <span class="k">if</span> <span class="n">iou_val</span> <span class="o">&gt;</span> <span class="n">best_iou</span><span class="p">:</span>
+                <span class="n">best_iou</span><span class="p">,</span> <span class="n">best_g</span> <span class="o">=</span> <span class="n">iou_val</span><span class="p">,</span> <span class="n">g</span>
+        <span class="k">if</span> <span class="n">best_iou</span> <span class="o">&gt;=</span> <span class="n">iou_threshold</span><span class="p">:</span>
+            <span class="n">matched_pred</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="n">matched_gt</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">best_g</span><span class="p">)</span>
+    <span class="n">pred_status</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">gt_status</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">gt</span><span class="p">,</span>   <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pred_ids</span><span class="p">:</span>
+        <span class="n">pred_status</span><span class="p">[</span><span class="n">pred</span> <span class="o">==</span> <span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">matched_pred</span> <span class="k">else</span> <span class="mi">2</span>   <span class="c1"># TP / FP</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gt_ids</span><span class="p">:</span>
+        <span class="n">gt_status</span><span class="p">[</span><span class="n">gt</span> <span class="o">==</span> <span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">matched_gt</span> <span class="k">else</span> <span class="mi">3</span>         <span class="c1"># TP / FN</span>
+    <span class="k">return</span> <span class="n">pred_status</span><span class="p">,</span> <span class="n">gt_status</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Helpers defined: show_mask, pixel_agreement_rgb, instance_match_status.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="generate-ground-truth">
+<h2>Generate ground truth<a class="headerlink" href="#generate-ground-truth" title="Link to this heading">#</a></h2>
+<p>Real ground truth is hard. For this lab we construct a synthetic ground truth that we <em>know</em> is correct, so we can measure exactly how the predictions deviate. In practice the ground truth would come from expert annotation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the easy mask as the &#39;truth&#39; for both images, simulating a case where</span>
+<span class="c1"># the model overfits the easy distribution and degrades on the harder one.</span>
+<span class="n">gt_easy</span> <span class="o">=</span> <span class="n">masks_easy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># For the hard ground truth, we&#39;ll perturb less aggressively — pretending the</span>
+<span class="c1"># real biology has more cells than the model found.</span>
+<span class="n">gt_hard</span> <span class="o">=</span> <span class="n">masks_easy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># in this synthetic setup, ground truth is the same as easy</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gt_easy: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">gt_easy</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gt_hard: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">gt_hard</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2"> objects&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Visualize what we’re comparing.</strong> Before any metric, see the four masks side-by-side. Top row = ground truth; bottom row = prediction. Differences should be visible by eye on the hard column.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">show_mask</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">gt_easy</span><span class="p">,</span>    <span class="s2">&quot;Easy — ground truth&quot;</span><span class="p">)</span>
+<span class="n">show_mask</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">gt_hard</span><span class="p">,</span>    <span class="s2">&quot;Hard — ground truth&quot;</span><span class="p">)</span>
+<span class="n">show_mask</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">masks_easy</span><span class="p">,</span> <span class="s2">&quot;Easy — predicted&quot;</span><span class="p">)</span>
+<span class="n">show_mask</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">masks_hard</span><span class="p">,</span> <span class="s2">&quot;Hard — predicted&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compute-pixel-level-metrics-iou-dice">
+<h2>Compute pixel-level metrics (IoU, Dice)<a class="headerlink" href="#compute-pixel-level-metrics-iou-dice" title="Link to this heading">#</a></h2>
+<p><strong>What’s happening here.</strong> <em>Intersection over Union</em> (IoU) is the area where prediction and truth agree, divided by the area covered by either. <em>Dice</em> is twice the agreement divided by the sum of the two areas — equivalent to the harmonic mean of precision and recall over pixels. Both range from 0 (no overlap) to 1 (perfect overlap). Both are <em>pixel</em>-level — they ignore whether the pixels group into the right number of cells.</p>
+<p><strong>Predict before running.</strong> Imagine two binary masks that are <em>identical except shifted by 1 pixel in both x and y</em>. The cells are perfectly recovered, just slightly offset. What IoU do you expect?</p>
+<ul class="simple">
+<li><p>(a) ≥ 0.99 — the masks are nearly identical, so IoU should be near-perfect.</p></li>
+<li><p>(b) ~ 0.95 — small offset, small drop.</p></li>
+<li><p>(c) ~ 0.85 — most pixels overlap, but boundary pixels don’t.</p></li>
+<li><p>(d) &lt; 0.7 — surprisingly low for a “small” shift.</p></li>
+</ul>
+<p>The right answer for a circular mask of radius ~12 px is closer to (c). Most students predict (a) or (b). IoU is harsher than intuition suggests because it compares <em>boundaries</em>, and boundaries are where errors live.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">iou_dice_binary</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">,</span> <span class="n">gt_mask</span><span class="p">):</span>
+    <span class="n">pred_bin</span> <span class="o">=</span> <span class="n">pred_mask</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">gt_bin</span> <span class="o">=</span> <span class="n">gt_mask</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">intersection</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">&amp;</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">union</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">|</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">pred_sum</span> <span class="o">=</span> <span class="n">pred_bin</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">gt_sum</span> <span class="o">=</span> <span class="n">gt_bin</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">iou</span> <span class="o">=</span> <span class="n">intersection</span> <span class="o">/</span> <span class="n">union</span> <span class="k">if</span> <span class="n">union</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">dice</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">pred_sum</span> <span class="o">+</span> <span class="n">gt_sum</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">pred_sum</span> <span class="o">+</span> <span class="n">gt_sum</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">iou</span><span class="p">,</span> <span class="n">dice</span>
+
+<span class="n">iou_e</span><span class="p">,</span> <span class="n">dice_e</span> <span class="o">=</span> <span class="n">iou_dice_binary</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">)</span>
+<span class="n">iou_h</span><span class="p">,</span> <span class="n">dice_h</span> <span class="o">=</span> <span class="n">iou_dice_binary</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Easy image  : IoU = </span><span class="si">{</span><span class="n">iou_e</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Dice = </span><span class="si">{</span><span class="n">dice_e</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hard image  : IoU = </span><span class="si">{</span><span class="n">iou_h</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Dice = </span><span class="si">{</span><span class="n">dice_h</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Where do those numbers live spatially?</strong> The IoU/Dice scores summarize the whole image into a single number. The next cell breaks that number out across pixels: <strong>green = true positive</strong> (pred and GT agree there’s a cell), <strong>red = false positive</strong> (pred says cell, GT says background), <strong>blue = false negative</strong> (GT says cell, pred missed it). The red and blue regions are <em>exactly</em> what’s pulling the IoU down.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pixel_agreement_rgb</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Easy — IoU=</span><span class="si">{</span><span class="n">iou_e</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Dice=</span><span class="si">{</span><span class="n">dice_e</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pixel_agreement_rgb</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hard — IoU=</span><span class="si">{</span><span class="n">iou_h</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Dice=</span><span class="si">{</span><span class="n">dice_h</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Pixel agreement map: green=TP, red=FP, blue=FN&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>What you should be seeing.</strong> The easy image scores near 1.0 (the agreement map is almost entirely green). The hard image is a bit lower but still typically above 0.85 — yet the agreement map shows visible red and blue patches. Pixel metrics make problems look <em>less</em> severe than they are. The number that <em>seems</em> high (0.92!) hides the fact that <em>count</em> is off, <em>which cells were detected</em> is wrong, and the failure-mode distribution is irregular. Watch what instance-level metrics show next.</p>
+<p><strong>Verify the 1-pixel-shift intuition.</strong> Run the cell below to confirm the prediction question. A circular mask shifted by 1 pixel each way drops to IoU ≈ 0.85, not the 0.99+ most people expect.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify: 1-pixel shift on a circular mask</span>
+<span class="n">shift</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># @param {type: &quot;slider&quot;, min: 0, max: 5, step: 1}</span>
+
+<span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[:</span><span class="mi">200</span><span class="p">,</span> <span class="p">:</span><span class="mi">200</span><span class="p">]</span>
+<span class="n">mask_a</span> <span class="o">=</span> <span class="p">((</span><span class="n">Y</span> <span class="o">-</span> <span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="n">mask_b</span> <span class="o">=</span> <span class="p">((</span><span class="n">Y</span> <span class="o">-</span> <span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="n">shift</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="n">shift</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="n">iou_shift</span><span class="p">,</span> <span class="n">dice_shift</span> <span class="o">=</span> <span class="n">iou_dice_binary</span><span class="p">(</span><span class="n">mask_a</span><span class="p">,</span> <span class="n">mask_b</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shift = </span><span class="si">{</span><span class="n">shift</span><span class="si">}</span><span class="s2"> px → IoU = </span><span class="si">{</span><span class="n">iou_shift</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Dice = </span><span class="si">{</span><span class="n">dice_shift</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Visualize: red = mask A only, blue = mask B only, magenta = both</span>
+<span class="n">overlay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">mask_a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">overlay</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_a</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">overlay</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_b</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">overlay</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mask A (red), Mask B (blue), overlap (magenta)</span><span class="se">\n</span><span class="s2">shift=</span><span class="si">{</span><span class="n">shift</span><span class="si">}</span><span class="s2">px → IoU=</span><span class="si">{</span><span class="n">iou_shift</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compute-instance-level-metrics">
+<h2>Compute instance-level metrics<a class="headerlink" href="#compute-instance-level-metrics" title="Link to this heading">#</a></h2>
+<p><strong>What’s happening here.</strong> Instance metrics treat each cell as a discrete object. We match each predicted cell to a ground-truth cell if their IoU exceeds a threshold. Matched pairs are <em>true positives</em>; unmatched predictions are <em>false positives</em>; unmatched ground-truth cells are <em>false negatives</em>. <strong>The threshold matters.</strong> A threshold of 0.5 is the COCO/instance-segmentation convention; 0.75 is much stricter.</p>
+<p><strong>Predict before running.</strong> With <code class="docutils literal notranslate"><span class="pre">iou_threshold=0.5</span></code>, a predicted mask with IoU exactly 0.51 against the wrong ground-truth cell is counted as a true positive. What does that mean for the precision/recall numbers you’ll see?</p>
+<ul class="simple">
+<li><p>(a) Nothing — the threshold is just a convention, the metric is robust.</p></li>
+<li><p>(b) The precision/recall numbers are <em>upper bounds</em>; with a stricter threshold the same predictions look worse.</p></li>
+<li><p>(c) The threshold is irrelevant; what matters is the underlying overlap.</p></li>
+<li><p>(d) The threshold should be chosen to match the biological tolerance — for sparse cells that touch, lower; for dense touching cells where boundary precision matters, higher.</p></li>
+</ul>
+<p>(b) and (d) are both correct. The threshold is not a property of your model; it is a property of <em>what counts as a successful detection</em>, and that is a biology question, not a model question.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">match_instances</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">,</span> <span class="n">gt_mask</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Match each predicted instance to a GT instance by IoU &gt;= threshold.</span>
+
+<span class="sd">    Returns matched count, false positives, false negatives.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pred_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pred_mask</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">gt_ids</span>   <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gt_mask</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">matched_pred</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">matched_gt</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pred_ids</span><span class="p">:</span>
+        <span class="n">pred_bin</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_mask</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">best_iou</span><span class="p">,</span> <span class="n">best_g</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gt_ids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">matched_gt</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">gt_bin</span> <span class="o">=</span> <span class="p">(</span><span class="n">gt_mask</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+            <span class="n">inter</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">&amp;</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">union</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_bin</span> <span class="o">|</span> <span class="n">gt_bin</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">iou_val</span> <span class="o">=</span> <span class="n">inter</span> <span class="o">/</span> <span class="n">union</span>
+            <span class="k">if</span> <span class="n">iou_val</span> <span class="o">&gt;</span> <span class="n">best_iou</span><span class="p">:</span>
+                <span class="n">best_iou</span><span class="p">,</span> <span class="n">best_g</span> <span class="o">=</span> <span class="n">iou_val</span><span class="p">,</span> <span class="n">g</span>
+        <span class="k">if</span> <span class="n">best_iou</span> <span class="o">&gt;=</span> <span class="n">iou_threshold</span><span class="p">:</span>
+            <span class="n">matched_pred</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">matched_gt</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">best_g</span><span class="p">)</span>
+
+    <span class="n">tp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_pred</span><span class="p">)</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_ids</span><span class="p">)</span> <span class="o">-</span> <span class="n">tp</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gt_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_gt</span><span class="p">)</span>
+    <span class="n">precision</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">recall</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;tp&quot;</span><span class="p">:</span> <span class="n">tp</span><span class="p">,</span> <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="n">precision</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">recall</span><span class="p">}</span>
+
+<span class="n">m_easy</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">)</span>
+<span class="n">m_hard</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Easy:&quot;</span><span class="p">,</span> <span class="n">m_easy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hard:&quot;</span><span class="p">,</span> <span class="n">m_hard</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Visualize the match.</strong> Two views: (1) per-cell match status painted on each image — <em>green = TP, red = FP, blue = FN</em>; (2) a bar chart of TP/FP/FN counts side-by-side. The hard image will have visibly red and blue cells; the easy image should be almost all green.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Per-cell match status maps</span>
+<span class="n">status_pred_e</span><span class="p">,</span> <span class="n">status_gt_e</span> <span class="o">=</span> <span class="n">instance_match_status</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">status_pred_h</span><span class="p">,</span> <span class="n">status_gt_h</span> <span class="o">=</span> <span class="n">instance_match_status</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># 4-color status colormap: 0=bg(black), 1=TP(green), 2=FP(red), 3=FN(blue)</span>
+<span class="n">_status_cmap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;#2ca02c&#39;</span><span class="p">,</span> <span class="s1">&#39;#d62728&#39;</span><span class="p">,</span> <span class="s1">&#39;#1f77b4&#39;</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">status_pred_e</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_status_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Easy — predicted (TP green / FP red)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">status_gt_e</span><span class="p">,</span>   <span class="n">cmap</span><span class="o">=</span><span class="n">_status_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Easy — ground truth (TP green / FN blue)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">status_pred_h</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_status_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hard — predicted (TP green / FP red)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">status_gt_h</span><span class="p">,</span>   <span class="n">cmap</span><span class="o">=</span><span class="n">_status_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hard — ground truth (TP green / FN blue)&quot;</span><span class="p">);</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Bar chart of TP/FP/FN counts</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TP&#39;</span><span class="p">,</span> <span class="s1">&#39;FP&#39;</span><span class="p">,</span> <span class="s1">&#39;FN&#39;</span><span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">,</span> <span class="p">[</span><span class="n">m_easy</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">],</span> <span class="n">m_easy</span><span class="p">[</span><span class="s1">&#39;fp&#39;</span><span class="p">],</span> <span class="n">m_easy</span><span class="p">[</span><span class="s1">&#39;fn&#39;</span><span class="p">]],</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Easy&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#4C72B0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">,</span> <span class="p">[</span><span class="n">m_hard</span><span class="p">[</span><span class="s1">&#39;tp&#39;</span><span class="p">],</span> <span class="n">m_hard</span><span class="p">[</span><span class="s1">&#39;fp&#39;</span><span class="p">],</span> <span class="n">m_hard</span><span class="p">[</span><span class="s1">&#39;fn&#39;</span><span class="p">]],</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hard&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#C44E52&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Count of instances&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Instance-level outcomes at IoU threshold 0.5&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>What you should be seeing.</strong> Pixel IoU was 0.95+ on the hard case while instance recall is now visibly lower. The same model output, scored two ways, can look excellent or mediocre depending on the metric. <strong>The metric you choose changes how bad the problem looks.</strong> Reporting a single IoU number in a methods section without disclosing the threshold and the matching strategy is the bioimage-analysis equivalent of selective reporting.</p>
+<p><strong>Free exploration — slide the IoU threshold.</strong> Watch how precision and recall change as you raise the threshold from 0.5 toward 0.9. Most published instance-level numbers are at threshold 0.5; the same model at 0.75 typically looks dramatically worse — and that stricter threshold is the one that matters when boundaries are biologically meaningful.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># @title Instance-matching threshold exploration { run: &quot;auto&quot; }</span>
+<span class="n">iou_threshold</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># @param {type: &quot;slider&quot;, min: 0.3, max: 0.95, step: 0.05}</span>
+
+<span class="n">m_easy_t</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="n">iou_threshold</span><span class="p">)</span>
+<span class="n">m_hard_t</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="n">iou_threshold</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;At iou_threshold=</span><span class="si">{</span><span class="n">iou_threshold</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Easy: precision=</span><span class="si">{</span><span class="n">m_easy_t</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, recall=</span><span class="si">{</span><span class="n">m_easy_t</span><span class="p">[</span><span class="s1">&#39;recall&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Hard: precision=</span><span class="si">{</span><span class="n">m_hard_t</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, recall=</span><span class="si">{</span><span class="n">m_hard_t</span><span class="p">[</span><span class="s1">&#39;recall&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>See the threshold dependence as a curve.</strong> A single number at one threshold is not a model property — it is a <em>choice</em>. The cell below sweeps the threshold from 0.3 to 0.95 and plots precision and recall for both images. The vertical line marks the slider value above. Slide the slider, re-run, watch the line move. <strong>Most published papers report the value at threshold 0.5; you can see how dramatically the same model looks worse at 0.75.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mi">27</span><span class="p">)</span>
+<span class="n">prec_e</span><span class="p">,</span> <span class="n">rec_e</span><span class="p">,</span> <span class="n">prec_h</span><span class="p">,</span> <span class="n">rec_h</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ts</span><span class="p">:</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">mh</span> <span class="o">=</span> <span class="n">match_instances</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">prec_e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">me</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]);</span> <span class="n">rec_e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">me</span><span class="p">[</span><span class="s1">&#39;recall&#39;</span><span class="p">])</span>
+    <span class="n">prec_h</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mh</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]);</span> <span class="n">rec_h</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mh</span><span class="p">[</span><span class="s1">&#39;recall&#39;</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">prec_e</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#4C72B0&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Easy precision&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">rec_e</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#4C72B0&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Easy recall&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">prec_h</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#C44E52&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hard precision&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">rec_h</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#C44E52&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hard recall&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">iou_threshold</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;slider = </span><span class="si">{</span><span class="n">iou_threshold</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;IoU threshold for instance match&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Precision / recall&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Instance metrics depend on the IoU threshold you chose&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="compute-biological-measurements">
+<h2>Compute biological measurements<a class="headerlink" href="#compute-biological-measurements" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">biological_summary</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="n">pred_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">pred</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">gt_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">gt</span><span class="p">[</span><span class="n">gt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+        <span class="s2">&quot;predicted_count&quot;</span><span class="p">:</span> <span class="n">pred_count</span><span class="p">,</span>
+        <span class="s2">&quot;true_count&quot;</span><span class="p">:</span> <span class="n">gt_count</span><span class="p">,</span>
+        <span class="s2">&quot;count_error&quot;</span><span class="p">:</span> <span class="n">pred_count</span> <span class="o">-</span> <span class="n">gt_count</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="n">bio_easy</span> <span class="o">=</span> <span class="n">biological_summary</span><span class="p">(</span><span class="n">masks_easy</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">,</span> <span class="s2">&quot;easy&quot;</span><span class="p">)</span>
+<span class="n">bio_hard</span> <span class="o">=</span> <span class="n">biological_summary</span><span class="p">(</span><span class="n">masks_hard</span><span class="p">,</span> <span class="n">gt_hard</span><span class="p">,</span> <span class="s2">&quot;hard&quot;</span><span class="p">)</span>
+<span class="n">df_bio</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">bio_easy</span><span class="p">,</span> <span class="n">bio_hard</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_bio</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Count comparison.</strong> A bar chart that puts true and predicted counts next to each other. The gap <em>is</em> the count error; the gap is what matters biologically. Compare this to the instance precision/recall plot above — you’ll see they tell different stories about the same prediction.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_bio</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">df_bio</span><span class="p">[</span><span class="s1">&#39;true_count&#39;</span><span class="p">],</span>      <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;True count&#39;</span><span class="p">,</span>      <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#2c7bb6&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">df_bio</span><span class="p">[</span><span class="s1">&#39;predicted_count&#39;</span><span class="p">],</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted count&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#d7191c&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_bio</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;count_error&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;err = </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">+d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;true_count&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;predicted_count&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">),</span>
+                <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">df_bio</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Cell count&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;True vs predicted cell counts&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">df_bio</span><span class="p">[[</span><span class="s1">&#39;true_count&#39;</span><span class="p">,</span> <span class="s1">&#39;predicted_count&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-metricbiology-plot">
+<h2>The metric–biology plot<a class="headerlink" href="#the-metricbiology-plot" title="Link to this heading">#</a></h2>
+<p><strong>What’s happening here.</strong> This is the lab’s central learning moment — the figure the morning lecture promised. We construct a series of perturbed predictions starting from ground truth and progressively deleting cells. For each perturbation we compute <em>both</em> IoU (a pixel metric) and absolute count error (a biological metric). Then we plot count error against IoU. If the two metrics tracked the same underlying quality, they would line up on a straight curve. They don’t.</p>
+<p><strong>Predict before running.</strong> As perturbation strength increases (more cells deleted), what relationship do you expect between IoU and count error?</p>
+<ul class="simple">
+<li><p>(a) IoU drops smoothly and count error rises smoothly — the two are tightly coupled.</p></li>
+<li><p>(b) IoU drops <em>faster</em> than count error rises — pixel metrics are the more sensitive signal.</p></li>
+<li><p>(c) IoU stays high while count error rises — pixel metrics hide instance-level failures.</p></li>
+<li><p>(d) Both stay roughly constant; the perturbations don’t perturb anything meaningful.</p></li>
+</ul>
+<p>If you predicted (c), you’ve internalized the lecture. The figure should make this visceral.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the gap: high IoU does not mean a correct count.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="c1"># Build a small set of perturbed predictions to plot a curve</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">n_trials</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">perturbations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">)</span>
+
+<span class="n">ious_curve</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">count_errors_curve</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">p_strength</span> <span class="ow">in</span> <span class="n">perturbations</span><span class="p">:</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">gt_easy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># Perturb: randomly delete a fraction of cells, randomly merge a few</span>
+    <span class="n">cell_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">test</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_delete</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p_strength</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">n_delete</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">)),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">test</span><span class="p">[</span><span class="n">test</span> <span class="o">==</span> <span class="n">cell</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">iou_val</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">iou_dice_binary</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">)</span>
+    <span class="n">bio</span> <span class="o">=</span> <span class="n">biological_summary</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">gt_easy</span><span class="p">,</span> <span class="s2">&quot;perturbed&quot;</span><span class="p">)</span>
+    <span class="n">ious_curve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iou_val</span><span class="p">)</span>
+    <span class="n">count_errors_curve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">bio</span><span class="p">[</span><span class="s2">&quot;count_error&quot;</span><span class="p">]))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ious_curve</span><span class="p">,</span> <span class="n">count_errors_curve</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">perturbations</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;IoU (pixel overlap)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Absolute count error&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;High IoU does not guarantee a correct cell count&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">invert_xaxis</span><span class="p">()</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">collections</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Perturbation strength&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>What you should be seeing.</strong> Count error rises faster than IoU drops. Models with IoU ≈ 0.95 can be off by <em>several cells</em>, and models with IoU ≈ 0.85 can be off by far more. The two metrics measure related but different things: IoU measures <em>pixel-level overlap</em>; count error measures <em>instance-level recovery</em>. <strong>They can disagree by a wide margin.</strong> Answer (c) was correct.</p>
+<p>This is the metrics-versus-biology gap. It is the single most reported-incorrectly aspect of bioimage AI papers, and the central pedagogy of this lab.</p>
+</section>
+<section id="the-key-insight">
+<h2>The key insight<a class="headerlink" href="#the-key-insight" title="Link to this heading">#</a></h2>
+<p>A model can be ‘good’ by IoU and still produce systematically wrong biological measurements. <strong>Choose validation metrics that match the biological question:</strong></p>
+<ul class="simple">
+<li><p><em>How many cells?</em> → count error</p></li>
+<li><p><em>What is the mean cell size?</em> → mean-area error</p></li>
+<li><p><em>Is the size distribution different between conditions?</em> → distribution-comparison test (KS, Earth Mover’s, etc.)</p></li>
+<li><p><em>Is the model spatially biased?</em> → per-region precision/recall</p></li>
+</ul>
+<p>Lab 2’s central message: don’t take the IoU number from a paper at face value. Ask whether it’s measuring the question you actually care about.</p>
+</section>
+<section id="closing-reflection">
+<h2>Closing reflection<a class="headerlink" href="#closing-reflection" title="Link to this heading">#</a></h2>
+<p>Lab 2 makes the metrics-versus-biology gap visible. The next lab (Lab 3) extends the responsible-use thread to a different challenge: how do you validate a model output when, by definition, you don’t have a clean version to compare against?</p>
+<p>That challenge is what AI restoration (Lab 3a) and foundation-model segmentation (Lab 3b) both face. See you there.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_cellpose_segmentation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03a_denoising_n2v.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-load-lab-1-outputs">Setup and load Lab 1 outputs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-helpers">Visualization helpers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-ground-truth">Generate ground truth</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-pixel-level-metrics-iou-dice">Compute pixel-level metrics (IoU, Dice)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-instance-level-metrics">Compute instance-level metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-biological-measurements">Compute biological measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-metricbiology-plot">The metric–biology plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-key-insight">The key insight</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

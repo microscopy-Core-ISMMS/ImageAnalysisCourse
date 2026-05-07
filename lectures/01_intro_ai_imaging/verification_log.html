@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Verification Log — Lecture 1 &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'lectures/01_intro_ai_imaging/verification_log';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Lecture 2 — Walking the Day" href="../02_walking_the_day/lecture.html" />
+    <link rel="prev" title="Speaker Cues — Lecture 1" href="speaker_cues.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/lectures/01_intro_ai_imaging/verification_log.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Verification Log — Lecture 1</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-flag-conventions">Verification flag conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-notes">Method notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-table">Reference table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#items-to-verify-before-external-publication">Items to verify before external publication</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-video-sources">Demo-video sources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-flags-retained-in-lecture-content">Hallucination flags retained in lecture content</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="verification-log-lecture-1">
+<h1>Verification Log — Lecture 1<a class="headerlink" href="#verification-log-lecture-1" title="Link to this heading">#</a></h1>
+<p>This log records the verification status of every reference cited in <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code> and the exported <code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code>. The intent is auditability: any reader, reviewer, or future maintainer can see what was verified, by what means, and what remains to be checked.</p>
+<section id="verification-flag-conventions">
+<h2>Verification flag conventions<a class="headerlink" href="#verification-flag-conventions" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>✓ verified</strong> — canonical source confirmed via web search and authoritative DOI/URL</p></li>
+<li><p><strong>✓ spot-check</strong> — verified directly during lecture build via WebSearch in this session (Cellpose, μSAM)</p></li>
+<li><p><strong>✓ agent</strong> — verified by a delegated research agent in this session; trusted via spot-checks of two references in the same batch</p></li>
+<li><p><strong>✏ corrected</strong> — initial training-knowledge claim was wrong; canonical entry used here reflects the correction</p></li>
+<li><p><strong>⚠ uncertain</strong> — drawn from training, no direct verification this session; should be sanity-checked before any external publication</p></li>
+<li><p><strong>❓ synthesis</strong> — interpretation or summary, not a specific factual citation</p></li>
+</ul>
+</section>
+<section id="method-notes">
+<h2>Method notes<a class="headerlink" href="#method-notes" title="Link to this heading">#</a></h2>
+<p>The Phase 1 verification pass used WebSearch to find canonical sources. Direct DOI fetching was blocked by the workspace network allowlist (only specific domains are reachable), so verification relied on search-result metadata rather than on full text retrieval. Two references (Cellpose, μSAM) were spot-checked directly and matched the agent’s findings, which raises confidence in the rest. All references should still be cross-checked against the source articles before any external delivery — search-result metadata can lag, mislabel, or contain errors.</p>
+</section>
+<section id="reference-table">
+<h2>Reference table<a class="headerlink" href="#reference-table" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Authors</p></th>
+<th class="head"><p>Year</p></th>
+<th class="head"><p>Venue</p></th>
+<th class="head"><p>DOI / URL</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cellpose2021</span></code></p></td>
+<td><p>✓ spot-check</p></td>
+<td><p>Stringer, Wang, Michaelos, Pachitariu</p></td>
+<td><p>2021</p></td>
+<td><p>Nature Methods 18:100–106</p></td>
+<td><p>10.1038/s41592-020-01018-x</p></td>
+<td><p>Generalist deep-learning cell segmentation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cellpose2_2022</span></code></p></td>
+<td><p>⚠ uncertain</p></td>
+<td><p>Pachitariu and Stringer (probable)</p></td>
+<td><p>2022</p></td>
+<td><p>Nature Methods</p></td>
+<td><p>10.1038/s41592-022-01663-4</p></td>
+<td><p>“Cellpose 2.0: how to train your own model.” Surfaced during spot-check; not in original verification batch.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cellpose3_2025</span></code></p></td>
+<td><p>⚠ uncertain</p></td>
+<td><p>Stringer et al. (probable)</p></td>
+<td><p>2025</p></td>
+<td><p>Nature Methods</p></td>
+<td><p>10.1038/s41592-025-02595-5</p></td>
+<td><p>“Cellpose3: one-click image restoration for improved cellular segmentation.” Surfaced during spot-check; useful in restoration section.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cellpose_sam_2025</span></code></p></td>
+<td><p>✓ spot-check</p></td>
+<td><p>Pachitariu, Rariden, Stringer</p></td>
+<td><p>2025</p></td>
+<td><p>bioRxiv (preprint)</p></td>
+<td><p>10.1101/2025.04.28.651001</p></td>
+<td><p><strong>Cellpose v4 / Cellpose-SAM</strong> — adapts SAM transformer backbone to the Cellpose framework. Current canonical version of the Cellpose tool. Posted 2025-05-01. Supersedes Cellpose 2021 as the active citation for Cellpose-based segmentation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stardist2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Schmidt, Weigert, Broaddus, Myers</p></td>
+<td><p>2018</p></td>
+<td><p>MICCAI 2018</p></td>
+<td><p>10.1007/978-3-030-00934-2_30</p></td>
+<td><p>Star-convex polygon segmentation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">care2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Weigert, Schmidt, Boothe et al.</p></td>
+<td><p>2018</p></td>
+<td><p>Nature Methods 15:1090–1097</p></td>
+<td><p>10.1038/s41592-018-0216-7</p></td>
+<td><p>Content-Aware Image Restoration in fluorescence microscopy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">noise2void2019</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Krull, Buchholz, Jug</p></td>
+<td><p>2019</p></td>
+<td><p>CVPR 2019</p></td>
+<td><p>(CVF open access)</p></td>
+<td><p>Self-supervised denoising.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mesmer2022</span></code></p></td>
+<td><p>✏ corrected</p></td>
+<td><p>Greenwald, Miller, Moen et al.</p></td>
+<td><p>2022 (print; online 2021)</p></td>
+<td><p>Nature Biotechnology 40:555–565</p></td>
+<td><p>10.1038/s41587-021-01094-0</p></td>
+<td><p>DeepCell / Mesmer whole-cell segmentation. Print year is 2022, not 2021 as I had assumed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voxelmorph2019</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Balakrishnan, Zhao, Sabuncu, Guttag, Dalca</p></td>
+<td><p>2019</p></td>
+<td><p>IEEE TMI 38(8):1788–1800</p></td>
+<td><p>10.1109/TMI.2019.2897538</p></td>
+<td><p>Deep-learning deformable image registration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">annapalm2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Ouyang, Aristov, Lelek, Hao, Zimmer</p></td>
+<td><p>2018</p></td>
+<td><p>Nature Biotechnology 36:460–468</p></td>
+<td><p>10.1038/nbt.4106</p></td>
+<td><p>Super-resolution from sparse PALM.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deepstorm2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Nehme, Weiss, Michaeli, Shechtman</p></td>
+<td><p>2018</p></td>
+<td><p>Optica 5(4):458–464</p></td>
+<td><p>(Optica) / arXiv:1801.09631</p></td>
+<td><p>Deep-learning single-molecule localization.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">christiansen2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Christiansen, Yang, Ando et al.</p></td>
+<td><p>2018</p></td>
+<td><p>Cell 173(3):792–803.e19</p></td>
+<td><p>10.1016/j.cell.2018.03.040</p></td>
+<td><p>In silico labeling.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ounkomol2018</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Ounkomol, Seshamani, Maleckar, Collman, Johnson</p></td>
+<td><p>2018</p></td>
+<td><p>Nature Methods 15:917–920</p></td>
+<td><p>10.1038/s41592-018-0111-2</p></td>
+<td><p>Label-free 3D fluorescence prediction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sam2023</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Kirillov, Mintun, Ravi et al.</p></td>
+<td><p>2023</p></td>
+<td><p>ICCV 2023</p></td>
+<td><p>10.1109/ICCV51070.2023.00371</p></td>
+<td><p>Segment Anything (SAM).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">microsam2025</span></code></p></td>
+<td><p>✓ spot-check</p></td>
+<td><p>Pape, Freckmann, Archit et al.</p></td>
+<td><p>2025 (Nature Methods 22)</p></td>
+<td><p>Nature Methods</p></td>
+<td><p>10.1038/s41592-024-02580-4</p></td>
+<td><p>μSAM / micro-sam — segment-anything for microscopy. Constantin Pape, Göttingen.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">claim2020</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Mongan, Moy, Kahn</p></td>
+<td><p>2020</p></td>
+<td><p>Radiology: AI 2(2):e200029</p></td>
+<td><p>10.1148/ryai.2020200029</p></td>
+<td><p>Checklist for AI in Medical Imaging.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stardai2020</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Sounderajah, Ashrafian, Aggarwal et al.</p></td>
+<td><p>2020 (steering); 2021 (BMJ Open protocol)</p></td>
+<td><p>Nature Medicine</p></td>
+<td><p>10.1038/s41591-020-1033-0</p></td>
+<td><p>STARD-AI reporting standards.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">consortai2020</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Liu, Cruz Rivera, Moher, Calvert, Denniston</p></td>
+<td><p>2020</p></td>
+<td><p>Nature Medicine 26(9):1364–1374</p></td>
+<td><p>10.1038/s41591-020-1034-x</p></td>
+<td><p>CONSORT-AI clinical trial reporting.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spiritai2020</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Cruz Rivera, Liu, Chan, Denniston, Calvert</p></td>
+<td><p>2020</p></td>
+<td><p>Nature Medicine 26(9):1351–1363</p></td>
+<td><p>10.1038/s41591-020-1037-7</p></td>
+<td><p>SPIRIT-AI trial protocol reporting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">miclaim2020</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Norgeot, Quer, Beaulieu-Jones et al.</p></td>
+<td><p>2020</p></td>
+<td><p>Nature Medicine 26(9):1320–1324</p></td>
+<td><p>10.1038/s41591-020-1041-y</p></td>
+<td><p>MI-CLAIM minimum information for clinical AI.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bbbc2012</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Ljosa, Sokolnicki, Carpenter</p></td>
+<td><p>2012</p></td>
+<td><p>Nature Methods 9:637</p></td>
+<td><p>10.1038/nmeth.2083</p></td>
+<td><p>Broad Bioimage Benchmark Collection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">imagesc</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Rueden, Ackerman, Schindelin et al. (community)</p></td>
+<td><p>2019</p></td>
+<td><p>(PLOS Biology overview); <a class="reference external" href="http://forum.image.sc">forum.image.sc</a></p></td>
+<td><p>—</p></td>
+<td><p><a class="reference external" href="http://image.sc">image.sc</a> community forum.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">neubias</span></code></p></td>
+<td><p>✓ agent</p></td>
+<td><p>Network of European BioImage Analysts</p></td>
+<td><p>2016+</p></td>
+<td><p><a class="reference external" href="http://eubias.org/NEUBIAS">eubias.org/NEUBIAS</a></p></td>
+<td><p>—</p></td>
+<td><p>Active training network.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="items-to-verify-before-external-publication">
+<h2>Items to verify before external publication<a class="headerlink" href="#items-to-verify-before-external-publication" title="Link to this heading">#</a></h2>
+<p>The following carry caveats requiring verification before any external delivery:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cellpose2_2022</span></code> and <code class="docutils literal notranslate"><span class="pre">cellpose3_2025</span></code>: spotted during a search but not part of the formal verification batch; confirm before citing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">microsam2025</span></code>: confirmed via search but the author list and DOI should be cross-checked against the published paper.</p></li>
+<li><p>All “✓ agent” entries: trusted on the strength of two spot-checks but should be cross-checked against published sources before public-facing use.</p></li>
+<li><p>Foundation-model citations not yet added (UNI, Virchow, CONCH for pathology; MedSAM, RadFM for clinical) are deferred to the broader curriculum and not currently in this lecture’s bibliography.</p></li>
+</ul>
+</section>
+<section id="demo-video-sources">
+<h2>Demo-video sources<a class="headerlink" href="#demo-video-sources" title="Link to this heading">#</a></h2>
+<p>Demo-video URLs are <em>not</em> verified as reachable in Phase 1. The video search agent was unable to confirm direct URLs due to network restrictions. Phase 1 uses <strong>placeholder still images with descriptive captions</strong>; Phase 3 (polish) will revisit video sourcing with author permissions or institutional archives once the lecture content is locked. Candidate sources flagged by the search agent (NEUBIAS YouTube channel, Nature Methods supplementary materials, paper supplements for Christiansen 2018, Krull 2019, Weigert 2018) are recorded in <code class="docutils literal notranslate"><span class="pre">README.md</span></code> for follow-up.</p>
+</section>
+<section id="hallucination-flags-retained-in-lecture-content">
+<h2>Hallucination flags retained in lecture content<a class="headerlink" href="#hallucination-flags-retained-in-lecture-content" title="Link to this heading">#</a></h2>
+<p>Even with verified citations, several claims in the lecture remain interpretive or general-audience-targeted summaries rather than direct citations. These will be flagged in the slides themselves with the ❓ symbol:</p>
+<ul class="simple">
+<li><p>Statements about “where AI works well” and “where it fails” — generic framing not tied to a single paper</p></li>
+<li><p>The “confident wrongness” failure-mode pattern — community-recognized but not a single canonical citation</p></li>
+<li><p>Discussions of foundation-model behavior — fast-moving area; specific characterizations age quickly</p></li>
+</ul>
+<p>These flags are intended to signal interpretation versus citation, not to cast doubt on the underlying claims.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./lectures/01_intro_ai_imaging"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="speaker_cues.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Speaker Cues — Lecture 1</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02_walking_the_day/lecture.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Lecture 2 — Walking the Day</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-flag-conventions">Verification flag conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-notes">Method notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-table">Reference table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#items-to-verify-before-external-publication">Items to verify before external publication</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-video-sources">Demo-video sources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-flags-retained-in-lecture-content">Hallucination flags retained in lecture content</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Workshop Schedule &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'schedule';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Prerequisites" href="prerequisites.html" />
+    <link rel="prev" title="AI for Microscopy Image Analysis" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/schedule.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Workshop Schedule</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#day-3-at-a-glance">Day 3 at a glance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#morning-session-5-python-google-colab-arun-narasimhan">Morning — Session 5: Python / Google Colab (Arun Narasimhan)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#afternoon-session-6-gui-based-ai-tools-applications-nikos-tzavaras">Afternoon — Session 6: GUI-Based AI Tools &amp; Applications (Nikos Tzavaras)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#welcome-setup-and-orientation-30-min">13:30 – 14:00 — Welcome, setup, and orientation (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-ai-for-scientific-image-analysis-45-min">14:00 – 14:45 — Lecture: AI for Scientific Image Analysis (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#break-15-min">14:45 – 15:00 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#walking-the-day-30-min">15:00 – 15:30 — Walking the day (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lab-block-1-cellpose-sam-segmentation-validation-60-min">15:30 – 16:30 — Lab block 1: Cellpose-SAM segmentation + validation (60 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">16:30 – 16:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up-path-forward-15-min">16:45 – 17:00 — Wrap-up + path forward (15 min)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-this-material-is-layered">How this material is layered</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-workshop-expectations">Pre-workshop expectations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-note-on-standalone-delivery">A note on standalone delivery</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="workshop-schedule">
+<h1>Workshop Schedule<a class="headerlink" href="#workshop-schedule" title="Link to this heading">#</a></h1>
+<p>This material is delivered as <strong>Day 3 of the 2026 MABC Image Analysis Workshop</strong> at the Icahn School of Medicine at Mount Sinai.</p>
+<p><strong>Date:</strong> Monday, May 11, 2026
+<strong>Venue:</strong> Annenberg 5-212, Icahn School of Medicine at Mount Sinai
+<strong>Format:</strong> Two half-day blocks (morning + afternoon), in-person hands-on with attendee laptops</p>
+<p>By Day 3 the audience has already been through Days 1 (image-analysis intro + QuPath) and 2 (Fiji hands-on + commercial demos). This day adds modern AI methods on top of that foundation. The afternoon block is the home for the materials in this Jupyter Book; the morning block (Arun Narasimhan’s Python/Colab session) is companion content delivered on the Mount Sinai HPC server.</p>
+<section id="day-3-at-a-glance">
+<h2>Day 3 at a glance<a class="headerlink" href="#day-3-at-a-glance" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Time</p></th>
+<th class="head"><p>Block</p></th>
+<th class="head"><p>Instructor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>09:00 – 12:30</p></td>
+<td><p>Session 5 — Python / Google Colab (Hands-on)</p></td>
+<td><p>Arun Narasimhan</p></td>
+</tr>
+<tr class="row-odd"><td><p>12:30 – 13:30</p></td>
+<td><p>Lunch</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>13:30 – 17:00</p></td>
+<td><p>Session 6 — GUI-Based AI Tools &amp; Applications (Hands-on)</p></td>
+<td><p>Nikos Tzavaras</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Time-slot swap, May 2026.</strong> The originally-published schedule had these in the opposite order. Topics didn’t move; only the time slots flipped. Cellpose and μSAM appear twice on Day 3 by design — Arun on the Mount Sinai HPC server in the morning, and again on Google Colab in the afternoon as part of this Jupyter Book companion. Same tools, different surfaces, deliberate reinforcement.</p>
+</div></blockquote>
+</section>
+<section id="morning-session-5-python-google-colab-arun-narasimhan">
+<h2>Morning — Session 5: Python / Google Colab (Arun Narasimhan)<a class="headerlink" href="#morning-session-5-python-google-colab-arun-narasimhan" title="Link to this heading">#</a></h2>
+<p>The morning block runs against the Mount Sinai HPC server with Napari, Cellpose, μSAM, and Google Colab pre-installed. Arun’s session materials live in the workshop’s main folder under <code class="docutils literal notranslate"><span class="pre">S6_Python_Google</span> <span class="pre">Colab</span> <span class="pre">(Hands-on)/</span></code>.</p>
+<p>The two ramp-up notebooks in this repository — <code class="docutils literal notranslate"><span class="pre">ramp-up/notebooks/python_basics.ipynb</span></code> and <code class="docutils literal notranslate"><span class="pre">image_basics.ipynb</span></code> — are available as a companion runway for participants who want a Python/numpy/image-data refresh, either before the workshop or alongside the morning block.</p>
+</section>
+<section id="afternoon-session-6-gui-based-ai-tools-applications-nikos-tzavaras">
+<h2>Afternoon — Session 6: GUI-Based AI Tools &amp; Applications (Nikos Tzavaras)<a class="headerlink" href="#afternoon-session-6-gui-based-ai-tools-applications-nikos-tzavaras" title="Link to this heading">#</a></h2>
+<p>The afternoon block delivers the AI material in this Jupyter Book. Times below are suggested rather than rigid; the room can adjust by ±15 minutes per block depending on pacing.</p>
+<section id="welcome-setup-and-orientation-30-min">
+<h3>13:30 – 14:00 — Welcome, setup, and orientation (30 min)<a class="headerlink" href="#welcome-setup-and-orientation-30-min" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Brief framing for the afternoon: what we will and won’t cover</p></li>
+<li><p>Confirm everyone’s Google Colab opens and loads this repository</p></li>
+<li><p>Run the <a class="reference internal" href="notebooks/00_setup_self_check.html"><span class="doc std std-doc">setup self-check notebook</span></a> end-to-end as a group</p></li>
+<li><p>Set the participant choice point for the day (live-room paths vs post-workshop self-paced; see “How this material is layered” below)</p></li>
+</ul>
+</section>
+<section id="lecture-ai-for-scientific-image-analysis-45-min">
+<h3>14:00 – 14:45 — Lecture: AI for Scientific Image Analysis (45 min)<a class="headerlink" href="#lecture-ai-for-scientific-image-analysis-45-min" title="Link to this heading">#</a></h3>
+<p>A condensed delivery of the <a class="reference internal" href="lectures/01_intro_ai_imaging/lecture.html"><span class="doc std std-doc">morning lecture</span></a> — AI task taxonomy, how models learn, where they work and fail, validation, and responsible use. Compressed from 90 minutes since by Day 3 the audience already has imaging fluency from Days 1 and 2.</p>
+<p>The lecture deck has drill-down sub-slides; the live presenter opens the ones that fit the room. See <a class="reference internal" href="lectures/01_intro_ai_imaging/speaker_cues.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">lectures/01_intro_ai_imaging/speaker_cues.md</span></code></span></a> for guidance.</p>
+</section>
+<section id="break-15-min">
+<h3>14:45 – 15:00 — Break (15 min)<a class="headerlink" href="#break-15-min" title="Link to this heading">#</a></h3>
+</section>
+<section id="walking-the-day-30-min">
+<h3>15:00 – 15:30 — Walking the day (30 min)<a class="headerlink" href="#walking-the-day-30-min" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="lectures/02_walking_the_day/lecture.html"><span class="doc std std-doc">bridge talk</span></a> previewing each afternoon lab — goal, what success looks like, where we expect things to break. Compressed from 45 minutes for the afternoon-only delivery. This block prevents the click-and-watch failure mode in the labs.</p>
+</section>
+<section id="lab-block-1-cellpose-sam-segmentation-validation-60-min">
+<h3>15:30 – 16:30 — Lab block 1: Cellpose-SAM segmentation + validation (60 min)<a class="headerlink" href="#lab-block-1-cellpose-sam-segmentation-validation-60-min" title="Link to this heading">#</a></h3>
+<p>Run together, since Lab 2 picks up Lab 1’s outputs:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="notebooks/01_cellpose_segmentation.html"><span class="doc std std-doc">Lab 1 — Cellpose-SAM</span></a>: apply pretrained Cellpose-SAM to canonical and synthetic data; customization workshop with <code class="docutils literal notranslate"><span class="pre">diameter</span></code>, <code class="docutils literal notranslate"><span class="pre">model_type</span></code>, <code class="docutils literal notranslate"><span class="pre">flow_threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">cellprob_threshold</span></code>; failure-mode finale on out-of-distribution data.</p></li>
+<li><p><a class="reference internal" href="notebooks/02_validation_quantification.html"><span class="doc std std-doc">Lab 2 — Validation &amp; quantification</span></a>: IoU, Dice, instance-level metrics, the metrics-vs-biology gap.</p></li>
+</ul>
+<p>Pacing target: ~35 min Lab 1, ~25 min Lab 2. The lecture and walking-the-day already covered the conceptual setup, so the labs run leaner than in the standalone one-day Demo.</p>
+</section>
+<section id="id1">
+<h3>16:30 – 16:45 — Break (15 min)<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+</section>
+<section id="wrap-up-path-forward-15-min">
+<h3>16:45 – 17:00 — Wrap-up + path forward (15 min)<a class="headerlink" href="#wrap-up-path-forward-15-min" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Quick reflection on the day’s labs</p></li>
+<li><p>The <a class="reference internal" href="notebooks/05_desktop_gui_complements.html"><span class="doc std std-doc">GUI-AI tools walkthrough</span></a> (Trainable Weka, QuPath Pixel Classifier, deepImageJ, StarDist Fiji + QuPath) — covered as live demo and as take-home reference.</p></li>
+<li><p>Pointers into <a class="reference internal" href="notebooks/04_community_platforms.html"><span class="doc std std-doc">Notebook 04</span></a> (community catalog + 5 inline mini-workflows + live BioImage Model Zoo browse) and <a class="reference internal" href="notebooks/03a_denoising_n2v.html"><span class="doc std std-doc">Lab 3 options</span></a> (denoising) and <a class="reference internal" href="notebooks/03b_foundation_model_segmentation.html"><span class="doc std std-doc">3b</span></a> (foundation models), as self-paced post-workshop work.</p></li>
+<li><p>The <a class="reference internal" href="resources.html"><span class="doc std std-doc">Resources page</span></a> and <a class="reference internal" href="handout.html"><span class="doc std std-doc">Handout</span></a> — bookmark these.</p></li>
+<li><p>Q&amp;A; workshop feedback (anonymous form via the workshop organizers).</p></li>
+</ul>
+</section>
+</section>
+<section id="how-this-material-is-layered">
+<h2>How this material is layered<a class="headerlink" href="#how-this-material-is-layered" title="Link to this heading">#</a></h2>
+<p>The repository is more comprehensive than fits in any one afternoon. The live-room block above hits the <strong>core spine</strong>; the rest is post-workshop self-paced.</p>
+<ul class="simple">
+<li><p><strong>Core spine (live-room).</strong> Setup self-check (Notebook 00) · Lecture 1 · Walking the Day · Lab 1 (Cellpose-SAM) · Lab 2 (Validation) · Notebook 05 (GUI-AI tools demo).</p></li>
+<li><p><strong>Extensions (in-room if time, post-workshop otherwise).</strong> Lab 3a (Noise2Void denoising) · Lab 3b (Foundation-model segmentation with SAM) · Notebook 04 (Community platforms catalog + 5 mini-workflows + live BiMZ browse).</p></li>
+<li><p><strong>Reference (post-workshop self-paced).</strong> Resources page · Handout · Prerequisites · Acknowledgments · Ramp-up notebooks (Python and image-data basics) · Lecture references and bibliography.</p></li>
+</ul>
+<p>Participants can run any extension or reference content on their own time; everything is Colab-ready, and the conda environment in <code class="docutils literal notranslate"><span class="pre">env/environment.yml</span></code> reproduces the same setup locally.</p>
+</section>
+<section id="pre-workshop-expectations">
+<h2>Pre-workshop expectations<a class="headerlink" href="#pre-workshop-expectations" title="Link to this heading">#</a></h2>
+<p>Attendees on Day 3 should:</p>
+<ol class="arabic simple">
+<li><p>Run the <a class="reference internal" href="notebooks/00_setup_self_check.html"><span class="doc std std-doc">setup self-check notebook</span></a> on Colab before the workshop day. About 20–30 minutes.</p></li>
+<li><p>Confirm Google account and GitHub access.</p></li>
+<li><p><em>(Optional)</em> Run the <a class="reference internal" href="ramp-up/notebooks/python_basics.html"><span class="doc std std-doc">ramp-up notebooks</span></a> the evening before if Python or image-data fluency feels rusty.</p></li>
+</ol>
+<p>See <a class="reference internal" href="prerequisites.html"><span class="doc std std-doc">prerequisites</span></a> for full details.</p>
+</section>
+<section id="a-note-on-standalone-delivery">
+<h2>A note on standalone delivery<a class="headerlink" href="#a-note-on-standalone-delivery" title="Link to this heading">#</a></h2>
+<p>The schedule above is calibrated for Day 3 of a multi-day workshop. The materials in this repository can also be delivered standalone as a one-day workshop — the <code class="docutils literal notranslate"><span class="pre">Microscopy_Workshop_Demo*</span></code> template (the seed for this repo) contains a one-day schedule with a longer lecture, a longer walking-the-day, and the full Lab 3 in-room. For standalone delivery, see the speaker cues and the original lecture timing in <a class="reference internal" href="#lectures/01_intro_ai_imaging/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">lectures/01_intro_ai_imaging/</span></code></span></a>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">AI for Microscopy Image Analysis</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="prerequisites.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Prerequisites</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#day-3-at-a-glance">Day 3 at a glance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#morning-session-5-python-google-colab-arun-narasimhan">Morning — Session 5: Python / Google Colab (Arun Narasimhan)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#afternoon-session-6-gui-based-ai-tools-applications-nikos-tzavaras">Afternoon — Session 6: GUI-Based AI Tools &amp; Applications (Nikos Tzavaras)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#welcome-setup-and-orientation-30-min">13:30 – 14:00 — Welcome, setup, and orientation (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-ai-for-scientific-image-analysis-45-min">14:00 – 14:45 — Lecture: AI for Scientific Image Analysis (45 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#break-15-min">14:45 – 15:00 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#walking-the-day-30-min">15:00 – 15:30 — Walking the day (30 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lab-block-1-cellpose-sam-segmentation-validation-60-min">15:30 – 16:30 — Lab block 1: Cellpose-SAM segmentation + validation (60 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">16:30 – 16:45 — Break (15 min)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up-path-forward-15-min">16:45 – 17:00 — Wrap-up + path forward (15 min)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-this-material-is-layered">How this material is layered</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-workshop-expectations">Pre-workshop expectations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-note-on-standalone-delivery">A note on standalone delivery</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

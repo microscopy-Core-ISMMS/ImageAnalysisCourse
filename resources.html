@@ -1,0 +1,1228 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resources &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'resources';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Workshop Handout" href="handout.html" />
+    <link rel="prev" title="Prerequisites" href="prerequisites.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="env/README.html">Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/resources.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Resources</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-legend">Quick legend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-institute">Allen Institute</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-cell-structure-segmenter-aics">Allen Cell &amp; Structure Segmenter (AICS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aicsimageio-bioio">AICSImageIO / bioio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari-allencell-segmenter">napari-allencell-segmenter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-neural-dynamics">Allen Neural Dynamics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#openscope-databook">OpenScope databook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brain-atlas-allensdk">Brain Atlas / AllenSDK</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chan-zuckerberg-initiative-czi">Chan Zuckerberg Initiative (CZI)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cz-imaging-institute-czii">CZ Imaging Institute (CZII)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari-czi-supported">napari (CZI-supported)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#czi-funding-for-community-projects">CZI funding for community projects</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#janelia-research-campus-hhmi-and-affiliated">Janelia Research Campus (HHMI) and affiliated</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-cellpose-sam-mouseland-stringer-pachitariu">Cellpose / Cellpose-SAM (MouseLand — Stringer &amp; Pachitariu)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stardist-janelia-mpi-cbg-tu-dresden">StarDist (Janelia / MPI-CBG / TU Dresden)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flyem-connectome-tools">FlyEM connectome tools</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bigstitcher">BigStitcher</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bigdataviewer-bdv">BigDataViewer (BDV)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mastodon">Mastodon</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embl-european-molecular-biology-laboratory">EMBL (European Molecular Biology Laboratory)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ilastik">ilastik</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepimagej">deepImageJ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-model-zoo-bioimage-io">BioImage Model Zoo (bioimage.io)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mobie">MoBIE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-archive-embl-ebi">BioImage Archive (EMBL-EBI)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blue-brain-project-open-brain-institute-epfl">Blue Brain Project / Open Brain Institute (EPFL)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neurom">NeuroM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sonata-format">SONATA format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bluepyopt">BluePyOpt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#community-platforms-and-colab-friendly-toolboxes">Community platforms and Colab-friendly toolboxes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zerocostdl4mic">ZeroCostDL4Mic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dl4miceverywhere">DL4MicEverywhere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neubias-training-resources">NEUBIAS training resources</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#image-sc-forum">image.sc forum</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#foundation-models-and-major-dl-building-blocks">Foundation models and major DL building blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#segment-anything-sam">Segment Anything (SAM)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#segment-anything-for-microscopy-sam-micro-sam">Segment Anything for Microscopy (μSAM / micro-sam)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#u-net-canonical-reference">U-Net (canonical reference)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-sam-current-cellpose">Cellpose-SAM (current Cellpose)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#restoration-and-self-supervised-denoising">Restoration and self-supervised denoising</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#care-content-aware-image-restoration">CARE (Content-Aware Image Restoration)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#noise2void">Noise2Void</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csbdeep">CSBDeep</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pathology-and-digital-pathology">Pathology and digital pathology</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qupath">QuPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wsinfer">WSInfer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monai-pathology">MONAI Pathology</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clinical-imaging">Clinical imaging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monai-core">MONAI (core)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nnu-net">nnU-Net</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#totalsegmentator">TotalSegmentator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#voxelmorph">VoxelMorph</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-and-infrastructure">Visualization and infrastructure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fiji-imagej">Fiji / ImageJ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scikit-image">scikit-image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clearmap">ClearMap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empanada-napari">empanada-napari</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellseg3d">CellSeg3D</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mesmer-deepcell">Mesmer / DeepCell</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vendor-format-support">Vendor-format support</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zeiss-pylibczirw">Zeiss pylibCZIrw</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bio-formats">Bio-Formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atlases-and-big-data-resources">Atlases and big data resources</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-brain-atlas">Allen Brain Atlas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idr-image-data-resource">IDR (Image Data Resource)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#microns-allen-princeton-baylor">MICrONS (Allen + Princeton + Baylor)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-image-library">Cell Image Library</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaps-and-notes">Gaps and notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-verified-versus-flagged">What’s verified versus flagged</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation-corrections-recorded">Citation corrections recorded</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Link to this heading">#</a></h1>
+<p>A curated survey of open-source projects, tools, and datasets relevant to AI for scientific image analysis. Organized by institution and topic. Every entry has a GitHub URL where one exists. Verification flags follow the same convention as the lecture’s bibliography (✓ verified, ⚠ uncertain, ✏ corrected).</p>
+<p>This page is the workshop’s distributed-handout resource: attendees receive the URL at workshop close. It is also linked from the lecture’s “Resources” appendix.</p>
+<p><strong>Status: Phase 2A draft for stakeholder review.</strong> Citations carry verification flags. Anything tagged ⚠ should be confirmed before external delivery — the field changes fast and metadata can drift.</p>
+<section id="quick-legend">
+<h2>Quick legend<a class="headerlink" href="#quick-legend" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>✓ — verified via web search this session or in Phase 1</p></li>
+<li><p>⚠ — citation or URL surfaced by automated research; should be confirmed before publication</p></li>
+<li><p>✏ — corrected from an initial mistaken claim</p></li>
+<li><p>❓ — interpretive or summary; not a specific citation</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="allen-institute">
+<h2>Allen Institute<a class="headerlink" href="#allen-institute" title="Link to this heading">#</a></h2>
+<section id="allen-cell-structure-segmenter-aics">
+<h3>Allen Cell &amp; Structure Segmenter (AICS)<a class="headerlink" href="#allen-cell-structure-segmenter-aics" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AllenCell/aics-segmentation">github.com/AllenCell/aics-segmentation</a> — classical workflow</p></li>
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AllenCell/aics-ml-segmentation">github.com/AllenCell/aics-ml-segmentation</a> — ML workflow</p></li>
+<li><p><strong>What:</strong> Python toolkit for 3D segmentation of intracellular structures in fluorescence microscopy. Combines classical and deep-learning workflows. ⚠</p></li>
+<li><p><strong>License:</strong> BSD/Apache (verify per repo) ⚠</p></li>
+<li><p><strong>Notes:</strong> Includes a napari plugin; companion lookup table covering ~20 reference structures.</p></li>
+</ul>
+</section>
+<section id="aicsimageio-bioio">
+<h3>AICSImageIO / bioio<a class="headerlink" href="#aicsimageio-bioio" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio">github.com/AllenCellModeling/aicsimageio</a> (now in maintenance mode)</p></li>
+<li><p><strong>Successor:</strong> bioio (per agent finding ⚠)</p></li>
+<li><p><strong>What:</strong> Pure-Python image reading/writing across microscopy formats (OME-TIFF, ND2, DV, CZI, LIF, PNG, GIF). ⚠</p></li>
+<li><p><strong>License:</strong> BSD ⚠</p></li>
+<li><p><strong>Notes:</strong> Foundational data-handling layer for the Allen ecosystem; widely used elsewhere.</p></li>
+</ul>
+</section>
+<section id="napari-allencell-segmenter">
+<h3>napari-allencell-segmenter<a class="headerlink" href="#napari-allencell-segmenter" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AllenCell/napari-allencell-segmenter">github.com/AllenCell/napari-allencell-segmenter</a> ⚠</p></li>
+<li><p><strong>What:</strong> napari plugin integrating the AICS Segmenter for interactive 3D work in napari.</p></li>
+<li><p><strong>License:</strong> BSD ⚠</p></li>
+</ul>
+</section>
+<section id="allen-neural-dynamics">
+<h3>Allen Neural Dynamics<a class="headerlink" href="#allen-neural-dynamics" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub org:</strong> <a class="reference external" href="https://github.com/AllenNeuralDynamics">github.com/AllenNeuralDynamics</a> ⚠</p></li>
+<li><p><strong>What:</strong> Behavioral imaging, Neuropixels analysis, and neural-dynamics tools for circuit and whole-brain mapping.</p></li>
+<li><p><strong>Notes:</strong> Includes natural-language brain-data navigation tools; secondary to microscopy but useful for neural-imaging audiences.</p></li>
+</ul>
+</section>
+<section id="openscope-databook">
+<h3>OpenScope databook<a class="headerlink" href="#openscope-databook" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AllenInstitute/openscope_databook">github.com/AllenInstitute/openscope_databook</a> ⚠</p></li>
+<li><p><strong>What:</strong> Two-photon calcium imaging and Neuropixels datasets with reproducible analysis workflows.</p></li>
+</ul>
+</section>
+<section id="brain-atlas-allensdk">
+<h3>Brain Atlas / AllenSDK<a class="headerlink" href="#brain-atlas-allensdk" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Additional reference:</strong> AllenSDK (Allen Institute Software Development Kit) is the canonical Python access layer to the Brain Atlas, Cell Types Database, and other Allen resources. ❓</p></li>
+<li><p><strong>What to investigate before workshop:</strong> which AllenSDK modules are most relevant to microscopy AI versus systems neuroscience.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="chan-zuckerberg-initiative-czi">
+<h2>Chan Zuckerberg Initiative (CZI)<a class="headerlink" href="#chan-zuckerberg-initiative-czi" title="Link to this heading">#</a></h2>
+<section id="cz-imaging-institute-czii">
+<h3>CZ Imaging Institute (CZII)<a class="headerlink" href="#cz-imaging-institute-czii" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub org:</strong> <a class="reference external" href="https://github.com/czimaginginstitute">github.com/czimaginginstitute</a> ⚠</p></li>
+<li><p><strong>What:</strong> Emerging hub for foundational AI models, imaging hardware/software, and training materials. The Imaging Institute is recently founded; the GitHub presence is still expanding.</p></li>
+<li><p><strong>Notes:</strong> Relationship to the broader Chan Zuckerberg Biohub Network worth flagging in presenter notes.</p></li>
+</ul>
+</section>
+<section id="napari-czi-supported">
+<h3>napari (CZI-supported)<a class="headerlink" href="#napari-czi-supported" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/napari/napari">github.com/napari/napari</a> ✓</p></li>
+<li><p><strong>What:</strong> Multi-dimensional image viewer for Python; the de facto interactive analysis platform in modern bioimage workflows.</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ✓</p></li>
+<li><p><strong>Notes:</strong> ~100+ plugins; CZI is a primary funder. Plugin engine v2 (npe2) is current.</p></li>
+</ul>
+</section>
+<section id="czi-funding-for-community-projects">
+<h3>CZI funding for community projects<a class="headerlink" href="#czi-funding-for-community-projects" title="Link to this heading">#</a></h3>
+<p>CZI funds many of the projects elsewhere on this page (ZeroCostDL4Mic, DL4MicEverywhere, <a class="reference external" href="http://image.sc">image.sc</a>, NEUBIAS continuations, BioImage Archive, BioImage Model Zoo). Worth flagging in the lecture as “the funding layer behind the ecosystem.” ❓</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="janelia-research-campus-hhmi-and-affiliated">
+<h2>Janelia Research Campus (HHMI) and affiliated<a class="headerlink" href="#janelia-research-campus-hhmi-and-affiliated" title="Link to this heading">#</a></h2>
+<section id="cellpose-cellpose-sam-mouseland-stringer-pachitariu">
+<h3>Cellpose / Cellpose-SAM (MouseLand — Stringer &amp; Pachitariu)<a class="headerlink" href="#cellpose-cellpose-sam-mouseland-stringer-pachitariu" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/MouseLand/cellpose">github.com/MouseLand/cellpose</a> ✓</p></li>
+<li><p><strong>What:</strong> Generalist deep-learning cell segmentation. Current version is <strong>Cellpose-SAM (v4)</strong>, adapting the SAM transformer backbone to the original Cellpose framework.</p></li>
+<li><p><strong>Papers:</strong> Stringer et al., <em>Nature Methods</em> 2021 ✓ (original); Pachitariu, Rariden, Stringer, <em>bioRxiv</em> 2025 (Cellpose-SAM, preprint) ⚠</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ✓</p></li>
+<li><p><strong>Notes:</strong> Cellpose has gone through Cellpose, Cellpose 2.0 (2022), Cellpose 3 (2025, image restoration), and Cellpose-SAM (2025). Cite the version you use.</p></li>
+</ul>
+</section>
+<section id="stardist-janelia-mpi-cbg-tu-dresden">
+<h3>StarDist (Janelia / MPI-CBG / TU Dresden)<a class="headerlink" href="#stardist-janelia-mpi-cbg-tu-dresden" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/stardist/stardist">github.com/stardist/stardist</a> ⚠</p></li>
+<li><p><strong>Paper:</strong> Schmidt, Weigert, Broaddus, Myers, <em>MICCAI</em> 2018 ✓ (✏ correction: agent draft listed Weigert as first author, the original paper has Schmidt first)</p></li>
+<li><p><strong>What:</strong> Instance segmentation via star-convex polygons; 2D and 3D. Canonical for nuclei detection.</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ⚠</p></li>
+<li><p><strong>Notes:</strong> napari plugin available; broad adoption.</p></li>
+</ul>
+</section>
+<section id="flyem-connectome-tools">
+<h3>FlyEM connectome tools<a class="headerlink" href="#flyem-connectome-tools" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub org:</strong> <a class="reference external" href="https://github.com/janelia-flyem">github.com/janelia-flyem</a> ⚠</p></li>
+<li><p><strong>What:</strong> EM connectome segmentation, evaluation, and visualization. Includes tooling for the Hemibrain and Male Adult Nerve Cord (MANC) datasets.</p></li>
+<li><p><strong>Notes:</strong> Major connectome projects with public data; relevant for EM-imaging audiences.</p></li>
+</ul>
+</section>
+<section id="bigstitcher">
+<h3>BigStitcher<a class="headerlink" href="#bigstitcher" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/JaneliaSciComp/BigStitcher">github.com/JaneliaSciComp/BigStitcher</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Hörl et al., <em>Nature Methods</em> 2019 ✓ — doi: 10.1038/s41592-019-0501-0</p></li>
+<li><p><strong>What:</strong> Image stitching and registration for large multi-tile, multi-angle microscopy (lightsheet, confocal). Terabyte-scale.</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+<li><p><strong>Notes:</strong> Available via Fiji; BigStitcher-Spark for distributed processing. Relevant for the <strong>registration</strong> task (T1.9).</p></li>
+</ul>
+</section>
+<section id="bigdataviewer-bdv">
+<h3>BigDataViewer (BDV)<a class="headerlink" href="#bigdataviewer-bdv" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> integrated within BigStitcher and Fiji repositories; main BDV repo at <a class="reference external" href="https://github.com/bigdataviewer">github.com/bigdataviewer</a> ⚠</p></li>
+<li><p><strong>What:</strong> Interactive visualization framework for large 3D/4D datasets.</p></li>
+<li><p><strong>Notes:</strong> Foundational dependency of Mastodon, BigStitcher, MoBIE.</p></li>
+</ul>
+</section>
+<section id="mastodon">
+<h3>Mastodon<a class="headerlink" href="#mastodon" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/mastodon-sc/mastodon">github.com/mastodon-sc/mastodon</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Wolff, Tinevez, Pietzsch et al., <em>eLife</em> <strong>2018</strong> (✏ corrected: agent draft listed 2022; canonical Mastodon/MaMuT paper is 2018, doi: 10.7554/eLife.34410. The 2022 work is the ELEPHANT deep-learning extension)</p></li>
+<li><p><strong>What:</strong> Large-scale tracking and lineage editing for multi-view developmental and cell-biology imaging. Standalone or via Fiji.</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+<li><p><strong>Notes:</strong> Joint development with EMBL groups; ELEPHANT extension for deep-learning-assisted tracking.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="embl-european-molecular-biology-laboratory">
+<h2>EMBL (European Molecular Biology Laboratory)<a class="headerlink" href="#embl-european-molecular-biology-laboratory" title="Link to this heading">#</a></h2>
+<section id="ilastik">
+<h3>ilastik<a class="headerlink" href="#ilastik" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub org:</strong> <a class="reference external" href="https://github.com/ilastik">github.com/ilastik</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Berg et al., <em>Nature Methods</em> 2019 ✓ — doi: 10.1038/s41592-019-0582-9</p></li>
+<li><p><strong>What:</strong> Interactive ML for pixel/object classification, tracking, and semi-automated segmentation. Random-forest backend; no coding required.</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+<li><p><strong>Notes:</strong> Anna Kreshuk’s lab. ImageJ/Fiji integration; Python API. Long-standing community workhorse.</p></li>
+</ul>
+</section>
+<section id="deepimagej">
+<h3>deepImageJ<a class="headerlink" href="#deepimagej" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/deepimagej/deepimagej-plugin">github.com/deepimagej/deepimagej-plugin</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Gómez-de-Mariscal et al., <em>Nature Methods</em> 2021 ✓ — doi: 10.1038/s41592-021-01262-9</p></li>
+<li><p><strong>What:</strong> ImageJ/Fiji plugin to run deep-learning models without coding (classification, segmentation, denoising, super-resolution). BioImage Model Zoo–compatible.</p></li>
+<li><p><strong>License:</strong> AGPL ⚠</p></li>
+</ul>
+</section>
+<section id="bioimage-model-zoo-bioimage-io">
+<h3>BioImage Model Zoo (<a class="reference external" href="http://bioimage.io">bioimage.io</a>)<a class="headerlink" href="#bioimage-model-zoo-bioimage-io" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/bioimage-io/bioimage.io">github.com/bioimage-io/bioimage.io</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Ouyang et al., 2022, <strong>bioRxiv preprint</strong> (✏ corrected: agent draft listed <em>Nature Methods</em>; the canonical reference is a bioRxiv preprint as of verification — confirm publication status before external use)</p></li>
+<li><p><strong>What:</strong> Standardized repository of pre-trained deep-learning models for bioimage analysis. Metadata, versioning, DOI.</p></li>
+<li><p><strong>License:</strong> Various per model (CC-BY, MIT, etc.)</p></li>
+<li><p><strong>Notes:</strong> Hosted on Zenodo; integrates with ilastik, deepImageJ, StarDist, CSBDeep, others.</p></li>
+</ul>
+</section>
+<section id="mobie">
+<h3>MoBIE<a class="headerlink" href="#mobie" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/mobie">github.com/mobie</a> ⚠</p></li>
+<li><p><strong>What:</strong> Visualization platform for multi-omics and volumetric data; OME-NGFF/Zarr integration; Fiji plugin.</p></li>
+<li><p><strong>Notes:</strong> COVID-EM and other public projects.</p></li>
+</ul>
+</section>
+<section id="bioimage-archive-embl-ebi">
+<h3>BioImage Archive (EMBL-EBI)<a class="headerlink" href="#bioimage-archive-embl-ebi" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="https://www.ebi.ac.uk/bioimage-archive">www.ebi.ac.uk/bioimage-archive</a> ⚠</p></li>
+<li><p><strong>What:</strong> Public archive for biological image data — equivalent to GenBank/PDB for imaging. Submissions assigned accession numbers; growing rapidly.</p></li>
+<li><p><strong>Relevance:</strong> Data-storage and reference-dataset infrastructure.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="blue-brain-project-open-brain-institute-epfl">
+<h2>Blue Brain Project / Open Brain Institute (EPFL)<a class="headerlink" href="#blue-brain-project-open-brain-institute-epfl" title="Link to this heading">#</a></h2>
+<section id="neurom">
+<h3>NeuroM<a class="headerlink" href="#neurom" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/BlueBrain/NeuroM">github.com/BlueBrain/NeuroM</a> ⚠</p></li>
+<li><p><strong>What:</strong> Python toolkit for analysis and processing of neuron morphologies. Feature extraction and validation.</p></li>
+<li><p><strong>License:</strong> LGPLv3 ⚠</p></li>
+<li><p><strong>Notes:</strong> Foundational for computational neuroscience. Migration to OpenBrainInstitute reportedly underway. ⚠</p></li>
+</ul>
+</section>
+<section id="sonata-format">
+<h3>SONATA format<a class="headerlink" href="#sonata-format" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/BlueBrain/sonata">github.com/BlueBrain/sonata</a> ⚠</p></li>
+<li><p><strong>What:</strong> Scalable open data format for multiscale neuronal network models and simulation output. Co-developed with Allen Institute.</p></li>
+</ul>
+</section>
+<section id="bluepyopt">
+<h3>BluePyOpt<a class="headerlink" href="#bluepyopt" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/BlueBrain/BluePyOpt">github.com/BlueBrain/BluePyOpt</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Van Geit et al., <em>Frontiers in Neuroinformatics</em> 2016 ✓ — doi: 10.3389/fninf.2016.00017</p></li>
+<li><p><strong>What:</strong> Parameter optimization for computational neuron models.</p></li>
+<li><p><strong>Relevance:</strong> Lower for AI-imaging specifically; included for completeness.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="community-platforms-and-colab-friendly-toolboxes">
+<h2>Community platforms and Colab-friendly toolboxes<a class="headerlink" href="#community-platforms-and-colab-friendly-toolboxes" title="Link to this heading">#</a></h2>
+<section id="zerocostdl4mic">
+<h3>ZeroCostDL4Mic<a class="headerlink" href="#zerocostdl4mic" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/HenriquesLab/ZeroCostDL4Mic">github.com/HenriquesLab/ZeroCostDL4Mic</a> ✓</p></li>
+<li><p><strong>Paper:</strong> von Chamier et al., <em>Nature Communications</em> 2021 ✓ — doi: 10.1038/s41467-021-22518-0</p></li>
+<li><p><strong>What:</strong> Google Colab notebooks for deep-learning microscopy methods (U-Net, StarDist, YOLOv2, CARE, Noise2Void, Deep-STORM, label-free prediction / fnet, pix2pix, CycleGAN). No coding required.</p></li>
+<li><p><strong>License:</strong> MIT ⚠</p></li>
+<li><p><strong>Notes:</strong> The community-standard entry point for non-coders.</p></li>
+</ul>
+</section>
+<section id="dl4miceverywhere">
+<h3>DL4MicEverywhere<a class="headerlink" href="#dl4miceverywhere" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/HenriquesLab/DL4MicEverywhere">github.com/HenriquesLab/DL4MicEverywhere</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Hidalgo-Cenalmor et al., <em>Nature Methods</em> 2024 ✓ — doi: 10.1038/s41592-024-02295-6 (✏ correction: agent draft listed Fuster-Barceló as first author)</p></li>
+<li><p><strong>What:</strong> Containerized successor to ZeroCostDL4Mic. Docker images that run on Colab, local, HPC, or cloud. Adds image registration, 3D SMLM, temporal/spatial upsampling, image generation. ~25 notebooks.</p></li>
+<li><p><strong>License:</strong> CC-BY-4.0 ✓</p></li>
+<li><p><strong>Notes:</strong> AI4Life-affiliated. Probably the right local-runtime path for workshop attendees who want to continue past Colab.</p></li>
+</ul>
+</section>
+<section id="neubias-training-resources">
+<h3>NEUBIAS training resources<a class="headerlink" href="#neubias-training-resources" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/NEUBIAS/training-resources">github.com/NEUBIAS/training-resources</a> ⚠</p></li>
+<li><p><strong>What:</strong> Modular open educational resource for bioimage analysis. 30-minute lessons across ImageJ, Python, Galaxy, and more.</p></li>
+<li><p><strong>License:</strong> CC-BY ⚠</p></li>
+<li><p><strong>Notes:</strong> Community-driven; NEUBIAS Defragmentation training-school materials available.</p></li>
+</ul>
+</section>
+<section id="image-sc-forum">
+<h3><a class="reference external" href="http://image.sc">image.sc</a> forum<a class="headerlink" href="#image-sc-forum" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="https://forum.image.sc">forum.image.sc</a> ✓</p></li>
+<li><p><strong>What:</strong> Community forum for bioimage analysis; the canonical place to ask questions. Multiple software communities (Fiji, CellProfiler, napari, ilastik, scikit-image, etc.) share the platform.</p></li>
+<li><p><strong>Notes:</strong> The single most useful URL on this page for an attendee continuing self-directed learning.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="foundation-models-and-major-dl-building-blocks">
+<h2>Foundation models and major DL building blocks<a class="headerlink" href="#foundation-models-and-major-dl-building-blocks" title="Link to this heading">#</a></h2>
+<section id="segment-anything-sam">
+<h3>Segment Anything (SAM)<a class="headerlink" href="#segment-anything-sam" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/facebookresearch/segment-anything">github.com/facebookresearch/segment-anything</a> ⚠</p></li>
+<li><p><strong>Paper:</strong> Kirillov et al., <em>ICCV</em> 2023 ✓</p></li>
+<li><p><strong>What:</strong> Vision foundation model for general segmentation. Foundation for downstream microscopy/biomedical adaptations.</p></li>
+<li><p><strong>License:</strong> Apache 2.0 ⚠</p></li>
+<li><p><strong>Notes:</strong> SAM 2 and reportedly SAM 3 released; verify current state before workshop. ⚠</p></li>
+</ul>
+</section>
+<section id="segment-anything-for-microscopy-sam-micro-sam">
+<h3>Segment Anything for Microscopy (μSAM / micro-sam)<a class="headerlink" href="#segment-anything-for-microscopy-sam-micro-sam" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/computational-cell-analytics/micro-sam">github.com/computational-cell-analytics/micro-sam</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Pape et al., <em>Nature Methods</em> 2025 ✓ (✏ correction: agent draft listed Wolny as first author)</p></li>
+<li><p><strong>What:</strong> SAM fine-tuned on &gt;17,000 microscopy images. Light and electron microscopy; napari plugin.</p></li>
+<li><p><strong>License:</strong> CC-BY-4.0 ⚠</p></li>
+<li><p><strong>Notes:</strong> Constantin Pape, Göttingen. Used in Lab 3 option B.</p></li>
+</ul>
+</section>
+<section id="u-net-canonical-reference">
+<h3>U-Net (canonical reference)<a class="headerlink" href="#u-net-canonical-reference" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub example:</strong> <a class="reference external" href="https://github.com/milesial/Pytorch-UNet">github.com/milesial/Pytorch-UNet</a> ⚠ (one of many implementations)</p></li>
+<li><p><strong>Paper:</strong> Ronneberger, Fischer, Brox, <em>MICCAI</em> 2015 ⚠</p></li>
+<li><p><strong>What:</strong> The seminal encoder-decoder architecture for biomedical image segmentation. Numerous implementations and variants.</p></li>
+<li><p><strong>Notes:</strong> Cite the original paper; there is no canonical reference implementation.</p></li>
+</ul>
+</section>
+<section id="cellpose-sam-current-cellpose">
+<h3>Cellpose-SAM (current Cellpose)<a class="headerlink" href="#cellpose-sam-current-cellpose" title="Link to this heading">#</a></h3>
+<p>See <a class="reference internal" href="#cellpose--cellpose-sam-mouseland--stringer--pachitariu"><span class="xref myst">Janelia / MouseLand</span></a> above.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="restoration-and-self-supervised-denoising">
+<h2>Restoration and self-supervised denoising<a class="headerlink" href="#restoration-and-self-supervised-denoising" title="Link to this heading">#</a></h2>
+<section id="care-content-aware-image-restoration">
+<h3>CARE (Content-Aware Image Restoration)<a class="headerlink" href="#care-content-aware-image-restoration" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <em>via CSBDeep / cstring</em> — verify before workshop ⚠</p></li>
+<li><p><strong>Paper:</strong> Weigert et al., <em>Nature Methods</em> 2018 ✓</p></li>
+<li><p><strong>What:</strong> Supervised content-aware restoration for fluorescence microscopy.</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ⚠</p></li>
+</ul>
+</section>
+<section id="noise2void">
+<h3>Noise2Void<a class="headerlink" href="#noise2void" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/juglab/n2v">github.com/juglab/n2v</a> ⚠</p></li>
+<li><p><strong>Paper:</strong> Krull, Buchholz, Jug, <em>CVPR</em> 2019 ✓</p></li>
+<li><p><strong>What:</strong> Self-supervised denoising. Trains directly on noisy data without paired ground truth.</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ⚠</p></li>
+<li><p><strong>Notes:</strong> Used in Lab 3 option A.</p></li>
+</ul>
+</section>
+<section id="csbdeep">
+<h3>CSBDeep<a class="headerlink" href="#csbdeep" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/CSBDeep/CSBDeep">github.com/CSBDeep/CSBDeep</a> ⚠</p></li>
+<li><p><strong>What:</strong> Content-aware deep-learning restoration framework underlying CARE and several related methods.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pathology-and-digital-pathology">
+<h2>Pathology and digital pathology<a class="headerlink" href="#pathology-and-digital-pathology" title="Link to this heading">#</a></h2>
+<section id="qupath">
+<h3>QuPath<a class="headerlink" href="#qupath" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/qupath/qupath">github.com/qupath/qupath</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Bankhead et al., <em>Scientific Reports</em> 2017 ✓ — doi: 10.1038/s41598-017-17204-5</p></li>
+<li><p><strong>What:</strong> Whole-slide image analysis platform. WSI annotation, segmentation, classification. Deep-learning integrations (StarDist, WSInfer).</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+<li><p><strong>Notes:</strong> Wide adoption in digital pathology. WSInfer extension for standardized model deployment.</p></li>
+</ul>
+</section>
+<section id="wsinfer">
+<h3>WSInfer<a class="headerlink" href="#wsinfer" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/SBU-BMI/wsinfer">github.com/SBU-BMI/wsinfer</a> ⚠</p></li>
+<li><p><strong>What:</strong> Standardized inference of pretrained models on whole-slide images.</p></li>
+</ul>
+</section>
+<section id="monai-pathology">
+<h3>MONAI Pathology<a class="headerlink" href="#monai-pathology" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/Project-MONAI/MONAI">github.com/Project-MONAI/MONAI</a> ⚠</p></li>
+<li><p><strong>What:</strong> PyTorch-based framework for medical AI; pathology and clinical-imaging modules. Core MONAI plus pathology-specific extensions.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="clinical-imaging">
+<h2>Clinical imaging<a class="headerlink" href="#clinical-imaging" title="Link to this heading">#</a></h2>
+<section id="monai-core">
+<h3>MONAI (core)<a class="headerlink" href="#monai-core" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/Project-MONAI/MONAI">github.com/Project-MONAI/MONAI</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Cardoso et al., <em>arXiv</em> 2022 (arXiv:2211.02701) — ✏ corrected: no canonical Nature Methods paper exists; the framework is documented via the arXiv preprint and project website</p></li>
+<li><p><strong>What:</strong> PyTorch-based framework for clinical AI. DICOM-aware data loaders, transforms, models, and validation utilities.</p></li>
+<li><p><strong>License:</strong> Apache 2.0 ⚠</p></li>
+</ul>
+</section>
+<section id="nnu-net">
+<h3>nnU-Net<a class="headerlink" href="#nnu-net" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/MIC-DKFZ/nnUNet">github.com/MIC-DKFZ/nnUNet</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Isensee et al., <em>Nature Methods</em> 2021 ✓ — doi: 10.1038/s41592-020-01008-z</p></li>
+<li><p><strong>What:</strong> Self-configuring segmentation framework that has dominated medical-imaging segmentation challenges.</p></li>
+</ul>
+</section>
+<section id="totalsegmentator">
+<h3>TotalSegmentator<a class="headerlink" href="#totalsegmentator" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/wasserth/TotalSegmentator">github.com/wasserth/TotalSegmentator</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Wasserthal et al., <em>Radiology: AI</em> 2023 ✓ — doi: 10.1148/ryai.230024 (✏ corrected: agent draft had year unknown; verified 2023 publication in Radiology: AI)</p></li>
+<li><p><strong>What:</strong> Whole-body CT/MRI multi-organ segmentation tool. Wide clinical adoption.</p></li>
+</ul>
+</section>
+<section id="voxelmorph">
+<h3>VoxelMorph<a class="headerlink" href="#voxelmorph" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/voxelmorph/voxelmorph">github.com/voxelmorph/voxelmorph</a> ⚠</p></li>
+<li><p><strong>Paper:</strong> Balakrishnan et al., <em>IEEE TMI</em> 2019 ✓</p></li>
+<li><p><strong>What:</strong> Deep-learning deformable image registration. Foundational for clinical-imaging registration.</p></li>
+<li><p><strong>License:</strong> Apache 2.0 ⚠</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="visualization-and-infrastructure">
+<h2>Visualization and infrastructure<a class="headerlink" href="#visualization-and-infrastructure" title="Link to this heading">#</a></h2>
+<section id="fiji-imagej">
+<h3>Fiji / ImageJ<a class="headerlink" href="#fiji-imagej" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/fiji">github.com/fiji</a> ⚠</p></li>
+<li><p><strong>What:</strong> The dominant community platform for microscopy image analysis. Distribution of ImageJ with curated plugins.</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+<li><p><strong>Notes:</strong> Foundational; integrates StarDist, ilastik, BigStitcher, Mastodon, deepImageJ, and many others.</p></li>
+</ul>
+</section>
+<section id="scikit-image">
+<h3>scikit-image<a class="headerlink" href="#scikit-image" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/scikit-image/scikit-image">github.com/scikit-image/scikit-image</a> ✓</p></li>
+<li><p><strong>What:</strong> Python library for classical image processing. Used heavily in preprocessing pipelines for AI workflows.</p></li>
+<li><p><strong>License:</strong> BSD-3-Clause ✓</p></li>
+</ul>
+</section>
+<section id="clearmap">
+<h3>ClearMap<a class="headerlink" href="#clearmap" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/ChristophKirst/ClearMap">github.com/ChristophKirst/ClearMap</a> ✓</p></li>
+<li><p><strong>Paper:</strong> Renier, Adams, Kirst et al., <em>Cell</em> 2016 ✓ — doi: 10.1016/j.cell.2016.05.007 (✏ corrected: agent draft listed Kirst as first author; canonical paper has Renier first; Kirst is contributing author and current GitHub maintainer)</p></li>
+<li><p><strong>What:</strong> Volumetric image analysis, registration, and segmentation for cleared-tissue samples. Allen Brain Atlas integration.</p></li>
+</ul>
+</section>
+<section id="empanada-napari">
+<h3>empanada-napari<a class="headerlink" href="#empanada-napari" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/volume-em/empanada-napari">github.com/volume-em/empanada-napari</a> ⚠</p></li>
+<li><p><strong>What:</strong> Panoptic segmentation napari plugin for electron microscopy.</p></li>
+</ul>
+</section>
+<section id="cellseg3d">
+<h3>CellSeg3D<a class="headerlink" href="#cellseg3d" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/AdaptiveMotorControlLab/CellSeg3D">github.com/AdaptiveMotorControlLab/CellSeg3D</a> ⚠</p></li>
+<li><p><strong>What:</strong> 3D cell segmentation napari plugin (Mathis Lab).</p></li>
+</ul>
+</section>
+<section id="mesmer-deepcell">
+<h3>Mesmer / DeepCell<a class="headerlink" href="#mesmer-deepcell" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/vanvalenlab/deepcell-tf">github.com/vanvalenlab/deepcell-tf</a> ⚠</p></li>
+<li><p><strong>Paper:</strong> Greenwald et al., <em>Nature Biotechnology</em> 2022 ✓</p></li>
+<li><p><strong>What:</strong> Whole-cell segmentation across fluorescence and mass spectrometry imaging. Two-channel (nucleus + membrane) input.</p></li>
+<li><p><strong>License:</strong> Apache 2.0 ⚠</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="vendor-format-support">
+<h2>Vendor-format support<a class="headerlink" href="#vendor-format-support" title="Link to this heading">#</a></h2>
+<section id="zeiss-pylibczirw">
+<h3>Zeiss pylibCZIrw<a class="headerlink" href="#zeiss-pylibczirw" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/ZEISS/pylibczirw">github.com/ZEISS/pylibczirw</a> ⚠</p></li>
+<li><p><strong>Colab tutorial:</strong> <a class="reference external" href="https://colab.research.google.com/github/zeiss-microscopy/OAD/blob/master/jupyter_notebooks/pylibCZIrw/pylibCZIrw_4_0_0.ipynb">colab.research.google.com/github/zeiss-microscopy/OAD</a> ⚠</p></li>
+<li><p><strong>What:</strong> Read/write CZI files in Python.</p></li>
+<li><p><strong>Notes:</strong> Useful for attendees with Zeiss microscopes.</p></li>
+</ul>
+</section>
+<section id="bio-formats">
+<h3>Bio-Formats<a class="headerlink" href="#bio-formats" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>GitHub:</strong> <a class="reference external" href="https://github.com/ome/bioformats">github.com/ome/bioformats</a> ⚠</p></li>
+<li><p><strong>What:</strong> Java library for reading and writing &gt;150 microscopy and life-science formats. Integrated into Fiji, ImageJ, QuPath, and many Python tools.</p></li>
+<li><p><strong>License:</strong> GPL ⚠</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="atlases-and-big-data-resources">
+<h2>Atlases and big data resources<a class="headerlink" href="#atlases-and-big-data-resources" title="Link to this heading">#</a></h2>
+<section id="allen-brain-atlas">
+<h3>Allen Brain Atlas<a class="headerlink" href="#allen-brain-atlas" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="https://portal.brain-map.org">portal.brain-map.org</a> ✓</p></li>
+<li><p><strong>What:</strong> Reference atlases of mouse and human brain. Datasets, ontologies, and APIs (AllenSDK).</p></li>
+</ul>
+</section>
+<section id="idr-image-data-resource">
+<h3>IDR (Image Data Resource)<a class="headerlink" href="#idr-image-data-resource" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="https://idr.openmicroscopy.org">idr.openmicroscopy.org</a> ⚠</p></li>
+<li><p><strong>What:</strong> Public repository of reference imaging datasets.</p></li>
+</ul>
+</section>
+<section id="microns-allen-princeton-baylor">
+<h3>MICrONS (Allen + Princeton + Baylor)<a class="headerlink" href="#microns-allen-princeton-baylor" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="https://www.microns-explorer.org">microns-explorer.org</a> ⚠</p></li>
+<li><p><strong>What:</strong> EM connectomics dataset with cell-type annotations.</p></li>
+</ul>
+</section>
+<section id="cell-image-library">
+<h3>Cell Image Library<a class="headerlink" href="#cell-image-library" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Web:</strong> <a class="reference external" href="http://www.cellimagelibrary.org">cellimagelibrary.org</a> ⚠</p></li>
+<li><p><strong>What:</strong> Curated collection of cell biology images.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="gaps-and-notes">
+<h2>Gaps and notes<a class="headerlink" href="#gaps-and-notes" title="Link to this heading">#</a></h2>
+<p>The agent research pass surfaced 50+ projects. Several areas remain thin:</p>
+<ul class="simple">
+<li><p><strong>Euro-BioImaging</strong> and <strong>Global BioImaging</strong> are coordination and infrastructure networks rather than tool-publishing organizations. Their value is in linking labs, not GitHub repos. ❓</p></li>
+<li><p><strong>EMBL-EBI imaging tools</strong> are scattered across labs rather than centrally hosted. The BioImage Archive is data-centric; tooling is dispersed.</p></li>
+<li><p><strong>CZ Imaging Institute</strong> is recently founded; the GitHub presence is still expanding. Worth re-checking before any external delivery.</p></li>
+<li><p><strong>Pathology and clinical-imaging foundation models</strong> (UNI, Virchow, CONCH, MedSAM, RadFM, CXR-CLIP, BiomedCLIP) are touched on in the broader curriculum but not in this lecture’s primary scope; they are listed in the curriculum module catalog instead.</p></li>
+<li><p><strong>Cryo-EM tooling</strong> (RELION, cryoSPARC, Topaz, ModelAngelo) is deferred per workshop scope.</p></li>
+</ul>
+</section>
+<section id="what-s-verified-versus-flagged">
+<h2>What’s verified versus flagged<a class="headerlink" href="#what-s-verified-versus-flagged" title="Link to this heading">#</a></h2>
+<p>Of the entries above:</p>
+<ul class="simple">
+<li><p><strong>Fully verified during this build session (✓):</strong> Cellpose, ZeroCostDL4Mic, DL4MicEverywhere, μSAM, napari, scikit-image, <a class="reference external" href="http://image.sc">image.sc</a>, several papers (Stringer 2021, Schmidt 2018, Weigert 2018, Krull 2019, Kirillov 2023, Pape 2025, Greenwald 2022, von Chamier 2021, Hidalgo-Cenalmor 2024, Balakrishnan 2019), Allen Brain Atlas portal.</p></li>
+<li><p><strong>Flagged ⚠ for verification:</strong> GitHub URLs and license fields for many entries; specific paper citations for ilastik, deepImageJ, BioImage Model Zoo, BigStitcher, Mastodon, Bankhead/QuPath, Berg/ilastik, Hörl/BigStitcher, Wolff/Mastodon, Gómez-de-Mariscal/deepImageJ, Ronneberger U-Net, Kirst/ClearMap, Van Geit/BluePyOpt, Isensee/nnU-Net.</p></li>
+</ul>
+<p>Anything tagged ⚠ should be cross-checked against the source GitHub repository’s <code class="docutils literal notranslate"><span class="pre">README</span></code> or the cited paper before public-facing use.</p>
+</section>
+<section id="citation-corrections-recorded">
+<h2>Citation corrections recorded<a class="headerlink" href="#citation-corrections-recorded" title="Link to this heading">#</a></h2>
+<p>Two citation errors in the agent’s draft were corrected during compilation:</p>
+<ol class="arabic simple">
+<li><p><strong>StarDist</strong> — agent listed Weigert et al. (correct paper has Schmidt et al., 2018, <em>MICCAI</em>).</p></li>
+<li><p><strong>DL4MicEverywhere</strong> — agent listed Fuster-Barceló et al. (correct paper has Hidalgo-Cenalmor et al., 2024, <em>Nature Methods</em>).</p></li>
+<li><p><strong>μSAM</strong> — agent listed Wolny et al. (correct paper has Pape et al., 2025, <em>Nature Methods</em>).</p></li>
+</ol>
+<p>These corrections are reflected in the entries above. Other agent-provided citations carry ⚠ pending verification.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="prerequisites.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Prerequisites</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="handout.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Workshop Handout</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-legend">Quick legend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-institute">Allen Institute</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-cell-structure-segmenter-aics">Allen Cell &amp; Structure Segmenter (AICS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aicsimageio-bioio">AICSImageIO / bioio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari-allencell-segmenter">napari-allencell-segmenter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-neural-dynamics">Allen Neural Dynamics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#openscope-databook">OpenScope databook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brain-atlas-allensdk">Brain Atlas / AllenSDK</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chan-zuckerberg-initiative-czi">Chan Zuckerberg Initiative (CZI)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cz-imaging-institute-czii">CZ Imaging Institute (CZII)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#napari-czi-supported">napari (CZI-supported)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#czi-funding-for-community-projects">CZI funding for community projects</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#janelia-research-campus-hhmi-and-affiliated">Janelia Research Campus (HHMI) and affiliated</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-cellpose-sam-mouseland-stringer-pachitariu">Cellpose / Cellpose-SAM (MouseLand — Stringer &amp; Pachitariu)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stardist-janelia-mpi-cbg-tu-dresden">StarDist (Janelia / MPI-CBG / TU Dresden)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flyem-connectome-tools">FlyEM connectome tools</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bigstitcher">BigStitcher</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bigdataviewer-bdv">BigDataViewer (BDV)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mastodon">Mastodon</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embl-european-molecular-biology-laboratory">EMBL (European Molecular Biology Laboratory)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ilastik">ilastik</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deepimagej">deepImageJ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-model-zoo-bioimage-io">BioImage Model Zoo (bioimage.io)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mobie">MoBIE</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-archive-embl-ebi">BioImage Archive (EMBL-EBI)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blue-brain-project-open-brain-institute-epfl">Blue Brain Project / Open Brain Institute (EPFL)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neurom">NeuroM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sonata-format">SONATA format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bluepyopt">BluePyOpt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#community-platforms-and-colab-friendly-toolboxes">Community platforms and Colab-friendly toolboxes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zerocostdl4mic">ZeroCostDL4Mic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dl4miceverywhere">DL4MicEverywhere</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neubias-training-resources">NEUBIAS training resources</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#image-sc-forum">image.sc forum</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#foundation-models-and-major-dl-building-blocks">Foundation models and major DL building blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#segment-anything-sam">Segment Anything (SAM)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#segment-anything-for-microscopy-sam-micro-sam">Segment Anything for Microscopy (μSAM / micro-sam)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#u-net-canonical-reference">U-Net (canonical reference)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-sam-current-cellpose">Cellpose-SAM (current Cellpose)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#restoration-and-self-supervised-denoising">Restoration and self-supervised denoising</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#care-content-aware-image-restoration">CARE (Content-Aware Image Restoration)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#noise2void">Noise2Void</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csbdeep">CSBDeep</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pathology-and-digital-pathology">Pathology and digital pathology</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qupath">QuPath</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wsinfer">WSInfer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monai-pathology">MONAI Pathology</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clinical-imaging">Clinical imaging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monai-core">MONAI (core)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nnu-net">nnU-Net</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#totalsegmentator">TotalSegmentator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#voxelmorph">VoxelMorph</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-and-infrastructure">Visualization and infrastructure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fiji-imagej">Fiji / ImageJ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scikit-image">scikit-image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clearmap">ClearMap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empanada-napari">empanada-napari</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellseg3d">CellSeg3D</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mesmer-deepcell">Mesmer / DeepCell</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vendor-format-support">Vendor-format support</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zeiss-pylibczirw">Zeiss pylibCZIrw</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bio-formats">Bio-Formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atlases-and-big-data-resources">Atlases and big data resources</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-brain-atlas">Allen Brain Atlas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idr-image-data-resource">IDR (Image Data Resource)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#microns-allen-princeton-baylor">MICrONS (Allen + Princeton + Baylor)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-image-library">Cell Image Library</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaps-and-notes">Gaps and notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-verified-versus-flagged">What’s verified versus flagged</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation-corrections-recorded">Citation corrections recorded</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
