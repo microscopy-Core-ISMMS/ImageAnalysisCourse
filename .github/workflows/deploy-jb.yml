@@ -1,0 +1,63 @@
+name: Build and deploy Jupyter Book
+
+# Trigger on push to the canonical content branches.
+# Also runs on manual dispatch from the Actions tab.
+on:
+  push:
+    branches:
+      - main
+      - 2026-workshop
+    # Don't rebuild for changes that don't affect the rendered site.
+    paths-ignore:
+      - "day-2-fiji/**"     # Day 2 is intentionally outside the JB scope
+      - "**.gitattributes"
+      - ".gitignore"
+      - "git_commit_plan.md"
+      - "README.md"         # repo-level readme, not in _toc.yml
+      - "CONTENT_LICENSE.md"
+      - "LICENSE"
+  workflow_dispatch:        # allow manual runs from GitHub UI
+
+# Need write access to push to gh-pages
+permissions:
+  contents: write
+
+# If a new push lands while a build is running, cancel the in-flight build
+# so we don't deploy a stale version on top of a newer one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # full history so ghp-import can fast-forward
+          lfs: true           # pull LFS objects so notebook embedded figures resolve
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Jupyter Book + deploy tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install jupyter-book ghp-import
+
+      - name: Build the book
+        run: |
+          jupyter-book build .
+          echo "Build size:"
+          du -sh _build/html
+
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          ghp-import -n -p -f -m "Deploy JB build from ${GITHUB_SHA::7}" _build/html
