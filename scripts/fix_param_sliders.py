@@ -150,6 +150,71 @@ FIXES = {
                 '        sam_mask_t = (Y - test_point[0])**2 + (X - test_point[1])**2 <= 25**2'
             ),
         },
+        # --- 7. Cell 18: replace fixed bbox with interactive percent-based sliders ---
+        {
+            "issue": "cell 18: convert fixed-size bbox to interactive sliders (center + size in % of image)",
+            "old": (
+                '# Bounding box around (roughly) the same blob\n'
+                f'{SENTINEL}: derive bounds from img.shape so the bbox clamps to the real image\n'
+                'H_img, W_img = img.shape[:2]\n'
+                'y0, x0 = max(point[0] - 30, 0), max(point[1] - 30, 0)\n'
+                'y1, x1 = min(point[0] + 30, H_img), min(point[1] + 30, W_img)\n'
+                'input_box = np.array([x0, y0, x1, y1])'
+            ),
+            "new": (
+                '# @title Bounding-box prompt — interactive sliders { run: "auto" }\n'
+                f'{SENTINEL}: bbox is now controllable by 4 sliders (all in percent of image dims).\n'
+                '# Defaults reproduce a small box near the auto-detected `point`.\n'
+                'box_center_x_pct = 50  # @param {type: "slider", min: 0, max: 100, step: 1}\n'
+                'box_center_y_pct = 50  # @param {type: "slider", min: 0, max: 100, step: 1}\n'
+                'box_width_pct = 10  # @param {type: "slider", min: 1, max: 100, step: 1}\n'
+                'box_height_pct = 10  # @param {type: "slider", min: 1, max: 100, step: 1}\n'
+                '\n'
+                'H_img, W_img = img.shape[:2]\n'
+                'cx = int(box_center_x_pct / 100 * W_img)\n'
+                'cy = int(box_center_y_pct / 100 * H_img)\n'
+                'half_w = max(1, int(box_width_pct / 100 * W_img / 2))\n'
+                'half_h = max(1, int(box_height_pct / 100 * H_img / 2))\n'
+                'x0 = max(cx - half_w, 0)\n'
+                'x1 = min(cx + half_w, W_img)\n'
+                'y0 = max(cy - half_h, 0)\n'
+                'y1 = min(cy + half_h, H_img)\n'
+                'input_box = np.array([x0, y0, x1, y1])\n'
+                'print(f"Image: {W_img}x{H_img} px. Box: ({x0}, {y0}) -> ({x1}, {y1}), size {x1-x0}x{y1-y0} px.")'
+            ),
+        },
+        # --- 8. Cell 20: replace fixed shifts with slider-driven percent shift ---
+        # Two old-string variants because the prior run produced a double-hash version.
+        # We try the broken-current-state version first; on a fresh NB the second variant matches.
+        {
+            "issue": "cell 20: clean up double-hash comment from prior fix run",
+            "old": (
+                '# @title Move the point around — interactive shift slider { run: "auto" }\n'
+                f'# {SENTINEL}: shift amount is now a slider in percent of image width.\n'
+            ),
+            "new": (
+                '# @title Move the point around — interactive shift slider { run: "auto" }\n'
+                f'{SENTINEL}: shift amount is now a slider in percent of image width.\n'
+            ),
+        },
+        {
+            "issue": "cell 20: convert fixed shift list to interactive percent-based slider",
+            "old": (
+                '# Move the point around and see how the mask changes\n'
+                'shifts = [(-20, 0), (0, 0), (20, 0)]\n'
+            ),
+            "new": (
+                '# @title Move the point around — interactive shift slider { run: "auto" }\n'
+                f'{SENTINEL}: shift amount is now a slider in percent of image width.\n'
+                '# Three panels show: -shift, 0, +shift along the x-axis from `point`.\n'
+                'shift_pct = 5  # @param {type: "slider", min: 0, max: 50, step: 1}\n'
+                '\n'
+                '_W = img.shape[1]\n'
+                'shift_px = int(shift_pct / 100 * _W)\n'
+                'shifts = [(0, -shift_px), (0, 0), (0, shift_px)]  # (dy, dx) in pixels\n'
+                'print(f"Image width: {_W} px. Shift: {shift_pct}% = {shift_px} px along x-axis.")\n'
+            ),
+        },
     ],
 }
 
