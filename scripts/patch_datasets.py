@@ -47,14 +47,18 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "20 fields of murine bone-marrow derived macrophages (DAPI + CD11b + F-actin); paired ground-truth outlines available.",
-        "swap_vars": ["img"],
+        "swap_vars": ["img_easy", "img_hard", "img_easy_synth", "img_hard_synth", "img"],
         "swap_code": (
-            "if real_imgs:\n"
+            "if real_imgs and len(real_imgs) >= 2:\n"
+            "    img_easy = real_imgs[0]\n"
+            "    img_hard = real_imgs[1]\n"
+            "    img_easy_synth = real_imgs[0]\n"
+            "    img_hard_synth = real_imgs[1]\n"
             "    img = real_imgs[0]\n"
-            "    print('img is now from real data (BBBC020). Downstream Cellpose cells will run on real data.')\n"
-            "    print(\"NOTE: 'What you should be seeing' callouts were written for the synthetic image; counts and shapes will differ.\")\n"
+            "    print('img_easy / img_hard / *_synth now bound to BBBC020 real images (real_imgs[0] and real_imgs[1]).')\n"
+            "    print(\"NOTE: 'What you should be seeing' callouts were written for synthetic; counts and shapes will differ.\")\n"
             "else:\n"
-            "    print('real_imgs is None; staying with synthetic. Re-run the download cell above to retry.')\n"
+            "    print('real_imgs is None or has <2 images; staying with synthetic.')\n"
         ),
     },
     "02_validation_quantification.ipynb": {
@@ -194,16 +198,23 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC038",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC038v1/BBBC038v1_train.zip",
         "what_it_is": "Diverse nuclei across modalities — designed for segmentation model training. Training subset only (smaller download).",
-        "swap_vars": ["train_imgs", "test_imgs", "img"],
+        "swap_vars": ["train_images", "train_labels", "test_images", "test_labels", "img"],
         "swap_code": (
             "if real_imgs and len(real_imgs) >= 6:\n"
-            "    train_imgs = real_imgs[:6]\n"
-            "    test_imgs = real_imgs[6:]\n"
-            "    img = real_imgs[0]\n"
-            "    print(f'train_imgs / test_imgs now from BBBC038 real nuclei. {len(train_imgs)} train / {len(test_imgs)} test.')\n"
-            "    print(\"NOTE: BBBC038 has paired masks but they're not loaded here yet (would need to walk the masks/ folder). Treat this as 'real images, generate masks via the baseline first'.\")\n"
+            "    import numpy as _np\n"
+            "    train_images = list(real_imgs[:6])\n"
+            "    test_images = list(real_imgs[6:8]) if len(real_imgs) >= 8 else list(real_imgs[6:])\n"
+            "    # BBBC038 train zip ships paired masks in mask/ subfolders, but the simple zip\n"
+            "    # walker doesn't separate them. Initialize labels to zeros so the schema works;\n"
+            "    # for true fine-tuning, run the baseline cells below first and use the predicted\n"
+            "    # masks as starting labels.\n"
+            "    train_labels = [_np.zeros(_np.asarray(im).shape[:2], dtype=_np.int32) for im in train_images]\n"
+            "    test_labels = [_np.zeros(_np.asarray(im).shape[:2], dtype=_np.int32) for im in test_images]\n"
+            "    img = _np.asarray(real_imgs[0])\n"
+            "    print(f'train_images ({len(train_images)}) / test_images ({len(test_images)}) now from BBBC038 real nuclei.')\n"
+            "    print(\"NOTE: train_labels/test_labels are zero-initialized. Run the baseline first to get predicted masks before fine-tuning.\")\n"
             "else:\n"
-            "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
+            "    print('real_imgs is None or has <6 images; staying with synthetic.')\n"
         ),
     },
     "12_deconvolution.ipynb": {
@@ -247,14 +258,19 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "Pairs naturally with NB01 — same dataset, multiple validation models compared on it.",
-        "swap_vars": ["img", "TEST_IMAGES (real entry added)"],
+        "swap_vars": ["img", "TEST_IMAGES"],
         "swap_code": (
             "if real_imgs:\n"
             "    img = real_imgs[0]\n"
-            "    # If a TEST_IMAGES registry exists later in the NB, you can append:\n"
-            "    #   TEST_IMAGES['real_bbbc020'] = (real_imgs[0], None)\n"
-            "    print('img is now from real data (BBBC020). Downstream model-picker cells will run on real microscopy.')\n"
-            "    print(\"NOTE: TEST_IMAGES dict is created later in the NB; once it exists, attendees can append a real entry.\")\n"
+            "    # Pre-create TEST_IMAGES with real entries. The synthetic creation cell\n"
+            "    # below is gated to skip when USE_REAL_FOR_DOWNSTREAM is True, so this dict\n"
+            "    # survives into the downstream model picker.\n"
+            "    # Each entry: name -> (image, ground_truth_or_None).\n"
+            "    TEST_IMAGES = {\n"
+            "        f'real_bbbc020_{i:02d}': (real_imgs[i], None)\n"
+            "        for i in range(min(4, len(real_imgs)))\n"
+            "    }\n"
+            "    print(f'img + TEST_IMAGES now from BBBC020 real data ({len(TEST_IMAGES)} registry entries; ground-truth masks not loaded for BBBC020).')\n"
             "else:\n"
             "    print('real_imgs is None; staying with synthetic.')\n"
         ),

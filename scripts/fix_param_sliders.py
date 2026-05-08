@@ -26,12 +26,41 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 NB_DIR = REPO_ROOT / "notebooks"
 
 SENTINEL = "# SLIDER-RANGE-FIX"
+GATE_SENTINEL = "# GATE-SYNTHETIC"
 
 
 # Per-NB known issues. Each entry replaces a snippet (`old`) with a fixed
 # version (`new`). Matching is exact-substring; if `new` already appears in
 # the cell, the fix is treated as already applied.
 FIXES = {
+    "01_cellpose_segmentation.ipynb": [
+        # When real data is loaded, img_easy is already bound by the swap. The
+        # original PNG-read overwrites that. Make it conditional.
+        {
+            "issue": "cell 14: skio.imread('sample_easy.png') overwrites real img_easy after swap",
+            "old": (
+                'img_easy = skio.imread("sample_easy.png")\n'
+                '# If the image is RGB, Cellpose expects channels in a specific format'
+            ),
+            "new": (
+                f'{SENTINEL}: when real-data swap is on, img_easy is already bound from real_imgs.\n'
+                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                '    img_easy = skio.imread("sample_easy.png")\n'
+                '# If the image is RGB, Cellpose expects channels in a specific format'
+            ),
+        },
+        {
+            "issue": "cell 15: skio.imread('sample_hard.png') overwrites real img_hard after swap",
+            "old": (
+                'img_hard = skio.imread("sample_hard.png")'
+            ),
+            "new": (
+                f'{SENTINEL}: when real-data swap is on, img_hard is already bound from real_imgs.\n'
+                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                '    img_hard = skio.imread("sample_hard.png")'
+            ),
+        },
+    ],
     "03b_foundation_model_segmentation.ipynb": [
         # --- 1. Slider fix in cell 16 (already applied in v1) ---
         {
@@ -219,6 +248,97 @@ FIXES = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Cell-level gating (wraps a synthetic-generation cell so it skips when the
+# real-data swap is active). Different shape from FIXES (substring replace) —
+# this needs to wrap arbitrary existing content.
+# ---------------------------------------------------------------------------
+
+GATE_FIXES = {
+    "01_cellpose_segmentation.ipynb": [
+        {
+            "issue": "cell 10: synthetic image generators (skip when real data is in use)",
+            "identifier": "def make_easy_image(seed=0, size=200",
+        },
+    ],
+    "03b_foundation_model_segmentation.ipynb": [
+        {
+            "issue": "cell 10: synthetic non-canonical image generator",
+            "identifier": "rng = np.random.default_rng(7)\nsize = 256",
+        },
+    ],
+    "09_cellpose_finetune.ipynb": [
+        {
+            "issue": "cell 12: synthetic labeled dataset generator",
+            "identifier": "def make_labeled_image(seed=0, size=200",
+        },
+    ],
+    "13_validation_case_study.ipynb": [
+        {
+            "issue": "cell 12: synthetic TEST_IMAGES registry creation",
+            "identifier": "def make_synth_easy(seed=0, size=200",
+        },
+    ],
+}
+
+
+def gate_cell(cell: dict) -> bool:
+    """Wrap a code cell in a USE_REAL_FOR_DOWNSTREAM guard. Idempotent."""
+    src = "".join(cell.get("source", []))
+    if GATE_SENTINEL in src:
+        return False
+    indented = "\n".join(("    " + line if line else "") for line in src.splitlines())
+    new_src = (
+        f"{GATE_SENTINEL}: skip when USE_REAL_FOR_DOWNSTREAM is True (real data is in use).\n"
+        "if globals().get('USE_REAL_FOR_DOWNSTREAM') and globals().get('real_imgs'):\n"
+        "    print('Synthetic generation skipped — real data is loaded into the working variables.')\n"
+        "else:\n"
+        f"{indented}\n"
+    )
+    cell["source"] = new_src.splitlines(keepends=True)
+    return True
+
+
+def apply_gates(nb: dict, fn: str, gates: list, dry_run: bool) -> tuple[int, int]:
+    """Returns (applied, skipped). Idempotent — detects already-gated cells via
+    indented identifier + GATE_SENTINEL combo."""
+    applied = skipped = 0
+    for g in gates:
+        target_idx = None
+        already_gated = False
+        # Compute the indented form the identifier would have AFTER gating.
+        indented_id = "\n".join("    " + line for line in g["identifier"].splitlines())
+        for i, c in enumerate(nb["cells"]):
+            if c.get("cell_type") != "code":
+                continue
+            src = "".join(c.get("source", []))
+            # Case A: cell hasn't been gated yet — identifier appears verbatim.
+            if g["identifier"] in src and GATE_SENTINEL not in src:
+                target_idx = i
+                break
+            # Case B: cell is already gated — identifier is now indented inside else.
+            if GATE_SENTINEL in src and indented_id in src:
+                target_idx = i
+                already_gated = True
+                break
+        if target_idx is None:
+            print(f"  [WARN] {fn}: gate target not found for '{g['issue']}'")
+            continue
+        if already_gated:
+            skipped += 1
+            continue
+        if dry_run:
+            print(f"  [DRY ] {fn}: would gate cell {target_idx} — {g['issue']}")
+            applied += 1
+            continue
+        if gate_cell(nb["cells"][target_idx]):
+            print(f"  [GATE] {fn}: cell {target_idx} — {g['issue']}")
+            applied += 1
+        else:
+            skipped += 1
+    return applied, skipped
+
+
 def apply_fixes(nb: dict, fn: str, fixes: list, dry_run: bool) -> tuple[int, int]:
     """Returns (applied, skipped)."""
     applied = skipped = 0
@@ -249,14 +369,24 @@ def main() -> int:
     args = ap.parse_args()
 
     total_applied = total_skipped = 0
-    for fn, fixes in FIXES.items():
+    # Combine substring-fix and gate targets so one pass-through writes the file once.
+    nbs_to_process = sorted(set(list(FIXES.keys()) + list(GATE_FIXES.keys())))
+    for fn in nbs_to_process:
         nb_path = NB_DIR / fn
         if not nb_path.exists():
             print(f"[ERR ] {fn}: not found", file=sys.stderr)
             continue
         with open(nb_path) as f:
             nb = json.load(f)
-        applied, skipped = apply_fixes(nb, fn, fixes, args.dry_run)
+        applied = skipped = 0
+        if fn in FIXES:
+            a, s = apply_fixes(nb, fn, FIXES[fn], args.dry_run)
+            applied += a
+            skipped += s
+        if fn in GATE_FIXES:
+            a, s = apply_gates(nb, fn, GATE_FIXES[fn], args.dry_run)
+            applied += a
+            skipped += s
         total_applied += applied
         total_skipped += skipped
         if applied and not args.dry_run:
