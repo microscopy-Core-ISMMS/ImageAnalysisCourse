@@ -1,0 +1,821 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Canonical dataset audit — Day 3 notebook real-data integration &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'datasets_audit';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/datasets_audit.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Canonical dataset audit — Day 3 notebook real-data integration</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-table">Summary table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-source-detail">Per-source detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bbbc-broad-bioimage-benchmark-collection">1. BBBC — Broad Bioimage Benchmark Collection ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dsb2018-covered-above-as-bbbc038">2. DSB2018 — covered above as BBBC038 ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-archive-embl-ebi">3. BioImage Archive (EMBL-EBI) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idr-image-data-resource">4. IDR (Image Data Resource) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-dataset-hhmi-license-caveat">5. Cellpose dataset (HHMI) ⚠️ license caveat</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bsccm-verified">6. BSCCM ✅ verified</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gigadb-100888-hagen-et-al-2021">7. GigaDB 100888 (Hagen et al. 2021) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-image-library-with-caveat">8. Cell Image Library ✅ (with caveat)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-institute-verified-with-noncommercial-clause">9. Allen Institute ✅ verified (with noncommercial clause)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nature-methods-collection">10. Nature Methods collection ❌</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nist-nexuslims">11. NIST NexusLIMS ❌</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-notebook-dataset-mapping-proposal-needs-nikos-sign-off">Recommended notebook ↔ dataset mapping (proposal — needs Nikos sign-off)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#items-flagged-for-review-added-to-review-items-md">Items flagged for review (added to <code class="docutils literal notranslate"><span class="pre">review_items.md</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#honest-disclosure">Honest disclosure</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="canonical-dataset-audit-day-3-notebook-real-data-integration">
+<h1>Canonical dataset audit — Day 3 notebook real-data integration<a class="headerlink" href="#canonical-dataset-audit-day-3-notebook-real-data-integration" title="Link to this heading">#</a></h1>
+<p><strong>Date:</strong> 2026-05-06
+<strong>Purpose:</strong> Evaluate candidate dataset sources for replacing the synthetic / <code class="docutils literal notranslate"><span class="pre">skimage.data</span></code> placeholders in the Day 3 notebooks (NB01 Cellpose segmentation, NB02 Validation/QC, NB03a denoising, NB03b foundation segmentation, NB05 desktop GUI complements).
+<strong>Method:</strong> direct HTTP fetch of each landing page where possible; targeted web search where the page is JS-rendered or fetch failed; flagged anything I couldn’t verify firsthand. Verbatim license text quoted only where it materially affects classroom redistribution.</p>
+<section id="summary-table">
+<h2>Summary table<a class="headerlink" href="#summary-table" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Source</p></th>
+<th class="head"><p>URL</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>License</p></th>
+<th class="head"><p>Format</p></th>
+<th class="head"><p>Best fit for</p></th>
+<th class="head"><p>Confidence</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>BBBC</strong> (Broad Bioimage Benchmark Collection)</p></td>
+<td><p><a class="reference external" href="http://bbbc.broadinstitute.org/image_sets" rel="noreferer noopener" target="_blank">bbbc.broadinstitute.org/image_sets</a></p></td>
+<td><p>✅ verified</p></td>
+<td><p>CC0 (per BBBC005 page)</p></td>
+<td><p>TIFF / PNG + ground-truth masks</p></td>
+<td><p>NB01 (BBBC005, BBBC006, BBBC020), NB02 (any with masks)</p></td>
+<td><p>High</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>DSB2018</strong> = BBBC038</p></td>
+<td><p><a class="reference external" href="http://bbbc.broadinstitute.org/BBBC038" rel="noreferer noopener" target="_blank">bbbc.broadinstitute.org/BBBC038</a></p></td>
+<td><p>✅ verified (via BBBC index)</p></td>
+<td><p>mirrored from Kaggle competition; BBBC mirror governed by BBBC terms</p></td>
+<td><p>PNG + masks</p></td>
+<td><p>NB01 nuclei segmentation</p></td>
+<td><p>High — but Kaggle download requires login; BBBC mirror preferred</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>BioImage Archive</strong> (EMBL-EBI)</p></td>
+<td><p><a class="reference external" href="http://ebi.ac.uk/bioimage-archive" rel="noreferer noopener" target="_blank">ebi.ac.uk/bioimage-archive</a></p></td>
+<td><p>✅ verified</p></td>
+<td><p>per-study (CC variants); REMBI-compliant; DOI-stable</p></td>
+<td><p>varies — TIFF, OME-Zarr, OME-NGFF</p></td>
+<td><p>NB02, NB03a, NB05 — pick a small study</p></td>
+<td><p>Medium — needs per-study license check</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>IDR</strong> (Image Data Resource)</p></td>
+<td><p><a class="reference external" href="http://idr.openmicroscopy.org" rel="noreferer noopener" target="_blank">idr.openmicroscopy.org</a></p></td>
+<td><p>✅ verified</p></td>
+<td><p>site CC-BY 4.0; per-study terms vary</p></td>
+<td><p>OMERO-served, OME-NGFF samples available</p></td>
+<td><p>NB02 high-content / NB03b foundation models</p></td>
+<td><p>High site-level; per-study to be confirmed</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Cellpose dataset</strong> (HHMI / <a class="reference external" href="http://cellpose.org" rel="noreferer noopener" target="_blank">cellpose.org</a>)</p></td>
+<td><p><a class="reference external" href="http://cellpose.org/dataset" rel="noreferer noopener" target="_blank">cellpose.org/dataset</a></p></td>
+<td><p>✅ verified</p></td>
+<td><p><strong>HHMI non-commercial / educational only</strong>; email + click-through T&amp;C required</p></td>
+<td><p>PNG</p></td>
+<td><p>NB01 — exact match for the model in the notebook</p></td>
+<td><p><strong>Caveat:</strong> redistribution not allowed. Workshop attendees would need to register individually.</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p><strong>BSCCM</strong> (Berkeley Single Cell Computational Microscopy)</p></td>
+<td><p><a class="reference external" href="http://waller-lab.github.io/BSCCM" rel="noreferer noopener" target="_blank">waller-lab.github.io/BSCCM</a></p></td>
+<td><p>✅ verified</p></td>
+<td><p><strong>BSD-3-Clause</strong> (read direct from repo)</p></td>
+<td><p>HDF5 / Zarr; ~12M images of 400K WBCs; 6 size variants from BSCCM-tiny 0.6 GB to BSCCM 228 GB</p></td>
+<td><p>NB05 advanced demo; possibly NB10 (3D seg)</p></td>
+<td><p>High</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p><strong>GigaDB 100888</strong> (Hagen et al. 2021 fluorescence dataset)</p></td>
+<td><p><a class="reference external" href="http://gigadb.org/dataset/100888" rel="noreferer noopener" target="_blank">gigadb.org/dataset/100888</a></p></td>
+<td><p>✅ verified via search; DOI 10.5524/100888</p></td>
+<td><p><strong>CC0 (with attribution requested)</strong></p></td>
+<td><p>TIFF</p></td>
+<td><p>NB03a denoising — designed for DL training</p></td>
+<td><p>High — paper + GigaDB confirmed</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p><strong>Cell Image Library</strong></p></td>
+<td><p><a class="reference external" href="http://cellimagelibrary.org/pages/datasets" rel="noreferer noopener" target="_blank">cellimagelibrary.org/pages/datasets</a></p></td>
+<td><p>✅ verified (per-image)</p></td>
+<td><p><strong>Per-image submitter-chosen</strong>: PD / CC-BY / CC-BY-NC-SA / CC-BY-NC-ND / Copyrighted</p></td>
+<td><p>varies — confocal stacks, EM, video</p></td>
+<td><p>Reference / browse link in NB05; selective hand-picked PD or CC-BY entries via public API for inline demos</p></td>
+<td><p>High at site level; per-image filtering required before redistribution</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p><strong>Allen Cell Imaging Collections</strong></p></td>
+<td><p><a class="reference external" href="http://allencell.org/data-downloading" rel="noreferer noopener" target="_blank">allencell.org/data-downloading</a> + Registry of Open Data on AWS</p></td>
+<td><p>✅ verified</p></td>
+<td><p>Allen Institute <strong>Terms of Use</strong> — <strong>noncommercial only</strong>; academic/educational publication of “limited set” expressly allowed with citation; mandatory Citation Policy</p></td>
+<td><p>OME-TIFF (16-bit fields, 16-bit single-cell crops, 8-bit segmentation masks); AICS-25 ≈ 86 GB across 5 tar.gz parts</p></td>
+<td><p>NB05 advanced 3D demo (hiPSC, mEGFP, membrane + DNA channels)</p></td>
+<td><p>High — terms read verbatim 2026-05-07</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p><strong>Nature Methods collection</strong> “AI in image analysis”</p></td>
+<td><p><a class="reference external" href="http://nature.com/collections/affejeadcg" rel="noreferer noopener" target="_blank">nature.com/collections/affejeadcg</a></p></td>
+<td><p>❌ not verified</p></td>
+<td><p>n/a</p></td>
+<td><p>n/a</p></td>
+<td><p>n/a — this is a curated <em>article</em> collection, not a dataset</p></td>
+<td><p>Low — the URL is a reading list, not a download source</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p><strong>NIST NexusLIMS</strong></p></td>
+<td><p><a class="reference external" href="http://pages.nist.gov/NexusLIMS" rel="noreferer noopener" target="_blank">pages.nist.gov/NexusLIMS</a></p></td>
+<td><p>❌ not a dataset</p></td>
+<td><p>n/a</p></td>
+<td><p>n/a</p></td>
+<td><p>n/a</p></td>
+<td><p>High — verified prior turn: NexusLIMS is a LIMS tool for microscope facilities, not an image dataset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="per-source-detail">
+<h2>Per-source detail<a class="headerlink" href="#per-source-detail" title="Link to this heading">#</a></h2>
+<section id="bbbc-broad-bioimage-benchmark-collection">
+<h3>1. BBBC — Broad Bioimage Benchmark Collection ✅<a class="headerlink" href="#bbbc-broad-bioimage-benchmark-collection" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Index page:</strong> <code class="docutils literal notranslate"><span class="pre">bbbc.broadinstitute.org/image_sets</span></code> lists 50+ image sets (BBBC001–054).</p></li>
+<li><p><strong>Top picks for the Day 3 notebooks:</strong></p>
+<ul>
+<li><p><strong>BBBC005</strong> Synthetic cells — 19,200 8-bit TIFF (696×520), 1.8 GB; ground truth 12 MB. CC0 verified verbatim on the BBBC005 page. Good NB02 candidate (segmentation accuracy vs ground truth).</p></li>
+<li><p><strong>BBBC006</strong> Human U2OS cells (out of focus) — Hoechst-stained, real images, focus variation; ideal NB01 + NB03a.</p></li>
+<li><p><strong>BBBC020</strong> Murine bone-marrow derived macrophages — multi-channel real images with masks.</p></li>
+<li><p><strong>BBBC038</strong> = the Kaggle 2018 Data Science Bowl nuclei dataset; BBBC mirror is preferred over Kaggle (no login).</p></li>
+</ul>
+</li>
+<li><p><strong>Verbatim license quote (BBBC005):</strong> “To the extent possible under law, Anne Carpenter has waived all copyright and related or neighboring rights to blurred synthetic images and ground truth.”</p></li>
+<li><p><strong>Recommendation:</strong> Make this our primary canonical source. Pin one or two sets per notebook with direct download URLs.</p></li>
+</ul>
+</section>
+<section id="dsb2018-covered-above-as-bbbc038">
+<h3>2. DSB2018 — covered above as BBBC038 ✅<a class="headerlink" href="#dsb2018-covered-above-as-bbbc038" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Caveat:</strong> the original Kaggle competition page (<code class="docutils literal notranslate"><span class="pre">kaggle.com/c/data-science-bowl-2018</span></code>) requires a Kaggle account to download. Use the BBBC mirror.</p></li>
+</ul>
+</section>
+<section id="bioimage-archive-embl-ebi">
+<h3>3. BioImage Archive (EMBL-EBI) ✅<a class="headerlink" href="#bioimage-archive-embl-ebi" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Verified verbatim from landing page:</strong> “The BioImage Archive is a free, publicly available online resource which stores and distributes biological images. It accepts submissions of data from any imaging modality, as long as the data are either associated with a peer-reviewed publication, or of value beyond a single experiment.”</p></li>
+<li><p>DOI-stable, REMBI-compliant, paired with EMPIAR + IDR.</p></li>
+<li><p><strong>Caveat:</strong> per-study licenses vary. Need to pick a specific study (e.g., S-BIAD-something) and check.</p></li>
+<li><p><strong>Notice on landing page:</strong> scheduled maintenance 2026-05-07 and 2026-05-11–14. <strong>Existing data remain accessible</strong> during maintenance; only submission services are offline. Not a blocker for read-only use.</p></li>
+</ul>
+</section>
+<section id="idr-image-data-resource">
+<h3>4. IDR (Image Data Resource) ✅<a class="headerlink" href="#idr-image-data-resource" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Public OMERO server, has <code class="docutils literal notranslate"><span class="pre">/cell/</span></code> and <code class="docutils literal notranslate"><span class="pre">/tissue/</span></code> portals, OME-NGFF samples, Jupyter analysis environment, public API at <code class="docutils literal notranslate"><span class="pre">idr.openmicroscopy.org/about/api.html</span></code>.</p></li>
+<li><p>Site copyright “© 2016-2026 University of Dundee &amp; Open Microscopy Environment. Creative Commons Attribution 4.0 International License.”</p></li>
+<li><p>Strong fit for NB05 (live OMERO browse demo) or for pulling a specific high-content study into NB02.</p></li>
+</ul>
+</section>
+<section id="cellpose-dataset-hhmi-license-caveat">
+<h3>5. Cellpose dataset (HHMI) ⚠️ license caveat<a class="headerlink" href="#cellpose-dataset-hhmi-license-caveat" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">cellpose.org/dataset</span></code> — <strong>not</strong> a public download. Requires an institutional email + acceptance of HHMI T&amp;C.</p></li>
+<li><p><strong>Verbatim from T&amp;C:</strong> “The Content is made available for limited non-commercial, educational, research and personal use only…  Copying or redistribution of the Content in any manner for commercial use, including commercial publication, or for personal gain, or making any other use of the Content beyond that allowed by ‘fair use,’ as such term is understood under the United States Copyright Act and applicable law, is strictly prohibited.”</p></li>
+<li><p><strong>Implication for the workshop:</strong> we <strong>cannot</strong> ship the Cellpose dataset inside our repo, even on a side branch. We can (a) link to the registration page and ask each attendee to register and download, or (b) use BBBC nuclei sets instead. <strong>Recommendation:</strong> prefer (b) for NB01.</p></li>
+</ul>
+</section>
+<section id="bsccm-verified">
+<h3>6. BSCCM ✅ verified<a class="headerlink" href="#bsccm-verified" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>License confirmed: BSD-3-Clause</strong> (read directly from <code class="docutils literal notranslate"><span class="pre">github.com/Waller-Lab/BSCCM</span></code> repo About panel, 2026-05-07).</p></li>
+<li><p>BSD-3-Clause is fully permissive — allows commercial + non-commercial use, redistribution, and derivative works with attribution. <strong>No barrier to including BSCCM data or code in our repo or notebooks.</strong></p></li>
+<li><p>Repo state: latest tagged release v1.0.0 (Dec 15 2023), Croissant ML metadata included (<code class="docutils literal notranslate"><span class="pre">croissant_metadata.json</span></code>), Python package <code class="docutils literal notranslate"><span class="pre">bsccm</span></code>, Getting Started notebook in repo, project website at <code class="docutils literal notranslate"><span class="pre">waller-lab.github.io/BSCCM/</span></code>, raw data hosted externally.</p></li>
+<li><p>Verified verbatim from README (top lines): “Berkeley Single Cell Computational Microscopy Dataset … For using the bsccm python package for using the dataset, see the Getting Started Jupyter notebook. Raw data is hosted here, but it is easiest to download using the python package as shown in the notebook.”</p></li>
+<li><p>Prior-turn data: ~12M images of 400K WBCs, six size tiers from BSCCM-tiny (0.6 GB) to full BSCCM (228 GB).</p></li>
+<li><p><strong>Recommendation:</strong> ✅ promote. Strong NB05 advanced demo candidate, and can also slot into NB10 (3D segmentation) given the volume and modality variety.</p></li>
+</ul>
+</section>
+<section id="gigadb-100888-hagen-et-al-2021">
+<h3>7. GigaDB 100888 (Hagen et al. 2021) ✅<a class="headerlink" href="#gigadb-100888-hagen-et-al-2021" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>DOI: 10.5524/100888. Direct dataset URL: <code class="docutils literal notranslate"><span class="pre">gigadb.org/dataset/100888</span></code>.</p></li>
+<li><p>Title: “Fluorescence microscopy datasets for training deep neural networks” (Hagen GM, Bendesky J, Machado R, et al., GigaScience 10(5), giab032).</p></li>
+<li><p>License: “All raw and analyzed data are available on GigaDB and distributed under the Creative Commons CC0 waiver, with a request for attribution.”</p></li>
+<li><p><strong>Strong fit for NB03a (denoising)</strong> — designed exactly for deep-learning training.</p></li>
+</ul>
+</section>
+<section id="cell-image-library-with-caveat">
+<h3>8. Cell Image Library ✅ (with caveat)<a class="headerlink" href="#cell-image-library-with-caveat" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Verified verbatim from <code class="docutils literal notranslate"><span class="pre">/pages/license</span></code>:</strong> CIL uses <strong>per-image submitter-chosen licensing</strong> with five options:</p>
+<ol class="arabic simple">
+<li><p><strong>Public Domain</strong> — “for works that are no longer restricted by copyright and can be freely used by others”</p></li>
+<li><p><strong>Creative Commons; Attribution Required</strong> (CC-BY)</p></li>
+<li><p><strong>Creative Commons; Attribution Required; NonCommercial; ShareAlike</strong> (CC-BY-NC-SA)</p></li>
+<li><p><strong>Creative Commons; Attribution Required; NonCommercial; NoDerivatives</strong> (CC-BY-NC-ND)</p></li>
+<li><p><strong>Copyrighted</strong> — “Use requirements to be specified upon request of the copyright holder”</p></li>
+</ol>
+</li>
+<li><p>Library size (verbatim from <code class="docutils literal notranslate"><span class="pre">/home</span></code>): “over 12,000 unique datasets and 30 TB of data”</p></li>
+<li><p>Citation (verbatim): “Cell Image Library (CIL) (RRID:SCR_003510)”</p></li>
+<li><p>Hosted at UCSD Center for Research in Biological Systems (CRBS / NCMIR). Image data served from <code class="docutils literal notranslate"><span class="pre">cildata.crbs.ucsd.edu</span></code>.</p></li>
+<li><p><strong>Public API</strong> documented at <code class="docutils literal notranslate"><span class="pre">github.com/CRBS/CIL_RS/wiki/CIL_Public_API</span></code> — programmatic access by accession number is possible.</p></li>
+<li><p><strong>Bonus tool surfaced from the home page:</strong> <code class="docutils literal notranslate"><span class="pre">cdeep3m.crbs.ucsd.edu</span></code> — a CIL-affiliated deep-learning EM segmentation tool. May be worth a mention in NB05 as a community tool.</p></li>
+<li><p><strong>Workshop usage caveat:</strong> because each CIL entry has its own license, you must filter by license per-image before redistributing. The repo can’t ship CIL images blindly. <strong>Recommended workflow:</strong> pick 2–3 specific CIL accession numbers that are explicitly Public Domain or CC-BY, link them by URL, and let the notebook pull at runtime via the API rather than committing the bytes. Or use CIL only as a <em>reference / browse</em> link in the lecture and in NB05.</p></li>
+<li><p><strong>Recommendation:</strong> demote to <em>secondary</em>. Strong as a public-engagement / browsing source; not a primary training set unless you hand-pick PD/CC-BY entries.</p></li>
+</ul>
+</section>
+<section id="allen-institute-verified-with-noncommercial-clause">
+<h3>9. Allen Institute ✅ verified (with noncommercial clause)<a class="headerlink" href="#allen-institute-verified-with-noncommercial-clause" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Verified verbatim from <code class="docutils literal notranslate"><span class="pre">alleninstitute.org/legal/terms-of-use</span></code> (Updated May 5 2022):</strong> the data license is the Allen Institute <strong>Terms of Use</strong>. Key clauses:</p>
+<ul>
+<li><p><strong>Noncommercial only</strong>: “Your use of the Content, including creation of derivative works of the services, data, and tools, must be for research or other noncommercial purposes unless it is otherwise stated in these Terms or agreed to in writing by the Allen Institute.”</p></li>
+<li><p><strong>Academic/educational publication explicitly allowed</strong>: “you may, without further permission, publish a limited set of the Content in a scholarly journal, textbook or other professional, academic or journalistic publication (with appropriate citation) and still be compliant with these Terms.”</p></li>
+<li><p><strong>Derivative works (Improvements)</strong> allowed for research/noncommercial purposes; you cannot use IP claims on Improvements to limit Allen’s freedom to innovate.</p></li>
+<li><p><strong>Citation Policy</strong> is mandatory — separate document at <code class="docutils literal notranslate"><span class="pre">allencell.org/citation-policy</span></code>. Must follow it any time Content is used publicly.</p></li>
+<li><p>Disclaimer of warranties + Washington-state arbitration clause (standard institutional boilerplate).</p></li>
+</ul>
+</li>
+<li><p><strong>Practical implication for our workshop:</strong> the Jupyter Book companion is free, CC-BY-4.0 content, and educational — that fits Allen’s “research or other noncommercial purposes” cleanly. We should:</p>
+<ul>
+<li><p>Use a <strong>limited subset</strong> in NB05 (one or two AICS lines, not the full 100+ GB collection).</p></li>
+<li><p>Pull at runtime via direct AWS / <code class="docutils literal notranslate"><span class="pre">downloads.allencell.org</span></code> URLs rather than committing the bytes — keeps “limited” defensible.</p></li>
+<li><p>Add the Allen Citation Policy attribution in NB05 + the JB acknowledgments page.</p></li>
+</ul>
+</li>
+<li><p><strong>Datasets seen on the page:</strong> AICS-25 (hiPSC line, ~86 GB across 5 <code class="docutils literal notranslate"><span class="pre">tar.gz</span></code> parts at <code class="docutils literal notranslate"><span class="pre">downloads.allencell.org/AICS-25-partNN.tar.gz</span></code>). Per AWS Open Data Registry, broader collection includes 25 cell lines covering organelles, with field-of-view (16-bit) + single-cell crops (16-bit) + segmentation masks (8-bit), all OME-TIFF.</p></li>
+<li><p><strong>Recommendation:</strong> ✅ promote to verified. Strong NB05 advanced demo. Use one AICS subset, link runtime download, attach Citation Policy line.</p></li>
+</ul>
+</section>
+<section id="nature-methods-collection">
+<h3>10. Nature Methods collection ❌<a class="headerlink" href="#nature-methods-collection" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>URL <code class="docutils literal notranslate"><span class="pre">nature.com/collections/affejeadcg</span></code> is a <strong>collection of articles</strong>, not a dataset.</p></li>
+<li><p>Fetch redirected and was canceled twice. Even if it loaded, it would be a reading list rather than a data source.</p></li>
+<li><p><strong>Recommendation:</strong> drop from the dataset list. If we want to cite Nature articles, that goes in <code class="docutils literal notranslate"><span class="pre">references.bib</span></code>.</p></li>
+</ul>
+</section>
+<section id="nist-nexuslims">
+<h3>11. NIST NexusLIMS ❌<a class="headerlink" href="#nist-nexuslims" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Verified prior turn: NexusLIMS is a <strong>laboratory information management system</strong> for microscope facilities (built for NIST’s NCNR), not an image dataset. Source code on GitHub.</p></li>
+<li><p><strong>Recommendation:</strong> drop from the dataset list.</p></li>
+</ul>
+</section>
+</section>
+<section id="recommended-notebook-dataset-mapping-proposal-needs-nikos-sign-off">
+<h2>Recommended notebook ↔ dataset mapping (proposal — needs Nikos sign-off)<a class="headerlink" href="#recommended-notebook-dataset-mapping-proposal-needs-nikos-sign-off" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Notebook</p></th>
+<th class="head"><p>Recommended dataset</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NB00 setup</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">skimage.data.cells3d()</span></code> or BBBC005 sample</p></td>
+<td><p>tiny / fast / no download</p></td>
+</tr>
+<tr class="row-odd"><td><p>NB01 Cellpose segmentation</p></td>
+<td><p><strong>BBBC020</strong> (mouse macrophages, real, 2-channel, masks) or <strong>BBBC006</strong> (U2OS Hoechst, real, with focus variation)</p></td>
+<td><p>Replaces the synthetic placeholder; CC0; right size for Colab</p></td>
+</tr>
+<tr class="row-even"><td><p>NB02 Validation / QC</p></td>
+<td><p><strong>BBBC005</strong> ground truth pair</p></td>
+<td><p>Already prepared with ground truth + Bray et al. published counts for benchmarking</p></td>
+</tr>
+<tr class="row-odd"><td><p>NB03a denoising (Noise2Void)</p></td>
+<td><p><strong>GigaDB 100888</strong> (one chosen channel)</p></td>
+<td><p>Built for DL training; CC0; small enough to ship a representative 100-MB subset</p></td>
+</tr>
+<tr class="row-even"><td><p>NB03b foundation-model segmentation</p></td>
+<td><p><strong>IDR study (one well)</strong> or <strong>BBBC020</strong></p></td>
+<td><p>Foundation models like to see real, varied imaging modalities</p></td>
+</tr>
+<tr class="row-odd"><td><p>NB05 desktop-GUI complements</p></td>
+<td><p>Reference page only — link out to <strong>BioImage Archive</strong>, <strong>IDR</strong>, <strong>Allen Cell</strong>, <strong>Cell Image Library</strong></p></td>
+<td><p>This notebook teaches navigation, not a training pipeline</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="items-flagged-for-review-added-to-review-items-md">
+<h2>Items flagged for review (added to <code class="docutils literal notranslate"><span class="pre">review_items.md</span></code>)<a class="headerlink" href="#items-flagged-for-review-added-to-review-items-md" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>DS-1:</strong> BSCCM license text not yet quoted verbatim. Need to read the LICENSE file at <code class="docutils literal notranslate"><span class="pre">github.com/Waller-Lab/BSCCM</span></code> before recommending in writing.</p></li>
+<li><p><strong>DS-2:</strong> Allen Cell <strong>data</strong> license (vs. tool license) not verified directly. Need to fetch the portal in a JS-capable session or have Nikos open <code class="docutils literal notranslate"><span class="pre">allencell.org/data-downloading.html</span></code> and confirm.</p></li>
+<li><p><strong>DS-3:</strong> Nature collection (<code class="docutils literal notranslate"><span class="pre">nature.com/collections/affejeadcg</span></code>) is not a dataset — recommend removing from this list, or repurposing as a <code class="docutils literal notranslate"><span class="pre">references.bib</span></code> source.</p></li>
+<li><p><strong>DS-4:</strong> NIST NexusLIMS is a tool, not a dataset — same recommendation.</p></li>
+<li><p><strong>DS-5:</strong> Cellpose dataset’s HHMI T&amp;C <strong>prohibits redistribution</strong>. Pick BBBC equivalents for NB01 unless Nikos prefers the registration-and-download attendee flow.</p></li>
+</ul>
+</section>
+<section id="honest-disclosure">
+<h2>Honest disclosure<a class="headerlink" href="#honest-disclosure" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>All ✅ entries have at least one direct fetch + one quoted verbatim string from the source page.</p></li>
+<li><p>All ⚠️ entries have either (a) a JS-rendered page I couldn’t read directly, or (b) license text I haven’t seen verbatim.</p></li>
+<li><p>The Allen Institute audit drew partly on web-search summaries; the underlying source pages (<a class="reference external" href="http://allencell.org/data-downloading" rel="noreferer noopener" target="_blank">allencell.org/data-downloading</a>) need a final eyeballing before we publish anything.</p></li>
+<li><p>If Nikos wants the BSCCM and Allen license verifications resolved, the cleanest path is for him to open those pages in his browser and either paste the LICENSE text, or grant me Chrome control to read them with the extension.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-table">Summary table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-source-detail">Per-source detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bbbc-broad-bioimage-benchmark-collection">1. BBBC — Broad Bioimage Benchmark Collection ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dsb2018-covered-above-as-bbbc038">2. DSB2018 — covered above as BBBC038 ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bioimage-archive-embl-ebi">3. BioImage Archive (EMBL-EBI) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idr-image-data-resource">4. IDR (Image Data Resource) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cellpose-dataset-hhmi-license-caveat">5. Cellpose dataset (HHMI) ⚠️ license caveat</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bsccm-verified">6. BSCCM ✅ verified</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gigadb-100888-hagen-et-al-2021">7. GigaDB 100888 (Hagen et al. 2021) ✅</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-image-library-with-caveat">8. Cell Image Library ✅ (with caveat)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#allen-institute-verified-with-noncommercial-clause">9. Allen Institute ✅ verified (with noncommercial clause)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nature-methods-collection">10. Nature Methods collection ❌</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nist-nexuslims">11. NIST NexusLIMS ❌</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-notebook-dataset-mapping-proposal-needs-nikos-sign-off">Recommended notebook ↔ dataset mapping (proposal — needs Nikos sign-off)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#items-flagged-for-review-added-to-review-items-md">Items flagged for review (added to <code class="docutils literal notranslate"><span class="pre">review_items.md</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#honest-disclosure">Honest disclosure</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

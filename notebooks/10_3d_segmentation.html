@@ -372,6 +372,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-3d-segmentation-max-projection-orthogonal-slices">Visualize the 3D segmentation: max-projection + orthogonal slices</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-3d-segmentation-worth-it">When is 3D segmentation worth it?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
             </nav>
         </div>
@@ -890,6 +891,19 @@ The 60 Z-slices span the full depth of a confocal stack, so connectivity through
 <li><p><strong>μSAM for 3D</strong> (Notebook 03b extended) — segment-anything adapted to 3D; useful when models don’t exist for your sample type.</p></li>
 </ul>
 <p>The 3D-to-validation pipeline is young; methods and best practices are still evolving. The pattern in this lab — pick a method, measure it, pick a winner — is timeless.</p>
+<!-- DATASET-AUDIT-PATCH -->
+</section>
+<hr class="docutils" />
+<section id="real-microscopy-datasets-to-explore-next">
+<h2>Real microscopy datasets to explore next<a class="headerlink" href="#real-microscopy-datasets-to-explore-next" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">cells3d()</span></code> is the always-works real volume in this NB. For larger 3D demos (too big for in-NB download) try:</p>
+<ul class="simple">
+<li><p><strong>BSCCM (Berkeley Single Cell Computational Microscopy)</strong> — <a class="github reference external" href="https://github.com/Waller-Lab/BSCCM" rel="noreferer noopener" target="_blank">Waller-Lab/BSCCM</a> — BSD-3-Clause. Six size tiers, BSCCM-tiny is 0.6 GB. Python package handles download.</p></li>
+<li><p><strong>Allen Cell Imaging Collections</strong> — <a class="reference external" href="https://www.allencell.org/data-downloading.html" rel="noreferer noopener" target="_blank">https://www.allencell.org/data-downloading.html</a> — OME-TIFF hiPSC volumes. Allen TOU — noncommercial; mandatory citation.</p></li>
+<li><p><strong>BBBC024 (3D HL60 synthetic)</strong> — <a class="reference external" href="https://bbbc.broadinstitute.org/BBBC024" rel="noreferer noopener" target="_blank">https://bbbc.broadinstitute.org/BBBC024</a> — Synthetic 3D HL60 — CC0; useful for 3D method validation.</p></li>
+<li><p><strong>BBBC027 (3D Colon Tissue)</strong> — <a class="reference external" href="https://bbbc.broadinstitute.org/BBBC027" rel="noreferer noopener" target="_blank">https://bbbc.broadinstitute.org/BBBC027</a> — Real 3D colon tissue — CC0.</p></li>
+</ul>
+<p>Full audit and notebook ↔ dataset mapping in <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/datasets_audit.md" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">datasets_audit.md</span></code></a>.</p>
 </section>
 </section>
 
@@ -973,6 +987,7 @@ The 60 Z-slices span the full depth of a confocal stack, so connectivity through
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-3d-segmentation-max-projection-orthogonal-slices">Visualize the 3D segmentation: max-projection + orthogonal slices</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-3d-segmentation-worth-it">When is 3D segmentation worth it?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
   </nav></div>
 

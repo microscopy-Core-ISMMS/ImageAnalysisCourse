@@ -1,0 +1,714 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Real-data patch plan (per dataset audit, 2026-05-07) &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'scripts/datasets_patch_plan';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/scripts/datasets_patch_plan.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Real-data patch plan (per dataset audit, 2026-05-07)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-notebook-mapping">Per-notebook mapping</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-1-cell-template">Tier 1 cell template</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-2-cell-template">Tier 2 cell template</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-register">Risk register</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="real-data-patch-plan-per-dataset-audit-2026-05-07">
+<h1>Real-data patch plan (per dataset audit, 2026-05-07)<a class="headerlink" href="#real-data-patch-plan-per-dataset-audit-2026-05-07" title="Link to this heading">#</a></h1>
+<p><strong>Pattern:</strong> every notebook receives one of two patches.</p>
+<ul class="simple">
+<li><p><strong>Tier 1 (executable):</strong> insert one markdown + one code cell <strong>before</strong> the existing synthetic-data section. Code does <code class="docutils literal notranslate"><span class="pre">try:</span> <span class="pre">download_real_data()</span></code> → cache to <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> → load via <code class="docutils literal notranslate"><span class="pre">tifffile</span></code>/<code class="docutils literal notranslate"><span class="pre">imread</span></code> → assign to <code class="docutils literal notranslate"><span class="pre">real_*</span></code> variable. On any exception (timeout, 4xx, missing optional dep) it logs the failure and falls through to the existing synthetic path. Downstream cells continue to reference the existing variable names so the rest of the notebook keeps working unchanged.</p></li>
+<li><p><strong>Tier 2 (reference-only):</strong> append a markdown cell at the bottom of the notebook listing the canonical real datasets that fit the topic, with download URLs and license notes. No executable code — these notebooks already have stable demo data (cells3d(), BiMZ live calls, HF model hub, screenshot walkthroughs, etc.) and don’t need a runtime fetch.</p></li>
+</ul>
+<p>Both tiers carry attribution. Tier 1’s anchor cell is chosen to land <em>before</em> the synthetic generation so the real-vs-synthetic comparison is teachable.</p>
+<section id="per-notebook-mapping">
+<h2>Per-notebook mapping<a class="headerlink" href="#per-notebook-mapping" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>NB</p></th>
+<th class="head"><p>Tier</p></th>
+<th class="head"><p>Real dataset</p></th>
+<th class="head"><p>URL</p></th>
+<th class="head"><p>Anchor (insert before)</p></th>
+<th class="head"><p>License</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>00</p></td>
+<td><p>setup self-check</p></td>
+<td><p>T2</p></td>
+<td><p>n/a — reference appendix</p></td>
+<td><p>—</p></td>
+<td><p>end of NB</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>01</p></td>
+<td><p>Cellpose segmentation</p></td>
+<td><p><strong>T1</strong></p></td>
+<td><p>BBBC020 (mouse macrophages, 2-ch + masks) + BBBC006 try-this</p></td>
+<td><p><a class="reference external" href="http://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip" rel="noreferer noopener" target="_blank">data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip</a></p></td>
+<td><p>cell 5 (synthetic data section)</p></td>
+<td><p>CC0</p></td>
+</tr>
+<tr class="row-even"><td><p>02</p></td>
+<td><p>Validation/QC</p></td>
+<td><p><strong>T1</strong></p></td>
+<td><p>BBBC005 ground truth (1200 in-focus images + binary masks, 12 MB)</p></td>
+<td><p><a class="reference external" href="http://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip" rel="noreferer noopener" target="_blank">data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip</a></p></td>
+<td><p>cell 6 (<code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">ground</span> <span class="pre">truth</span></code>)</p></td>
+<td><p>CC0</p></td>
+</tr>
+<tr class="row-odd"><td><p>03a</p></td>
+<td><p>Denoising N2V</p></td>
+<td><p>T2</p></td>
+<td><p>GigaDB 100888 + BIA reference</p></td>
+<td><p><a class="reference external" href="http://gigadb.org/dataset/100888" rel="noreferer noopener" target="_blank">gigadb.org/dataset/100888</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>CC0</p></td>
+</tr>
+<tr class="row-even"><td><p>03b</p></td>
+<td><p>Foundation seg (SAM/μSAM)</p></td>
+<td><p><strong>T1</strong></p></td>
+<td><p>BBBC020 (non-canonical microscopy fits the SAM-on-microscopy theme)</p></td>
+<td><p><a class="reference external" href="http://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip" rel="noreferer noopener" target="_blank">data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip</a></p></td>
+<td><p>cell 5 (<code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">a</span> <span class="pre">non-canonical</span> <span class="pre">microscopy</span> <span class="pre">image</span></code>)</p></td>
+<td><p>CC0</p></td>
+</tr>
+<tr class="row-odd"><td><p>04</p></td>
+<td><p>Community catalog</p></td>
+<td><p>T2</p></td>
+<td><p>BiMZ live + audit list</p></td>
+<td><p>—</p></td>
+<td><p>end of NB</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>05</p></td>
+<td><p>Desktop GUI complements</p></td>
+<td><p>T2</p></td>
+<td><p>BBBC + BIA + IDR + Allen + CIL pointers (these are the natural Fiji/QuPath datasets)</p></td>
+<td><p>—</p></td>
+<td><p>end of NB</p></td>
+<td><p>mixed</p></td>
+</tr>
+<tr class="row-odd"><td><p>06</p></td>
+<td><p>Virtual staining</p></td>
+<td><p>T2</p></td>
+<td><p>Allen AICS + CSBDeep CARE pointers</p></td>
+<td><p><a class="reference external" href="http://downloads.allencell.org" rel="noreferer noopener" target="_blank">downloads.allencell.org</a> + <a class="reference external" href="http://csbdeep.bioimagecomputing.com" rel="noreferer noopener" target="_blank">csbdeep.bioimagecomputing.com</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>Allen TOU + BSD</p></td>
+</tr>
+<tr class="row-even"><td><p>07</p></td>
+<td><p>AI super-resolution</p></td>
+<td><p>T2</p></td>
+<td><p>CSBDeep CARE samples + ZeroCostDL4Mic</p></td>
+<td><p><a class="reference external" href="http://csbdeep.bioimagecomputing.com" rel="noreferer noopener" target="_blank">csbdeep.bioimagecomputing.com</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>BSD</p></td>
+</tr>
+<tr class="row-odd"><td><p>08</p></td>
+<td><p>SRRF / eSRRF</p></td>
+<td><p>T2</p></td>
+<td><p>Henriques lab demo data + BIA</p></td>
+<td><p><a class="reference external" href="http://github.com/HenriquesLab/NanoJ-SRRF" rel="noreferer noopener" target="_blank">github.com/HenriquesLab/NanoJ-SRRF</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>mixed</p></td>
+</tr>
+<tr class="row-even"><td><p>09</p></td>
+<td><p>Cellpose fine-tuning</p></td>
+<td><p><strong>T1</strong></p></td>
+<td><p>BBBC038 (Kaggle DSB 2018 nuclei — designed for segmentation training)</p></td>
+<td><p><a class="reference external" href="http://data.broadinstitute.org/bbbc/BBBC038v1/BBBC038v1_train.zip" rel="noreferer noopener" target="_blank">data.broadinstitute.org/bbbc/BBBC038v1/BBBC038v1_train.zip</a></p></td>
+<td><p>cell 7 (<code class="docutils literal notranslate"><span class="pre">Get</span> <span class="pre">a</span> <span class="pre">small</span> <span class="pre">labeled</span> <span class="pre">dataset</span></code>)</p></td>
+<td><p>CC0 (BBBC mirror)</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>3D segmentation</p></td>
+<td><p>T2</p></td>
+<td><p>cells3d() already real; BSCCM + AICS pointers (datasets too large for runtime download)</p></td>
+<td><p>—</p></td>
+<td><p>end of NB</p></td>
+<td><p>BSD-3 / Allen TOU</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>DL tracking</p></td>
+<td><p>T2</p></td>
+<td><p>Cell Tracking Challenge</p></td>
+<td><p><a class="reference external" href="http://celltrackingchallenge.net" rel="noreferer noopener" target="_blank">celltrackingchallenge.net</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>per-CTC dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p>Deconvolution</p></td>
+<td><p>T2</p></td>
+<td><p>CSBDeep deconv samples + BIA</p></td>
+<td><p><a class="reference external" href="http://csbdeep.bioimagecomputing.com" rel="noreferer noopener" target="_blank">csbdeep.bioimagecomputing.com</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>BSD</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>Validation case study</p></td>
+<td><p><strong>T1</strong></p></td>
+<td><p>BBBC020 (matches NB01 chain)</p></td>
+<td><p><a class="reference external" href="http://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip" rel="noreferer noopener" target="_blank">data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip</a></p></td>
+<td><p>cell 7 (<code class="docutils literal notranslate"><span class="pre">Test</span> <span class="pre">image</span> <span class="pre">registry</span></code>)</p></td>
+<td><p>CC0</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>Spot detection</p></td>
+<td><p>T2</p></td>
+<td><p>deepBlink samples + BIA FISH studies</p></td>
+<td><p><a class="reference external" href="http://github.com/BBQuercus/deepBlink" rel="noreferer noopener" target="_blank">github.com/BBQuercus/deepBlink</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>per-source</p></td>
+</tr>
+<tr class="row-even"><td><p>15</p></td>
+<td><p>Diffusion models</p></td>
+<td><p>T2</p></td>
+<td><p>HF model hub already there + BIA</p></td>
+<td><p><a class="reference external" href="http://huggingface.co/google/ddpm-cifar10-32" rel="noreferer noopener" target="_blank">huggingface.co/google/ddpm-cifar10-32</a></p></td>
+<td><p>end of NB</p></td>
+<td><p>various</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Tier 1 count: 5 NBs (01, 02, 03b, 09, 13).</strong>
+<strong>Tier 2 count: 12 NBs.</strong></p>
+</section>
+<section id="tier-1-cell-template">
+<h2>Tier 1 cell template<a class="headerlink" href="#tier-1-cell-template" title="Link to this heading">#</a></h2>
+<p>Markdown cell (above):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>## Try it on canonical real data
+This optional block fetches a canonical published dataset over the network and
+runs the same pipeline on it. If the download fails (firewall, missing optional
+dependency, expired URL), the notebook continues with the synthetic data below
+— so this cell is safe to skip.
+
+**Dataset:** {dataset_name} (license: {license})
+**Source:** {url}
+**Citation:** {citation}
+</pre></div>
+</div>
+<p>Code cell (below):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Real-data option — try BBBCxxx, fall back to synthetic if anything fails.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span>
+
+<span class="n">REAL_DATA_URL</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{URL}</span><span class="s2">&quot;</span>
+<span class="n">REAL_DATA_NAME</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">&quot;</span>
+<span class="n">USE_REAL_DATA</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># set False to skip the download entirely</span>
+
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># always defined; downstream cells can check `if real_imgs:`</span>
+<span class="k">if</span> <span class="n">USE_REAL_DATA</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s2">&quot;</span><span class="si">{cache_filename}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">REAL_DATA_URL</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+        <span class="c1"># ...load images into real_imgs list...</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> images from </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real-data download failed; continuing with synthetic.&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>Downstream synthetic cells stay untouched. Attendees who completed the synthetic flow can repeat with <code class="docutils literal notranslate"><span class="pre">real_imgs[i]</span></code> to see the real-data behavior.</p>
+</section>
+<section id="tier-2-cell-template">
+<h2>Tier 2 cell template<a class="headerlink" href="#tier-2-cell-template" title="Link to this heading">#</a></h2>
+<p>Single markdown cell at the end of the notebook:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>---
+## Real microscopy datasets to explore next
+
+Beyond the demo data above, here are canonical published datasets that fit
+this notebook&#39;s topic. License notes from the workshop dataset audit:
+
+- **{dataset 1}** — {URL} — {license note}
+- **{dataset 2}** — {URL} — {license note}
+- ...
+
+Full audit and notebook ↔ dataset mapping in `Claude_Workspace/datasets_audit.md`.
+</pre></div>
+</div>
+</section>
+<section id="risk-register">
+<h2>Risk register<a class="headerlink" href="#risk-register" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>BBBC mirror URLs are stable (audited verbatim 2026-05-07) but the <code class="docutils literal notranslate"><span class="pre">data.broadinstitute.org</span></code> endpoint is occasionally slow. Tier 1 cells have a 60-second timeout and clean fallback.</p></li>
+<li><p>BBBC038 mirror at <code class="docutils literal notranslate"><span class="pre">data.broadinstitute.org/bbbc/BBBC038v1/</span></code> — confirm exact zip name before commit. <strong>Flagged for confirmation in code (treat as risk, fall back gracefully if not found).</strong></p></li>
+<li><p>BBBC020 zip is ~25 MB → ~5–10 s on a fast link, ~30–60 s on conference Wi-Fi. Acceptable.</p></li>
+<li><p>BBBC005 ground truth zip is 12 MB → fast.</p></li>
+<li><p>All Tier 1 NBs preserve the original synthetic flow; turning off USE_REAL_DATA returns the NB to its pre-patch behavior.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./scripts"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-notebook-mapping">Per-notebook mapping</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-1-cell-template">Tier 1 cell template</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-2-cell-template">Tier 2 cell template</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-register">Risk register</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

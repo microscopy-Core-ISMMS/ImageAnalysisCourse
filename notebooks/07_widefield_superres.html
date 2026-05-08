@@ -370,6 +370,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-method-anomaly-fraction-and-metrics-across-the-test-set">Per-method anomaly fraction and metrics across the test set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-sr-genuinely-helps-vs-when-it-hides-noise">When SR genuinely helps vs. when it hides noise</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
             </nav>
         </div>
@@ -1005,6 +1006,18 @@
 <li><p><strong>BioImage Model Zoo</strong> — registry of pretrained SR models: <a class="reference external" href="https://bioimage.io" rel="noreferer noopener" target="_blank">https://bioimage.io</a></p></li>
 </ul>
 <p><strong>The philosophical point:</strong> Super-resolution is powerful because it leverages learned priors. But those priors are learned from your training data — if your training data has a bias, your SR will amplify it. <strong>Always validate SR outputs on held-out real data, and always report the hallucination check metrics (anomaly fraction) in your methods.</strong> That’s the barrier to papers that make claims about images no microscope ever measured.</p>
+<!-- DATASET-AUDIT-PATCH -->
+</section>
+<hr class="docutils" />
+<section id="real-microscopy-datasets-to-explore-next">
+<h2>Real microscopy datasets to explore next<a class="headerlink" href="#real-microscopy-datasets-to-explore-next" title="Link to this heading">#</a></h2>
+<p>Paired low-res / high-res microscopy for SR training:</p>
+<ul class="simple">
+<li><p><strong>CSBDeep CARE example data</strong> — <a class="reference external" href="http://csbdeep.bioimagecomputing.com/" rel="noreferer noopener" target="_blank">http://csbdeep.bioimagecomputing.com/</a> — Paired widefield → confocal / SIM examples.</p></li>
+<li><p><strong>ZeroCostDL4Mic (DFCAN, DFGAN, RCAN tutorials)</strong> — <a class="github reference external" href="https://github.com/HenriquesLab/ZeroCostDL4Mic" rel="noreferer noopener" target="_blank">HenriquesLab/ZeroCostDL4Mic</a> — Per-method demo data with Colab notebooks.</p></li>
+<li><p><strong>BioImage Archive — search ‘super-resolution’</strong> — <a class="reference external" href="https://www.ebi.ac.uk/bioimage-archive/" rel="noreferer noopener" target="_blank">https://www.ebi.ac.uk/bioimage-archive/</a> — DOI-stable raw frames with paired ground truth.</p></li>
+</ul>
+<p>Full audit and notebook ↔ dataset mapping in <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/datasets_audit.md" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">datasets_audit.md</span></code></a>.</p>
 </section>
 </section>
 
@@ -1086,6 +1099,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-method-anomaly-fraction-and-metrics-across-the-test-set">Per-method anomaly fraction and metrics across the test set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-sr-genuinely-helps-vs-when-it-hides-noise">When SR genuinely helps vs. when it hides noise</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
   </nav></div>
 
