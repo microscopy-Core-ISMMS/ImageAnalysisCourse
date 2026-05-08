@@ -29,8 +29,11 @@ Both tiers carry attribution. Tier 1's anchor cell is chosen to land *before* th
 | 14 | Spot detection | T2 | deepBlink samples + BIA FISH studies | github.com/BBQuercus/deepBlink | end of NB | per-source |
 | 15 | Diffusion models | T2 | HF model hub already there + BIA | huggingface.co/google/ddpm-cifar10-32 | end of NB | various |
 
-**Tier 1 count: 5 NBs (01, 02, 03b, 09, 13).**
-**Tier 2 count: 12 NBs.**
+**Tier 1 count: 10 NBs (01, 02, 03a, 03b, 06, 07, 09, 12, 13, 14).** Each gets four cells: download-md → download-code (with inline imshow viz) → swap-md → swap-code (NB-specific variable rebind).
+
+**Tier 2 count: 7 NBs (00, 04, 05, 08, 10, 11, 15).** These either don't have a working image variable (00 setup, 05 walkthrough, 15 frontier), already use real data (04 BiMZ live, 10 cells3d), or need a deliberate dataset selection that hasn't been done yet (08 SRRF blinking stacks, 11 tracking time series).
+
+**Promoted in second round (2026-05-07):** NB03a, NB06, NB07, NB12, NB14 — using verified BBBC005 / BBBC020 URLs. NB06/07/14 carry an explicit "pedagogical analogue" caveat in the markdown because the real dataset is not a perfect topical match (e.g. BBBC005 in/out-of-focus pairs are used as the SR low-res / high-res analogue in NB07).
 
 ## Tier 1 cell template
 

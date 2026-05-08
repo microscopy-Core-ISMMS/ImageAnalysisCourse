@@ -360,6 +360,10 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-widefield-sr-paired-data-generator">Synthetic widefield/SR paired-data generator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline">One paired example: HR ground truth, LR widefield input, bicubic baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predict-before-run-what-will-the-methods-recover">Predict-before-run: What will the methods recover?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-1-bicubic-upsampling-the-non-ai-baseline">Method 1 — Bicubic upsampling (the non-AI baseline)</a></li>
@@ -370,7 +374,6 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-method-anomaly-fraction-and-metrics-across-the-test-set">Per-method anomaly fraction and metrics across the test set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-sr-genuinely-helps-vs-when-it-hides-noise">When SR genuinely helps vs. when it hides noise</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
             </nav>
         </div>
@@ -515,6 +518,173 @@
 </div>
 </div>
 <p><strong>What the degradation does:</strong> The Gaussian blur + downsample + noise is a realistic model of widefield microscopy. By upsampling LR back to HR resolution before training, the model has a clear task: denoise and sharpen to match HR. In practice, the network learns to recover some real structure and invents some plausible high-frequency detail. Our hallucination check will measure how much is invention.</p>
+<!-- DATASET-AUDIT-PATCH -->
+</section>
+<section id="try-it-on-canonical-real-data">
+<h2>Try it on canonical real data<a class="headerlink" href="#try-it-on-canonical-real-data" title="Link to this heading">#</a></h2>
+<p>This optional block fetches a canonical published microscopy dataset over the
+network and prepares it for the rest of the notebook. <strong>If the download fails</strong>
+(firewall, missing optional dependency, expired URL), the notebook continues
+with the synthetic data below — this cell is safe to skip and re-runnable.</p>
+<ul class="simple">
+<li><p><strong>Dataset:</strong> BBBC005 v1 ground truth — in-focus images (used as HR; we synthesize LR by Gaussian blur + downsample)</p></li>
+<li><p><strong>What it is:</strong> Real in-focus fluorescence as HR; LR is synthesized by blur+downsample (the classic SR degradation model). For true paired widefield/SIM data, see CSBDeep CARE and ZeroCostDL4Mic.</p></li>
+<li><p><strong>Source:</strong> <a class="reference external" href="https://bbbc.broadinstitute.org/BBBC005" rel="noreferer noopener" target="_blank">https://bbbc.broadinstitute.org/BBBC005</a></p></li>
+<li><p><strong>License:</strong> CC0</p></li>
+<li><p><strong>Citation:</strong> Lehmussola et al., IEEE T. Med. Imaging, 2007</p></li>
+</ul>
+<p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
+dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. The cell after this
+one optionally <strong>redirects the rest of the notebook</strong> to use the real data —
+flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> in that cell to revert to synthetic.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
+<span class="c1"># Real-data option from the dataset audit (2026-05-07).</span>
+<span class="c1"># Tries to fetch a canonical published dataset; falls back to synthetic on any failure.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span>
+
+<span class="n">REAL_DATA_URL</span> <span class="o">=</span> <span class="s1">&#39;https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip&#39;</span>
+<span class="n">REAL_DATA_NAME</span> <span class="o">=</span> <span class="s1">&#39;BBBC005 v1 ground truth — in-focus images (used as HR; we synthesize LR by Gaussian blur + downsample)&#39;</span>
+<span class="n">USE_REAL_DATA</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># set False to skip the download entirely</span>
+
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">real_filenames</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">if</span> <span class="n">USE_REAL_DATA</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cache_zip</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">REAL_DATA_URL</span><span class="p">))</span>
+        <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">cache_zip</span> <span class="o">+</span> <span class="s2">&quot;_extracted&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2"> (this can take 10-60 s)...&quot;</span><span class="p">)</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">REAL_DATA_URL</span><span class="p">,</span> <span class="n">cache_zip</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  → cached at </span><span class="si">{</span><span class="n">cache_zip</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+                <span class="n">zf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
+
+        <span class="c1"># Walk the extracted tree for image files. tifffile preferred; PIL fallback.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+            <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+            <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+        <span class="n">exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;.tiff&quot;</span><span class="p">,</span> <span class="s2">&quot;.TIF&quot;</span><span class="p">,</span> <span class="s2">&quot;.TIFF&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.PNG&quot;</span><span class="p">)</span>
+        <span class="n">all_paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">exts</span><span class="p">):</span>
+                    <span class="n">all_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
+        <span class="n">all_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># Take only the first few so the cell runs quickly. Attendees can index further.</span>
+        <span class="n">sample_paths</span> <span class="o">=</span> <span class="n">all_paths</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sample_paths</span><span class="p">]</span>
+        <span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sample_paths</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> real images from </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  first image: shape=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Visual confirmation — display the first image inline so you can see the load worked.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
+            <span class="n">_sample</span> <span class="o">=</span> <span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Pick a 2D plane to display: handle (H,W), (H,W,C), or (C,H,W) / (Z,H,W).</span>
+            <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="c1"># Multi-channel or Z-stack — pick the largest plane.</span>
+                <span class="n">_axis</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>  <span class="c1"># smallest = channel/Z axis</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">_sample</span><span class="p">,</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">_axis</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">_axis</span><span class="p">)</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="c1"># Robust contrast for 16-bit / float images.</span>
+            <span class="n">_vmin</span><span class="p">,</span> <span class="n">_vmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">])</span>
+            <span class="n">_fig</span><span class="p">,</span> <span class="n">_ax</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">_vmax</span><span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">real_filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (shape=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not render preview (matplotlib issue?); data is still in real_imgs.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real-data download failed; continuing with synthetic.&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">real_filenames</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;USE_REAL_DATA = False; skipping download. Synthetic flow runs below.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<!-- DATASET-AUDIT-PATCH-SWAP -->
+<section id="use-real-data-for-the-rest-of-this-notebook">
+<h3>Use real data for the rest of this notebook<a class="headerlink" href="#use-real-data-for-the-rest-of-this-notebook" title="Link to this heading">#</a></h3>
+<p>If the download above succeeded, you can redirect the rest of the notebook to
+work on the real dataset by running the cell below. It re-binds the working
+variables (<code class="docutils literal notranslate"><span class="pre">hr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train_small</span></code>) so all downstream cells run on real microscopy.</p>
+<p>To revert to synthetic, set <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> and re-run, or
+re-run the synthetic generation cell that comes after.</p>
+<p>⚠️  The “What you should be seeing” callouts further down were written against
+the synthetic data — your output will differ in counts, shapes, and metric
+values. That’s expected and is itself a useful teaching moment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
+<span class="c1"># Optional: redirect the rest of the notebook to real data.</span>
+<span class="c1"># Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.</span>
+
+<span class="n">USE_REAL_FOR_DOWNSTREAM</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">USE_REAL_FOR_DOWNSTREAM</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span> <span class="k">as</span> <span class="n">_gf</span><span class="p">,</span> <span class="n">zoom</span> <span class="k">as</span> <span class="n">_zoom</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_to_hr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">im</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="k">else</span> <span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
+            <span class="c1"># center-crop to square then resize</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:</span><span class="n">s</span><span class="p">,</span> <span class="p">:</span><span class="n">s</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">_zoom</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">target</span> <span class="o">/</span> <span class="n">s</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="n">hr_train</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_to_hr</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">real_imgs</span><span class="p">])</span>
+        <span class="n">lr_train_small</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">_gf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hr_train</span><span class="p">])</span>
+        <span class="n">lr_train</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lr_train_small</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hr_train / lr_train now from BBBC005 real fluorescence (synthesized LR via blur+downsample). Shapes: HR=</span><span class="si">{</span><span class="n">hr_train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, LR=</span><span class="si">{</span><span class="n">lr_train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: synthesized LR is a *bicubic-style* analogue, not true widefield optics. Real paired SR data lives in CSBDeep CARE / ZeroCostDL4Mic.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real_imgs is None or insufficient; staying with synthetic SR pairs.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline">
 <h2>One paired example: HR ground truth, LR widefield input, bicubic baseline<a class="headerlink" href="#one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline" title="Link to this heading">#</a></h2>
@@ -1006,18 +1176,6 @@
 <li><p><strong>BioImage Model Zoo</strong> — registry of pretrained SR models: <a class="reference external" href="https://bioimage.io" rel="noreferer noopener" target="_blank">https://bioimage.io</a></p></li>
 </ul>
 <p><strong>The philosophical point:</strong> Super-resolution is powerful because it leverages learned priors. But those priors are learned from your training data — if your training data has a bias, your SR will amplify it. <strong>Always validate SR outputs on held-out real data, and always report the hallucination check metrics (anomaly fraction) in your methods.</strong> That’s the barrier to papers that make claims about images no microscope ever measured.</p>
-<!-- DATASET-AUDIT-PATCH -->
-</section>
-<hr class="docutils" />
-<section id="real-microscopy-datasets-to-explore-next">
-<h2>Real microscopy datasets to explore next<a class="headerlink" href="#real-microscopy-datasets-to-explore-next" title="Link to this heading">#</a></h2>
-<p>Paired low-res / high-res microscopy for SR training:</p>
-<ul class="simple">
-<li><p><strong>CSBDeep CARE example data</strong> — <a class="reference external" href="http://csbdeep.bioimagecomputing.com/" rel="noreferer noopener" target="_blank">http://csbdeep.bioimagecomputing.com/</a> — Paired widefield → confocal / SIM examples.</p></li>
-<li><p><strong>ZeroCostDL4Mic (DFCAN, DFGAN, RCAN tutorials)</strong> — <a class="github reference external" href="https://github.com/HenriquesLab/ZeroCostDL4Mic" rel="noreferer noopener" target="_blank">HenriquesLab/ZeroCostDL4Mic</a> — Per-method demo data with Colab notebooks.</p></li>
-<li><p><strong>BioImage Archive — search ‘super-resolution’</strong> — <a class="reference external" href="https://www.ebi.ac.uk/bioimage-archive/" rel="noreferer noopener" target="_blank">https://www.ebi.ac.uk/bioimage-archive/</a> — DOI-stable raw frames with paired ground truth.</p></li>
-</ul>
-<p>Full audit and notebook ↔ dataset mapping in <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/datasets_audit.md" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">datasets_audit.md</span></code></a>.</p>
 </section>
 </section>
 
@@ -1089,6 +1247,10 @@
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-widefield-sr-paired-data-generator">Synthetic widefield/SR paired-data generator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline">One paired example: HR ground truth, LR widefield input, bicubic baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predict-before-run-what-will-the-methods-recover">Predict-before-run: What will the methods recover?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-1-bicubic-upsampling-the-non-ai-baseline">Method 1 — Bicubic upsampling (the non-AI baseline)</a></li>
@@ -1099,7 +1261,6 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-method-anomaly-fraction-and-metrics-across-the-test-set">Per-method anomaly fraction and metrics across the test set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-sr-genuinely-helps-vs-when-it-hides-noise">When SR genuinely helps vs. when it hides noise</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-microscopy-datasets-to-explore-next">Real microscopy datasets to explore next</a></li>
 </ul>
   </nav></div>
 

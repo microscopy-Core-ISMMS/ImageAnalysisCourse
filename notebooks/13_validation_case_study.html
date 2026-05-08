@@ -360,7 +360,10 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helpers-from-lab-2">Helpers from Lab 2</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-image-registry">Test image registry</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-unified-model-adapter">The unified model adapter</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pick-a-model-and-an-image">Pick a model and an image</a></li>
@@ -535,8 +538,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.</p>
 <li><p><strong>Citation:</strong> Ljosa et al., Nature Methods, 2012 — BBBC020</p></li>
 </ul>
 <p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
-dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. Downstream synthetic
-cells run regardless.</p>
+dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. The cell after this
+one optionally <strong>redirects the rest of the notebook</strong> to use the real data —
+flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> in that cell to revert to synthetic.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
@@ -590,7 +594,43 @@ cells run regardless.</p>
         <span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sample_paths</span><span class="p">]</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> real images from </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Try: real_imgs[0].shape, real_imgs[0].dtype&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  first image: shape=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Visual confirmation — display the first image inline so you can see the load worked.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
+            <span class="n">_sample</span> <span class="o">=</span> <span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Pick a 2D plane to display: handle (H,W), (H,W,C), or (C,H,W) / (Z,H,W).</span>
+            <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="c1"># Multi-channel or Z-stack — pick the largest plane.</span>
+                <span class="n">_axis</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>  <span class="c1"># smallest = channel/Z axis</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">_sample</span><span class="p">,</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">_axis</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">_axis</span><span class="p">)</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">_sample</span>
+                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
+            <span class="c1"># Robust contrast for 16-bit / float images.</span>
+            <span class="n">_vmin</span><span class="p">,</span> <span class="n">_vmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">])</span>
+            <span class="n">_fig</span><span class="p">,</span> <span class="n">_ax</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">_vmax</span><span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">real_filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (shape=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not render preview (matplotlib issue?); data is still in real_imgs.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real-data download failed; continuing with synthetic.&quot;</span><span class="p">)</span>
         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -602,6 +642,41 @@ cells run regardless.</p>
 </div>
 </div>
 </div>
+<!-- DATASET-AUDIT-PATCH-SWAP -->
+<section id="use-real-data-for-the-rest-of-this-notebook">
+<h3>Use real data for the rest of this notebook<a class="headerlink" href="#use-real-data-for-the-rest-of-this-notebook" title="Link to this heading">#</a></h3>
+<p>If the download above succeeded, you can redirect the rest of the notebook to
+work on the real dataset by running the cell below. It re-binds the working
+variables (<code class="docutils literal notranslate"><span class="pre">img</span></code>, <code class="docutils literal notranslate"><span class="pre">TEST_IMAGES</span> <span class="pre">(real</span> <span class="pre">entry</span> <span class="pre">added)</span></code>) so all downstream cells run on real microscopy.</p>
+<p>To revert to synthetic, set <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> and re-run, or
+re-run the synthetic generation cell that comes after.</p>
+<p>⚠️  The “What you should be seeing” callouts further down were written against
+the synthetic data — your output will differ in counts, shapes, and metric
+values. That’s expected and is itself a useful teaching moment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
+<span class="c1"># Optional: redirect the rest of the notebook to real data.</span>
+<span class="c1"># Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.</span>
+
+<span class="n">USE_REAL_FOR_DOWNSTREAM</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">USE_REAL_FOR_DOWNSTREAM</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">real_imgs</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># If a TEST_IMAGES registry exists later in the NB, you can append:</span>
+        <span class="c1">#   TEST_IMAGES[&#39;real_bbbc020&#39;] = (real_imgs[0], None)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;img is now from real data (BBBC020). Downstream model-picker cells will run on real microscopy.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: TEST_IMAGES dict is created later in the NB; once it exists, attendees can append a real entry.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real_imgs is None; staying with synthetic.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="test-image-registry">
 <h2>Test image registry<a class="headerlink" href="#test-image-registry" title="Link to this heading">#</a></h2>
@@ -1200,7 +1275,10 @@ cells run regardless.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helpers-from-lab-2">Helpers from Lab 2</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-image-registry">Test image registry</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-unified-model-adapter">The unified model adapter</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pick-a-model-and-an-image">Pick a model and an image</a></li>
