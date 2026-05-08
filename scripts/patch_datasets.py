@@ -31,6 +31,8 @@ NB_DIR = REPO_ROOT / "notebooks"
 # Sentinels used to detect prior patch cells so the script is re-runnable.
 MD_SENTINEL = "<!-- DATASET-AUDIT-PATCH -->"
 CO_SENTINEL = "# DATASET-AUDIT-PATCH"
+SWAP_MD_SENTINEL = "<!-- DATASET-AUDIT-PATCH-SWAP -->"
+SWAP_CO_SENTINEL = "# DATASET-AUDIT-PATCH-SWAP"
 
 # ---------------------------------------------------------------------------
 # Tier 1 specs — executable real-data cells
@@ -38,14 +40,22 @@ CO_SENTINEL = "# DATASET-AUDIT-PATCH"
 
 T1_SPECS = {
     "01_cellpose_segmentation.ipynb": {
-        "anchor_text": "## Generate the working dataset",  # markdown header text
+        "anchor_text": "## Generate the working dataset",
         "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages",
         "license_note": "CC0",
         "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "20 fields of murine bone-marrow derived macrophages (DAPI + CD11b + F-actin); paired ground-truth outlines available.",
-        "loader_kind": "bbbc_zip_tif",
+        "swap_vars": ["img"],
+        "swap_code": (
+            "if real_imgs:\n"
+            "    img = real_imgs[0]\n"
+            "    print('img is now from real data (BBBC020). Downstream Cellpose cells will run on real data.')\n"
+            "    print(\"NOTE: 'What you should be seeing' callouts were written for the synthetic image; counts and shapes will differ.\")\n"
+            "else:\n"
+            "    print('real_imgs is None; staying with synthetic. Re-run the download cell above to retry.')\n"
+        ),
     },
     "02_validation_quantification.ipynb": {
         "anchor_text": "## Generate ground truth",
@@ -55,7 +65,42 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC005",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
         "what_it_is": "1,200 in-focus synthetic cell images with paired binary foreground/background masks. Ideal for IoU/Dice validation.",
-        "loader_kind": "bbbc_zip_tif",
+        "swap_vars": ["gt_easy", "gt_hard"],
+        "swap_code": (
+            "if real_imgs and len(real_imgs) >= 2:\n"
+            "    import numpy as _np\n"
+            "    gt_easy = (_np.asarray(real_imgs[0]) > 0).astype(_np.uint8)\n"
+            "    gt_hard = (_np.asarray(real_imgs[-1]) > 0).astype(_np.uint8)\n"
+            "    print('gt_easy / gt_hard now from BBBC005 real binary masks.')\n"
+            "    print(\"NOTE: 'pred_*' is still synthetic from Lab 1; rerun Lab 1 with real data first if you want a real-vs-real comparison. IoU/Dice numbers will differ from the callouts.\")\n"
+            "else:\n"
+            "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
+        ),
+    },
+    "03a_denoising_n2v.ipynb": {
+        "anchor_text": "**The Noise2Void principle.**",
+        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (real fluorescence, used as clean reference)",
+        "license_note": "CC0",
+        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
+        "what_it_is": "Real fluorescence as the 'clean' reference. We add controlled synthetic noise on top so we can still measure PSNR/SSIM against a known truth.",
+        "swap_vars": ["clean", "noisy"],
+        "swap_code": (
+            "if real_imgs:\n"
+            "    import numpy as _np\n"
+            "    _src = _np.asarray(real_imgs[0]).astype(float)\n"
+            "    if _src.ndim == 3:\n"
+            "        _src = _src.mean(axis=-1) if _src.shape[-1] in (3, 4) else _src[_src.shape[0]//2]\n"
+            "    _src = (_src - _src.min()) / (_src.max() - _src.min() + 1e-9)\n"
+            "    clean = _src\n"
+            "    _rng_real = _np.random.default_rng(0)\n"
+            "    noisy = clean + 0.10 * _rng_real.standard_normal(clean.shape)\n"
+            "    print('clean / noisy now derived from BBBC020 real fluorescence + simulated Gaussian noise (sigma=0.10).')\n"
+            "    print(\"NOTE: synthetic Gaussian noise is a *teaching analogue*. Real microscopy noise has Poisson + read components; for true denoising benchmarks see GigaDB 100888.\")\n"
+            "else:\n"
+            "    print('real_imgs is None; staying with synthetic.')\n"
+        ),
     },
     "03b_foundation_model_segmentation.ipynb": {
         "anchor_text": "## Load a non-canonical microscopy image",
@@ -65,7 +110,81 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "Multi-channel macrophage fluorescence — exactly the 'non-canonical microscopy' content SAM/μSAM are tested against.",
-        "loader_kind": "bbbc_zip_tif",
+        "swap_vars": ["img"],
+        "swap_code": (
+            "if real_imgs:\n"
+            "    import numpy as _np\n"
+            "    _src = _np.asarray(real_imgs[0]).astype(float)\n"
+            "    if _src.ndim == 3:\n"
+            "        _src = _src.mean(axis=-1) if _src.shape[-1] in (3, 4) else _src[_src.shape[0]//2]\n"
+            "    img = (_src - _src.min()) / (_src.max() - _src.min() + 1e-9)\n"
+            "    print('img is now from real data (BBBC020). SAM cells below will run on real microscopy.')\n"
+            "    print(\"NOTE: 'What you should be seeing' callouts were written for the synthetic image; SAM mask shapes will differ.\")\n"
+            "else:\n"
+            "    print('real_imgs is None; staying with synthetic.')\n"
+        ),
+    },
+    "06_virtual_staining.ipynb": {
+        "anchor_text": "## Method 1 — fnet-style U-Net (paired, regression)",
+        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (multi-channel fluorescence)",
+        "license_note": "CC0",
+        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
+        "what_it_is": "Real multi-channel fluorescence used as a *teaching analogue* for cross-channel prediction (input channel → target channel). True virtual-staining datasets have brightfield/phase as input — see Allen Cell Imaging Collections in the audit for that.",
+        "swap_vars": ["X_train", "Y_train", "X_test", "Y_test"],
+        "swap_code": (
+            "if real_imgs and len(real_imgs) >= 4:\n"
+            "    import numpy as _np\n"
+            "    def _to2d(im):\n"
+            "        a = _np.asarray(im).astype(_np.float32)\n"
+            "        if a.ndim == 3:\n"
+            "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
+            "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
+            "        return a\n"
+            "    _planes = [_to2d(im) for im in real_imgs]\n"
+            "    _half = len(_planes) // 2\n"
+            "    X_train = _np.stack(_planes[:_half])\n"
+            "    Y_train = _np.stack(_planes[_half:_half*2])\n"
+            "    X_test = X_train[-1:]\n"
+            "    Y_test = Y_train[-1:]\n"
+            "    print(f'X_train/Y_train now from BBBC020 real images, shapes: X={X_train.shape}, Y={Y_train.shape}.')\n"
+            "    print(\"NOTE: pedagogical analogue only — these are not true paired bright-field/fluorescence pairs. The cells3d() pairing above remains the canonical demo.\")\n"
+            "else:\n"
+            "    print('real_imgs is None or insufficient; staying with cells3d() pairs above.')\n"
+        ),
+    },
+    "07_widefield_superres.ipynb": {
+        "anchor_text": "## One paired example: HR ground truth, LR widefield input, bicubic baseline",
+        "dataset_name": "BBBC005 v1 ground truth — in-focus images (used as HR; we synthesize LR by Gaussian blur + downsample)",
+        "license_note": "CC0",
+        "citation": "Lehmussola et al., IEEE T. Med. Imaging, 2007",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC005",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
+        "what_it_is": "Real in-focus fluorescence as HR; LR is synthesized by blur+downsample (the classic SR degradation model). For true paired widefield/SIM data, see CSBDeep CARE and ZeroCostDL4Mic.",
+        "swap_vars": ["hr_train", "lr_train", "lr_train_small"],
+        "swap_code": (
+            "if real_imgs and len(real_imgs) >= 4:\n"
+            "    import numpy as _np\n"
+            "    from scipy.ndimage import gaussian_filter as _gf, zoom as _zoom\n"
+            "    def _to_hr(im, target=128):\n"
+            "        a = _np.asarray(im).astype(_np.float32)\n"
+            "        if a.ndim == 3:\n"
+            "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
+            "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
+            "        # center-crop to square then resize\n"
+            "        s = min(a.shape)\n"
+            "        a = a[:s, :s]\n"
+            "        a = _zoom(a, target / s, order=1)\n"
+            "        return a\n"
+            "    hr_train = _np.stack([_to_hr(im) for im in real_imgs])\n"
+            "    lr_train_small = _np.stack([_zoom(_gf(h, sigma=2.0), 0.5, order=1) for h in hr_train])\n"
+            "    lr_train = _np.stack([_zoom(s, 2.0, order=3) for s in lr_train_small])\n"
+            "    print(f'hr_train / lr_train now from BBBC005 real fluorescence (synthesized LR via blur+downsample). Shapes: HR={hr_train.shape}, LR={lr_train.shape}.')\n"
+            "    print(\"NOTE: synthesized LR is a *bicubic-style* analogue, not true widefield optics. Real paired SR data lives in CSBDeep CARE / ZeroCostDL4Mic.\")\n"
+            "else:\n"
+            "    print('real_imgs is None or insufficient; staying with synthetic SR pairs.')\n"
+        ),
     },
     "09_cellpose_finetune.ipynb": {
         "anchor_text": "## Step 1: Get a small labeled dataset",
@@ -75,7 +194,50 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC038",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC038v1/BBBC038v1_train.zip",
         "what_it_is": "Diverse nuclei across modalities — designed for segmentation model training. Training subset only (smaller download).",
-        "loader_kind": "bbbc_zip_tif",
+        "swap_vars": ["train_imgs", "test_imgs", "img"],
+        "swap_code": (
+            "if real_imgs and len(real_imgs) >= 6:\n"
+            "    train_imgs = real_imgs[:6]\n"
+            "    test_imgs = real_imgs[6:]\n"
+            "    img = real_imgs[0]\n"
+            "    print(f'train_imgs / test_imgs now from BBBC038 real nuclei. {len(train_imgs)} train / {len(test_imgs)} test.')\n"
+            "    print(\"NOTE: BBBC038 has paired masks but they're not loaded here yet (would need to walk the masks/ folder). Treat this as 'real images, generate masks via the baseline first'.\")\n"
+            "else:\n"
+            "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
+        ),
+    },
+    "12_deconvolution.ipynb": {
+        "anchor_text": "## One paired example: clean → blurred → noisy",
+        "dataset_name": "BBBC005 v1 ground truth — in-focus images (used as clean) + synthetic blur",
+        "license_note": "CC0",
+        "citation": "Lehmussola et al., IEEE T. Med. Imaging, 2007",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC005",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
+        "what_it_is": "Real in-focus fluorescence as the clean ground truth; we apply a Gaussian PSF + Poisson/Gaussian noise to simulate the wide-field forward model.",
+        "swap_vars": ["X_train_clean", "X_train_blurred", "X_train_blurred_noisy"],
+        "swap_code": (
+            "if real_imgs and len(real_imgs) >= 4:\n"
+            "    import numpy as _np\n"
+            "    from scipy.ndimage import gaussian_filter as _gf\n"
+            "    def _to_clean(im, target=64):\n"
+            "        a = _np.asarray(im).astype(_np.float32)\n"
+            "        if a.ndim == 3:\n"
+            "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
+            "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
+            "        s = min(a.shape)\n"
+            "        a = a[:s, :s]\n"
+            "        # downsample to target\n"
+            "        from scipy.ndimage import zoom as _zoom\n"
+            "        return _zoom(a, target / s, order=1)\n"
+            "    X_train_clean = _np.stack([_to_clean(im) for im in real_imgs])\n"
+            "    X_train_blurred = _np.stack([_gf(c, sigma=2.0) for c in X_train_clean])\n"
+            "    _rng_d = _np.random.default_rng(7)\n"
+            "    X_train_blurred_noisy = X_train_blurred + 0.05 * _rng_d.standard_normal(X_train_blurred.shape)\n"
+            "    print(f'X_train_clean / blurred / blurred_noisy now from BBBC005 real images + synthetic Gaussian PSF.')\n"
+            "    print(\"NOTE: PSF is approximate (Gaussian sigma=2.0). For true deconv benchmarks pair with actual measured PSF — see CSBDeep CARE-deconv example data.\")\n"
+            "else:\n"
+            "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
+        ),
     },
     "13_validation_case_study.ipynb": {
         "anchor_text": "## Test image registry",
@@ -85,7 +247,47 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "Pairs naturally with NB01 — same dataset, multiple validation models compared on it.",
-        "loader_kind": "bbbc_zip_tif",
+        "swap_vars": ["img", "TEST_IMAGES (real entry added)"],
+        "swap_code": (
+            "if real_imgs:\n"
+            "    img = real_imgs[0]\n"
+            "    # If a TEST_IMAGES registry exists later in the NB, you can append:\n"
+            "    #   TEST_IMAGES['real_bbbc020'] = (real_imgs[0], None)\n"
+            "    print('img is now from real data (BBBC020). Downstream model-picker cells will run on real microscopy.')\n"
+            "    print(\"NOTE: TEST_IMAGES dict is created later in the NB; once it exists, attendees can append a real entry.\")\n"
+            "else:\n"
+            "    print('real_imgs is None; staying with synthetic.')\n"
+        ),
+    },
+    "14_spot_detection.ipynb": {
+        "anchor_text": "## Show one example",
+        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (spot-like fluorescence intensities)",
+        "license_note": "CC0",
+        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
+        "what_it_is": "Real fluorescence imagery as a *teaching analogue* for spot detection. True FISH / single-molecule benchmarks live in deepBlink and BIA — see the audit.",
+        "swap_vars": ["train_images", "train_centers"],
+        "swap_code": (
+            "if real_imgs:\n"
+            "    import numpy as _np\n"
+            "    def _to2d(im, target=128):\n"
+            "        a = _np.asarray(im).astype(_np.float32)\n"
+            "        if a.ndim == 3:\n"
+            "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
+            "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
+            "        s = min(a.shape)\n"
+            "        a = a[:s, :s]\n"
+            "        from scipy.ndimage import zoom as _zoom\n"
+            "        return _zoom(a, target / s, order=1)\n"
+            "    train_images = _np.stack([_to2d(im) for im in real_imgs])\n"
+            "    # No ground-truth spot coordinates for BBBC020 — set centers to None.\n"
+            "    train_centers = [None] * len(train_images)\n"
+            "    print(f'train_images now from BBBC020. train_centers = None (no ground-truth coords for this dataset).')\n"
+            "    print(\"NOTE: BBBC020 is a *teaching analogue* for spot detection — no annotated coordinates. For true FISH benchmarks see deepBlink (github.com/BBQuercus/deepBlink).\")\n"
+            "else:\n"
+            "    print('real_imgs is None; staying with synthetic.')\n"
+        ),
     },
 }
 
@@ -106,8 +308,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.
 - **Citation:** {spec['citation']}
 
 After this cell runs, `real_imgs` is either a list of NumPy arrays from the real
-dataset, or `None` if the download was skipped or failed. Downstream synthetic
-cells run regardless.
+dataset, or `None` if the download was skipped or failed. The cell after this
+one optionally **redirects the rest of the notebook** to use the real data —
+flip `USE_REAL_FOR_DOWNSTREAM = False` in that cell to revert to synthetic.
 """
 
 
@@ -163,7 +366,43 @@ if USE_REAL_DATA:
         real_filenames = [os.path.relpath(p, cache_dir) for p in sample_paths]
 
         print(f"Loaded {{len(real_imgs)}} real images from {{REAL_DATA_NAME}}.")
-        print(f"Try: real_imgs[0].shape, real_imgs[0].dtype")
+        print(f"  first image: shape={{real_imgs[0].shape}}, dtype={{real_imgs[0].dtype}}")
+
+        # Visual confirmation — display the first image inline so you can see the load worked.
+        try:
+            import numpy as _np
+            import matplotlib.pyplot as _plt
+            _sample = real_imgs[0]
+            # Pick a 2D plane to display: handle (H,W), (H,W,C), or (C,H,W) / (Z,H,W).
+            if _sample.ndim == 2:
+                _display = _sample
+                _cmap = "gray"
+            elif _sample.ndim == 3 and _sample.shape[-1] in (3, 4):
+                _display = _sample
+                _cmap = None
+            elif _sample.ndim == 3:
+                # Multi-channel or Z-stack — pick the largest plane.
+                _axis = int(_np.argmin(_sample.shape))  # smallest = channel/Z axis
+                _display = _np.take(_sample, _sample.shape[_axis] // 2, axis=_axis)
+                _cmap = "gray"
+            else:
+                _display = _sample.reshape(_sample.shape[-2:]) if _sample.size else _sample
+                _cmap = "gray"
+            # Robust contrast for 16-bit / float images.
+            _vmin, _vmax = _np.percentile(_display, [1, 99])
+            _fig, _ax = _plt.subplots(figsize=(6, 6))
+            _ax.imshow(_display, cmap=_cmap, vmin=_vmin, vmax=_vmax)
+            _ax.set_title(
+                f"{{REAL_DATA_NAME}}\\n"
+                f"{{real_filenames[0]}} (shape={{_sample.shape}}, dtype={{_sample.dtype}})",
+                fontsize=10,
+            )
+            _ax.axis("off")
+            _plt.tight_layout()
+            _plt.show()
+        except Exception:
+            print("Could not render preview (matplotlib issue?); data is still in real_imgs.")
+            traceback.print_exc(limit=2)
     except Exception:
         print(f"Real-data download failed; continuing with synthetic.")
         traceback.print_exc(limit=2)
@@ -194,17 +433,6 @@ T2_SPECS = {
              "Public OMERO server; CC-BY 4.0 site-level; programmatic API."),
         ],
     },
-    "03a_denoising_n2v.ipynb": {
-        "intro": "Real-world denoising benchmarks for the Noise2Void / CARE family:",
-        "items": [
-            ("GigaDB 100888 (Hagen et al. 2021)", "https://gigadb.org/dataset/100888",
-             "Built specifically for training denoising DNNs. CC0 with citation request."),
-            ("CSBDeep CARE example data", "http://csbdeep.bioimagecomputing.com/",
-             "Paired clean/noisy fluorescence — the canonical CARE training set."),
-            ("BioImage Archive (search 'denoising')", "https://www.ebi.ac.uk/bioimage-archive/",
-             "Many published denoising studies with full raw + restored stacks."),
-        ],
-    },
     "04_community_platforms.ipynb": {
         "intro": "BiMZ live calls cover the model side; for paired *image* datasets:",
         "items": [
@@ -230,28 +458,6 @@ T2_SPECS = {
             ("Cell Image Library (per-image license)", "https://www.cellimagelibrary.org/pages/datasets",
              "12,000+ datasets at UCSD CRBS; filter by Public Domain or CC-BY before redistributing."),
             ("IDR", "https://idr.openmicroscopy.org/", "OMERO sample images for QuPath WSI workflows."),
-        ],
-    },
-    "06_virtual_staining.ipynb": {
-        "intro": "Canonical paired training data for virtual-staining / label-free prediction:",
-        "items": [
-            ("Allen Cell Imaging Collections (AICS-25 etc.)", "https://www.allencell.org/data-downloading.html",
-             "16-bit OME-TIFF fields + 8-bit segmentation masks. Allen TOU: noncommercial; cite per Allen Citation Policy."),
-            ("CSBDeep example data (fnet, CARE)", "http://csbdeep.bioimagecomputing.com/",
-             "Paired transmitted-light → fluorescence; the original fnet pairs."),
-            ("BioImage Model Zoo bioimage-applications track", "https://bioimage.io/",
-             "Models with linked sample image triplets."),
-        ],
-    },
-    "07_widefield_superres.ipynb": {
-        "intro": "Paired low-res / high-res microscopy for SR training:",
-        "items": [
-            ("CSBDeep CARE example data", "http://csbdeep.bioimagecomputing.com/",
-             "Paired widefield → confocal / SIM examples."),
-            ("ZeroCostDL4Mic (DFCAN, DFGAN, RCAN tutorials)", "https://github.com/HenriquesLab/ZeroCostDL4Mic",
-             "Per-method demo data with Colab notebooks."),
-            ("BioImage Archive — search 'super-resolution'", "https://www.ebi.ac.uk/bioimage-archive/",
-             "DOI-stable raw frames with paired ground truth."),
         ],
     },
     "08_srrf_esrrf.ipynb": {
@@ -289,27 +495,6 @@ T2_SPECS = {
             ("BBBC019 (Collective cell migration)", "https://bbbc.broadinstitute.org/BBBC019",
              "Real time-lapse with annotated tracks — CC0."),
             ("IDR studies tagged 'time-lapse'", "https://idr.openmicroscopy.org/", "OMERO API for batch fetch."),
-        ],
-    },
-    "12_deconvolution.ipynb": {
-        "intro": "Paired blurred/deconvolved data for benchmarking classical RL vs DL deconv:",
-        "items": [
-            ("CSBDeep CARE deconvolution demo", "http://csbdeep.bioimagecomputing.com/",
-             "Paired noisy/clean confocal — the original Care-deconv example."),
-            ("BioImage Archive — search 'deconvolution'", "https://www.ebi.ac.uk/bioimage-archive/",
-             "Several published studies with raw + processed stacks."),
-            ("BBBC005 (focus blur)", "https://bbbc.broadinstitute.org/BBBC005",
-             "Synthetic in-focus / out-of-focus pairs — useful as a focus-restoration analogue."),
-        ],
-    },
-    "14_spot_detection.ipynb": {
-        "intro": "Real spot-detection / single-molecule data:",
-        "items": [
-            ("deepBlink example data", "https://github.com/BBQuercus/deepBlink",
-             "Heatmap-based detector with bundled FISH-like demo set."),
-            ("BioImage Archive — search 'FISH' or 'smFISH'", "https://www.ebi.ac.uk/bioimage-archive/",
-             "Many published FISH studies with annotated spots."),
-            ("IDR FISH studies", "https://idr.openmicroscopy.org/", "OMERO API; per-study annotations."),
         ],
     },
     "15_diffusion_models.ipynb": {
@@ -370,14 +555,52 @@ def _code_cell(text: str) -> dict:
 
 
 def _strip_prior_patch(cells: List[dict]) -> List[dict]:
-    """Remove any cell that carries the patch sentinel."""
+    """Remove any cell that carries any of the patch sentinels (download or swap)."""
+    sentinels = (MD_SENTINEL, CO_SENTINEL, SWAP_MD_SENTINEL, SWAP_CO_SENTINEL)
     out = []
     for c in cells:
         src = "".join(c.get("source", []))
-        if MD_SENTINEL in src or CO_SENTINEL in src:
+        if any(s in src for s in sentinels):
             continue
         out.append(c)
     return out
+
+
+def t1_swap_markdown(spec: dict) -> str:
+    vars_listed = ", ".join(f"`{v}`" for v in spec.get("swap_vars", []))
+    return f"""{SWAP_MD_SENTINEL}
+### Use real data for the rest of this notebook
+
+If the download above succeeded, you can redirect the rest of the notebook to
+work on the real dataset by running the cell below. It re-binds the working
+variables ({vars_listed}) so all downstream cells run on real microscopy.
+
+To revert to synthetic, set `USE_REAL_FOR_DOWNSTREAM = False` and re-run, or
+re-run the synthetic generation cell that comes after.
+
+⚠️  The "What you should be seeing" callouts further down were written against
+the synthetic data — your output will differ in counts, shapes, and metric
+values. That's expected and is itself a useful teaching moment.
+"""
+
+
+def t1_swap_code(spec: dict) -> str:
+    body = _indent(spec["swap_code"], 4)
+    return f"""{SWAP_CO_SENTINEL}
+# Optional: redirect the rest of the notebook to real data.
+# Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.
+
+USE_REAL_FOR_DOWNSTREAM = True
+
+if not USE_REAL_FOR_DOWNSTREAM:
+    print('USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.')
+else:
+{body}"""
+
+
+def _indent(block: str, n: int = 4) -> str:
+    pad = " " * n
+    return "\n".join((pad + line) if line else line for line in block.splitlines()) + ("\n" if block.endswith("\n") else "")
 
 
 def _find_anchor_index(cells: List[dict], anchor_text: str) -> int:
@@ -400,9 +623,12 @@ def patch_t1(nb: dict, fn: str, spec: dict) -> Tuple[bool, str]:
         return False, f"  T1 anchor not found in {fn}: {spec['anchor_text']!r}"
     new_md = _md_cell(t1_markdown(spec))
     new_co = _code_cell(t1_code(spec))
-    cells[idx:idx] = [new_md, new_co]
+    new_swap_md = _md_cell(t1_swap_markdown(spec))
+    new_swap_co = _code_cell(t1_swap_code(spec))
+    # Order: download-md → download-code → swap-md → swap-code → (existing anchor cell)
+    cells[idx:idx] = [new_md, new_co, new_swap_md, new_swap_co]
     nb["cells"] = cells
-    return True, f"  T1 inserted at cell {idx} in {fn}"
+    return True, f"  T1 inserted at cell {idx} in {fn} (4 cells: download + viz + swap)"
 
 
 def patch_t2(nb: dict, fn: str, spec: dict) -> Tuple[bool, str]:
