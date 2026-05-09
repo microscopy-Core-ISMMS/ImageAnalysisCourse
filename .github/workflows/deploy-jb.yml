@@ -57,6 +57,20 @@ jobs:
           echo "Build size:"
           du -sh _build/html
 
+      - name: Stage MABC sample data alongside the build
+        # Notebooks fetch their MABC samples from gh-pages at
+        # https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/<nb>.npz
+        # so we copy the data/ tree into _build/html/ before ghp-import.
+        run: |
+          if [ -d data ]; then
+            mkdir -p _build/html/data
+            cp -r data/* _build/html/data/
+            echo "Staged data/:"
+            du -sh _build/html/data
+          else
+            echo "No data/ folder; skipping MABC sample stage."
+          fi
+
       - name: Deploy to gh-pages
         run: |
           git config user.name "github-actions[bot]"

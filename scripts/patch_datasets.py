@@ -29,10 +29,23 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 NB_DIR = REPO_ROOT / "notebooks"
 
 # Sentinels used to detect prior patch cells so the script is re-runnable.
+# Old (pre-2026-05-08): 4 cells per T1 NB.
 MD_SENTINEL = "<!-- DATASET-AUDIT-PATCH -->"
 CO_SENTINEL = "# DATASET-AUDIT-PATCH"
 SWAP_MD_SENTINEL = "<!-- DATASET-AUDIT-PATCH-SWAP -->"
 SWAP_CO_SENTINEL = "# DATASET-AUDIT-PATCH-SWAP"
+# New (2026-05-08+): 2 cells per T1 NB — one decision block instead of separate
+# download + swap. Old sentinels are still caught by _strip_prior_patch so a
+# notebook with the old 4-cell pattern migrates cleanly to the new 2-cell pattern.
+DECISION_MD_SENTINEL = "<!-- DATA-DECISION -->"
+DECISION_CO_SENTINEL = "# DATA-DECISION"
+
+# MABC samples are hosted on the gh-pages branch alongside the JB build.
+# URL pattern: <gh-pages root>/data/mabc/<nb_id>.npz
+MABC_URL_BASE = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc"
+
+# T0 reference notebook URL (for the "My own data" tier).
+T0_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/notebooks/00_data_sources.html"
 
 # ---------------------------------------------------------------------------
 # Tier 1 specs — executable real-data cells
@@ -160,12 +173,12 @@ T1_SPECS = {
     },
     "07_widefield_superres.ipynb": {
         "anchor_text": "## One paired example: HR ground truth, LR widefield input, bicubic baseline",
-        "dataset_name": "BBBC005 v1 ground truth — in-focus images (used as HR; we synthesize LR by Gaussian blur + downsample)",
+        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (used as HR; we synthesize LR by Gaussian blur + downsample)",
         "license_note": "CC0",
-        "citation": "Lehmussola et al., IEEE T. Med. Imaging, 2007",
-        "source_url": "https://bbbc.broadinstitute.org/BBBC005",
-        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
-        "what_it_is": "Real in-focus fluorescence as HR; LR is synthesized by blur+downsample (the classic SR degradation model). For true paired widefield/SIM data, see CSBDeep CARE and ZeroCostDL4Mic.",
+        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
+        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
+        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
+        "what_it_is": "Real fluorescence (DAPI + CD11b + F-actin macrophages) used as HR ground truth; LR is synthesized by Gaussian blur + downsample (the classic SR degradation model). For true paired widefield/SIM data, see CSBDeep CARE and ZeroCostDL4Mic.",
         "swap_vars": ["hr_train", "lr_train", "lr_train_small", "hr_test", "lr_test", "lr_test_small", "n_train", "n_test"],
         "swap_code": (
             "if real_imgs and len(real_imgs) >= 4:\n"
@@ -452,8 +465,14 @@ if USE_REAL_DATA:
             else:
                 _display = _sample.reshape(_sample.shape[-2:]) if _sample.size else _sample
                 _cmap = "gray"
-            # Robust contrast for 16-bit / float images.
+            # Robust contrast for 16-bit / float images. Fall back to min/max
+            # when the percentile stretch collapses (e.g. sparse binary masks
+            # where >99% of pixels are background — vmin == vmax = 0 → all-black).
             _vmin, _vmax = _np.percentile(_display, [1, 99])
+            if _vmax <= _vmin:
+                _vmin, _vmax = float(_np.min(_display)), float(_np.max(_display))
+                if _vmax <= _vmin:
+                    _vmax = _vmin + 1.0
             _fig, _ax = _plt.subplots(figsize=(6, 6))
             _ax.imshow(_display, cmap=_cmap, vmin=_vmin, vmax=_vmax)
             _ax.set_title(
@@ -619,8 +638,12 @@ def _code_cell(text: str) -> dict:
 
 
 def _strip_prior_patch(cells: List[dict]) -> List[dict]:
-    """Remove any cell that carries any of the patch sentinels (download or swap)."""
-    sentinels = (MD_SENTINEL, CO_SENTINEL, SWAP_MD_SENTINEL, SWAP_CO_SENTINEL)
+    """Remove any cell carrying any patch sentinel — old 4-cell pattern OR new
+    2-cell decision pattern. Lets a notebook with the old layout migrate cleanly."""
+    sentinels = (
+        MD_SENTINEL, CO_SENTINEL, SWAP_MD_SENTINEL, SWAP_CO_SENTINEL,
+        DECISION_MD_SENTINEL, DECISION_CO_SENTINEL,
+    )
     out = []
     for c in cells:
         src = "".join(c.get("source", []))
@@ -683,19 +706,183 @@ def _find_anchor_index(cells: List[dict], anchor_text: str) -> int:
 # Patch operations
 # ---------------------------------------------------------------------------
 
+def t1_decision_markdown(spec: dict) -> str:
+    """The intro markdown cell that explains the four-tier choice."""
+    return f"""{DECISION_MD_SENTINEL}
+## Choose your data source
+
+This notebook can run on four kinds of data — pick one in the cell below.
+
+- **MABC hosted** *(default)* — curated samples produced by the Mt Sinai Microscopy and Advanced Bioimaging Core, sized and formatted for this notebook. Fast, reproducible, license-clean.
+- **Canonical** — fetch the published reference dataset ({spec['dataset_name']}) from its upstream source. Slower but pedagogically the same.
+- **Synthetic** — generate the toy data the notebook was originally written against. Always works, even offline. The "what you should be seeing" callouts further down were written for this path.
+- **My own data → see T0** — opens the [data sources reference notebook]({T0_URL}) with copy-pasteable blocks (local files, Google Drive, public URL, etc.).
+
+If the chosen tier fails (network down, file missing), the loader falls through automatically: MABC → canonical → synthetic. Every cell prints which tier won.
+
+- **Source:** [{spec['source_url']}]({spec['source_url']})
+- **License:** {spec['license_note']}
+- **Citation:** {spec['citation']}
+"""
+
+
+def t1_decision_code(spec: dict, nb_id: str) -> str:
+    """The single decision-block code cell that does tier resolution + bind + display."""
+    bind_body = _indent(spec["swap_code"], 4)
+    return f"""{DECISION_CO_SENTINEL}
+# @title Choose data source {{ run: "auto", display-mode: "form" }}
+DATA_SOURCE = "MABC hosted"  # @param ["MABC hosted", "Canonical (BBBC etc.)", "Synthetic", "My own data → see T0 notebook"]
+
+import os, sys, traceback, tempfile, urllib.request, urllib.error, zipfile
+import numpy as _np
+
+NB_ID = {nb_id!r}
+MABC_URL = f"{MABC_URL_BASE}/{{NB_ID}}.npz"
+CANONICAL_URL = {spec['zip_url']!r}
+CANONICAL_NAME = {spec['dataset_name']!r}
+
+real_imgs = None
+real_filenames = None
+real_metadata = None
+loaded_tier = None
+
+
+def _try_mabc():
+    \"\"\"Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata).\"\"\"
+    cache = os.path.join(tempfile.gettempdir(), os.path.basename(MABC_URL))
+    if not os.path.exists(cache):
+        print(f"Fetching MABC sample: {{MABC_URL}}")
+        urllib.request.urlretrieve(MABC_URL, cache)
+    data = _np.load(cache, allow_pickle=True)
+    imgs = list(data['images'])
+    fnames = list(data['filenames']) if 'filenames' in data.files else [f"mabc_{{i}}" for i in range(len(imgs))]
+    try:
+        meta = data['metadata'].item() if 'metadata' in data.files else {{}}
+    except Exception:
+        meta = {{}}
+    return imgs, fnames, meta
+
+
+def _try_canonical():
+    \"\"\"Existing zip-based fetch from BBBC / GigaDB. Same logic as the prior architecture.\"\"\"
+    cache_zip = os.path.join(tempfile.gettempdir(), os.path.basename(CANONICAL_URL))
+    cache_dir = cache_zip + "_extracted"
+    if not os.path.exists(cache_zip):
+        print(f"Fetching canonical: {{CANONICAL_NAME}} (this can take 10-60 s)...")
+        urllib.request.urlretrieve(CANONICAL_URL, cache_zip)
+        print(f"  cached at {{cache_zip}} ({{os.path.getsize(cache_zip)/1e6:.1f}} MB)")
+    if not os.path.isdir(cache_dir):
+        os.makedirs(cache_dir, exist_ok=True)
+        with zipfile.ZipFile(cache_zip) as zf:
+            zf.extractall(cache_dir)
+    try:
+        import tifffile
+        _read = lambda p: tifffile.imread(p)
+    except ImportError:
+        from PIL import Image
+        _read = lambda p: _np.array(Image.open(p))
+    exts = ('.tif', '.tiff', '.TIF', '.TIFF', '.png', '.PNG')
+    paths = []
+    for root, _, files in os.walk(cache_dir):
+        for fn in files:
+            if fn.endswith(exts):
+                paths.append(os.path.join(root, fn))
+    paths.sort()
+    paths = paths[:8]
+    imgs = [_read(p) for p in paths]
+    fnames = [os.path.relpath(p, cache_dir) for p in paths]
+    meta = {{"source": CANONICAL_NAME, "url": CANONICAL_URL, "tier": "canonical"}}
+    return imgs, fnames, meta
+
+
+# Tier resolution
+if DATA_SOURCE == "My own data → see T0 notebook":
+    print("Open the T0 notebook for copy-paste data-loading blocks:")
+    print(f"  {T0_URL}")
+    print("Once your images are loaded into a list called `real_imgs`, re-run the rest of this notebook.")
+
+elif DATA_SOURCE == "Synthetic":
+    print("Synthetic-only mode: skipping all real-data tiers; the synthetic generation cell below will run.")
+
+else:
+    if DATA_SOURCE == "MABC hosted":
+        try:
+            real_imgs, real_filenames, real_metadata = _try_mabc()
+            loaded_tier = "MABC"
+        except (urllib.error.HTTPError, urllib.error.URLError, FileNotFoundError):
+            print("MABC sample not yet available; falling through to canonical.")
+        except Exception:
+            print("MABC fetch raised an unexpected error; falling through to canonical.")
+            traceback.print_exc(limit=2)
+
+    if real_imgs is None:
+        try:
+            real_imgs, real_filenames, real_metadata = _try_canonical()
+            loaded_tier = "Canonical"
+        except Exception:
+            print("Canonical fetch failed; the synthetic-generation cell below will run as the final fallback.")
+            traceback.print_exc(limit=2)
+
+
+# Bind working variables and display the loaded grid (only if a real tier won).
+if real_imgs is not None:
+    print(f"\\nLoaded {{len(real_imgs)}} images from tier: {{loaded_tier}}.")
+    if real_metadata:
+        print(f"  source: {{real_metadata.get('source', '(unknown)')}}")
+        print(f"  license: {{real_metadata.get('license', 'see source')}}")
+        if 'citation' in real_metadata:
+            print(f"  cite: {{real_metadata['citation']}}")
+
+    # ---- Per-NB binding (lifted from the prior architecture's swap_code) ----
+{bind_body}
+
+    # ---- Universal display grid ----
+    try:
+        import matplotlib.pyplot as _plt
+        _n_show = min(8, len(real_imgs))
+        _ncols = 4
+        _nrows = (_n_show + _ncols - 1) // _ncols
+        _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3 * _ncols, 3 * _nrows))
+        _ax_iter = list(_axes.flat) if hasattr(_axes, 'flat') else [_axes]
+        for _i, _ax in enumerate(_ax_iter[:_n_show]):
+            _disp = _np.asarray(real_imgs[_i]).astype(float)
+            if _disp.ndim == 3:
+                if _disp.shape[-1] in (3, 4):
+                    pass  # RGB(A)
+                else:
+                    _disp = _disp.mean(axis=-1) if _disp.shape[-1] < min(_disp.shape[:2]) else _disp[_disp.shape[0]//2]
+            _vmin, _vmax = _np.percentile(_disp, [1, 99])
+            if _vmax <= _vmin:
+                _vmin, _vmax = float(_disp.min()), float(_disp.max())
+                if _vmax <= _vmin:
+                    _vmax = _vmin + 1.0
+            _cmap = None if (_disp.ndim == 3 and _disp.shape[-1] in (3, 4)) else 'gray'
+            _ax.imshow(_disp, cmap=_cmap, vmin=_vmin, vmax=_vmax)
+            _fn = (real_filenames[_i] if real_filenames and _i < len(real_filenames) else f'img {{_i}}')
+            _ax.set_title(f"{{loaded_tier}}: {{str(_fn)[:32]}}", fontsize=8)
+            _ax.axis('off')
+        for _ax in _ax_iter[_n_show:]:
+            _ax.axis('off')
+        _plt.tight_layout(); _plt.show()
+    except Exception:
+        print("Could not render preview grid; data is still in real_imgs.")
+        traceback.print_exc(limit=2)
+else:
+    print("Real-data tiers did not produce data. The synthetic-generation cell below will run.")
+"""
+
+
 def patch_t1(nb: dict, fn: str, spec: dict) -> Tuple[bool, str]:
     cells = _strip_prior_patch(nb["cells"])
     idx = _find_anchor_index(cells, spec["anchor_text"])
     if idx < 0:
         return False, f"  T1 anchor not found in {fn}: {spec['anchor_text']!r}"
-    new_md = _md_cell(t1_markdown(spec))
-    new_co = _code_cell(t1_code(spec))
-    new_swap_md = _md_cell(t1_swap_markdown(spec))
-    new_swap_co = _code_cell(t1_swap_code(spec))
-    # Order: download-md → download-code → swap-md → swap-code → (existing anchor cell)
-    cells[idx:idx] = [new_md, new_co, new_swap_md, new_swap_co]
+    nb_id = fn.replace(".ipynb", "")
+    new_md = _md_cell(t1_decision_markdown(spec))
+    new_co = _code_cell(t1_decision_code(spec, nb_id))
+    cells[idx:idx] = [new_md, new_co]
     nb["cells"] = cells
-    return True, f"  T1 inserted at cell {idx} in {fn} (4 cells: download + viz + swap)"
+    return True, f"  T1 inserted at cell {idx} in {fn} (2 cells: decision-block intro + tiered loader)"
 
 
 def patch_t2(nb: dict, fn: str, spec: dict) -> Tuple[bool, str]:

@@ -34,6 +34,7 @@ parts:
 
   - caption: Lab notebooks (core)
     chapters:
+      - file: notebooks/00_data_sources
       - file: notebooks/00_setup_self_check
       - file: notebooks/01_cellpose_segmentation
       - file: notebooks/02_validation_quantification
