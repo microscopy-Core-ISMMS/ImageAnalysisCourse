@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook T0 — Data Sources Reference &#8212; AI for Microscopy Image Analysis</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbe4e59a" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/00_data_sources';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 00 — Setup and Self-Check" href="00_setup_self_check.html" />
+    <link rel="prev" title="Lecture 2 — Walking the Day" href="../lectures/02_walking_the_day/lecture.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-light" alt="AI for Microscopy Image Analysis - Home"/>
+    <img src="../_static/Core_logo-transparent.png" class="logo__image only-dark pst-js-only" alt="AI for Microscopy Image Analysis - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Workshop Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handout.html">Workshop Handout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Ramp-up evening (optional)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/rampup_evening.html">Ramp-up Evening (Optional T0 Session)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/00_lecture_prereqs_check.html">Lecture 1 — Prerequisites check (Tier 0)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lectures/01_intro_ai_imaging/verification_log.html">Verification Log — Lecture 1</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../lectures/02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook T0 — Data Sources Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03a_denoising_n2v.html">Notebook 03a — AI Denoising with Noise2Void (Lab 3, Option A)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03b_foundation_model_segmentation.html">Notebook 03b — Foundation-Model Segmentation (Lab 3, Option B)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_community_platforms.html">Notebook 04 — Community Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_desktop_gui_complements.html">Notebook 05 — Desktop GUI Complements</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Extension notebooks (post-workshop, self-paced)</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="06_virtual_staining.html">Notebook 06 — Virtual Staining and Label-Free Prediction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_widefield_superres.html">Notebook 07 — AI Super-Resolution from Widefield (Multi-Method, Choose-Your-Own)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_wsi_transcriptomics.html">Notebook 16 — WSI → Transcriptomics (Frontier Demo)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data/README.html">Data Sources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/00_data_sources.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook T0 — Data Sources Reference</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-this-notebook">How to use this notebook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-a-workshop-default-mabc-samples-canonical-fallback">Block A — Workshop default (MABC samples + canonical fallback)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-b-load-your-own-local-files">Block B — Load your own local files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-c-mount-google-drive-colab-only">Block C — Mount Google Drive (Colab only)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-d-pull-from-any-public-url">Block D — Pull from any public URL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-e-huggingface-datasets">Block E — HuggingFace Datasets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-f-mt-sinai-box-onedrive-institutional-storage">Block F — Mt Sinai Box / OneDrive (institutional storage)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-g-run-notebooks-locally-instead-of-on-colab">Block G — Run notebooks locally instead of on Colab</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-local">Why local?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-notes">GPU notes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-put-data">Where to put data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-name-reference">Variable name reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-resources">Further resources</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- colab-badge -->
+<p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/00_data_sources.ipynb" rel="noreferer noopener" target="_blank"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>Click the badge to open this notebook in Google Colab.</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-t0-data-sources-reference">
+<h1>Notebook T0 — Data Sources Reference<a class="headerlink" href="#notebook-t0-data-sources-reference" title="Link to this heading">#</a></h1>
+<p><strong>Purpose.</strong> This is a reference notebook, not a tutorial. Use it when you want to run any of the workshop notebooks on <strong>data other than the defaults</strong>. Each section below is a self-contained, copy-paste block for one way to load images.</p>
+<p><strong>How the workshop notebooks consume data.</strong> Every T1 lab notebook (NB01, NB02, NB03a/b, NB06, NB07, NB09, NB12, NB13, NB14, NB16) starts with a “Choose data source” decision block. By default that block fetches from the MABC-hosted samples; if MABC is unavailable, it falls through to a canonical published dataset (BBBC, GigaDB, etc.); if that fails, it falls through to the synthetic generator.</p>
+<p>The fourth option in that block is <strong>“My own data → see T0”</strong> — that’s what brings you here. The blocks below show you how to load your own data into a Python list called <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code>. Once you’ve run the appropriate block, <strong>switch back to the lab notebook</strong> and re-run from the cell after the decision block. The lab notebook will pick up <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> from memory.</p>
+<blockquote>
+<div><p>⚠️  Variable name contract: the lab notebooks expect <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> to be a list (or array) of NumPy arrays. Each notebook also wants specific working variable names bound from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> — e.g. NB01 expects <code class="docutils literal notranslate"><span class="pre">img_easy</span></code>, <code class="docutils literal notranslate"><span class="pre">img_hard</span></code>. See the <strong>Variable name reference</strong> at the end of this notebook for the per-notebook contract.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="how-to-use-this-notebook">
+<h2>How to use this notebook<a class="headerlink" href="#how-to-use-this-notebook" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Pick the block</strong> that matches where your data lives (local files, Drive, etc.).</p></li>
+<li><p><strong>Copy the code</strong> into the lab notebook you want to run, or run it here and switch back.</p></li>
+<li><p><strong>Bind the working variables</strong> the lab notebook expects (see the reference table at the bottom).</p></li>
+<li><p><strong>Re-run the lab notebook</strong> from the cell <em>after</em> its decision block.</p></li>
+</ol>
+<p>The blocks are intentionally minimal — short, well-commented, paste-ready. None of them depend on each other.</p>
+</section>
+<section id="block-a-workshop-default-mabc-samples-canonical-fallback">
+<h2>Block A — Workshop default (MABC samples + canonical fallback)<a class="headerlink" href="#block-a-workshop-default-mabc-samples-canonical-fallback" title="Link to this heading">#</a></h2>
+<p>This is what each lab notebook does by default. Shown here for completeness — you don’t normally run this block manually; just leave the lab notebook’s decision dropdown set to <code class="docutils literal notranslate"><span class="pre">&quot;MABC</span> <span class="pre">hosted&quot;</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.error</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">NB_ID</span> <span class="o">=</span> <span class="s2">&quot;01_cellpose_segmentation&quot;</span>   <span class="c1"># change to your target NB id</span>
+<span class="n">MABC_URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/</span><span class="si">{</span><span class="n">NB_ID</span><span class="si">}</span><span class="s2">.npz&quot;</span>
+
+<span class="n">cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">MABC_URL</span><span class="p">))</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">MABC_URL</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">])</span>
+<span class="n">real_filenames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;filenames&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="s2">&quot;filenames&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;metadata&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="p">{}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> images from MABC sample </span><span class="si">{</span><span class="n">NB_ID</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  shape per image: </span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype: </span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  source: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(unknown)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="block-b-load-your-own-local-files">
+<h2>Block B — Load your own local files<a class="headerlink" href="#block-b-load-your-own-local-files" title="Link to this heading">#</a></h2>
+<p>Use this when your images are on the same machine as the notebook. On Colab, “local” means the runtime VM — not your laptop. To work on your laptop’s files in Colab, mount Drive (Block C) or upload them to the runtime first (<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">google.colab</span> <span class="pre">import</span> <span class="pre">files;</span> <span class="pre">files.upload()</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Edit these paths.</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/content/my_images&quot;</span><span class="p">)</span>          <span class="c1"># folder with your TIFF/PNG files</span>
+<span class="n">PATTERN</span> <span class="o">=</span> <span class="s2">&quot;*.tif&quot;</span>                                <span class="c1"># glob pattern</span>
+<span class="n">N_LIMIT</span> <span class="o">=</span> <span class="mi">8</span>                                      <span class="c1"># how many to load</span>
+
+<span class="c1"># Try tifffile first (handles multi-page, 16-bit), fall back to PIL.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+    <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+    <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+<span class="n">paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">PATTERN</span><span class="p">))[:</span><span class="n">N_LIMIT</span><span class="p">]</span>
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
+<span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> files from </span><span class="si">{</span><span class="n">DATA_DIR</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">fn</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_imgs</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s2">: shape=</span><span class="si">{</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">im</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>TIFF gotchas.</strong> Multi-page TIFF (Z-stacks) returns a 3D array <code class="docutils literal notranslate"><span class="pre">(Z,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>. Multi-channel TIFF can return <code class="docutils literal notranslate"><span class="pre">(C,</span> <span class="pre">H,</span> <span class="pre">W)</span></code> or <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W,</span> <span class="pre">C)</span></code> depending on how it was saved. The lab notebooks generally handle both, but if a downstream cell errors on shape, do <code class="docutils literal notranslate"><span class="pre">print(real_imgs[0].shape)</span></code> and slice/transpose to <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W)</span></code> for grayscale or <code class="docutils literal notranslate"><span class="pre">(H,</span> <span class="pre">W,</span> <span class="pre">3)</span></code> for RGB.</p>
+<p><strong>Other formats</strong> — for proprietary microscopy formats (<code class="docutils literal notranslate"><span class="pre">.lif</span></code>, <code class="docutils literal notranslate"><span class="pre">.nd2</span></code>, <code class="docutils literal notranslate"><span class="pre">.czi</span></code>, <code class="docutils literal notranslate"><span class="pre">.lsm</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">bioio</span> <span class="n">bioio</span><span class="o">-</span><span class="n">lif</span> <span class="n">bioio</span><span class="o">-</span><span class="n">nd2</span>  <span class="c1"># one of: -lif, -nd2, -czi, -lsm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bioio</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioImage</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">BioImage</span><span class="p">(</span><span class="s2">&quot;/content/my_image.lif&quot;</span><span class="p">)</span>
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;YX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">Z</span><span class="p">)]</span>
+</pre></div>
+</div>
+</section>
+<section id="block-c-mount-google-drive-colab-only">
+<h2>Block C — Mount Google Drive (Colab only)<a class="headerlink" href="#block-c-mount-google-drive-colab-only" title="Link to this heading">#</a></h2>
+<p>Use this when your images live in your Google Drive. Authentication runs once per Colab runtime; subsequent cells access files at paths like <code class="docutils literal notranslate"><span class="pre">/content/drive/MyDrive/...</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Colab-only: mount Google Drive at /content/drive/</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.colab</span><span class="w"> </span><span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;/content/drive&quot;</span><span class="p">)</span>
+
+<span class="c1"># Now your Drive files are at /content/drive/MyDrive/&lt;your-folder&gt;/...</span>
+<span class="c1"># Combine with Block B above to load:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/content/drive/MyDrive/workshop_images&quot;</span><span class="p">)</span>
+<span class="n">PATTERN</span> <span class="o">=</span> <span class="s2">&quot;*.tif&quot;</span>
+<span class="c1"># ... continue with Block B&#39;s loading code</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>First-time auth.</strong> The cell above pops up a Google sign-in flow. Sign in with the same Google account that owns the Drive folder. Authorization persists for the runtime session (~12 hours).</p>
+<p><strong>Path tip.</strong> If your folder is in a Shared Drive (org account), the path is <code class="docutils literal notranslate"><span class="pre">/content/drive/Shareddrives/&lt;DriveName&gt;/...</span></code> — note the lowercase <code class="docutils literal notranslate"><span class="pre">d</span></code> in <code class="docutils literal notranslate"><span class="pre">drive</span></code> and the capital <code class="docutils literal notranslate"><span class="pre">Shared</span></code>.</p>
+</section>
+<section id="block-d-pull-from-any-public-url">
+<h2>Block D — Pull from any public URL<a class="headerlink" href="#block-d-pull-from-any-public-url" title="Link to this heading">#</a></h2>
+<p>Use this when your data lives on a public web URL (your lab’s website, Zenodo, Figshare, GitHub raw, etc.) — anything reachable via HTTPS without authentication.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Edit these.</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;https://example.org/path/to/your-data.zip&quot;</span>
+<span class="n">N_LIMIT</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">URL</span><span class="p">))</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+
+<span class="c1"># If it&#39;s a zip, extract; otherwise just load.</span>
+<span class="k">if</span> <span class="n">cache</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">):</span>
+    <span class="n">extract_dir</span> <span class="o">=</span> <span class="n">cache</span> <span class="o">+</span> <span class="s2">&quot;_extracted&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+            <span class="n">zf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">)</span>
+    <span class="n">img_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">extract_dir</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.tif&quot;</span><span class="p">))[:</span><span class="n">N_LIMIT</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">img_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">cache</span><span class="p">)]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+    <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+    <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">img_paths</span><span class="p">]</span>
+<span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">img_paths</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> images from </span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Citation hygiene.</strong> If the URL points at a published dataset (BBBC, GigaDB, BIA, IDR, etc.), capture the dataset name + DOI/URL in your notebook so anyone reading it can trace the data. The workshop’s <code class="docutils literal notranslate"><span class="pre">datasets_audit.md</span></code> covers the most common canonical sources.</p>
+</section>
+<section id="block-e-huggingface-datasets">
+<h2>Block E — HuggingFace Datasets<a class="headerlink" href="#block-e-huggingface-datasets" title="Link to this heading">#</a></h2>
+<p>Use this when your dataset is hosted on the <a class="reference external" href="https://huggingface.co/datasets" rel="noreferer noopener" target="_blank">HuggingFace Hub</a>. Many recent bioimage benchmarks (STimage-1K4M, BIN-1, etc.) live there. HuggingFace caches downloads in <code class="docutils literal notranslate"><span class="pre">~/.cache/huggingface/</span></code> so subsequent runs are fast.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install --quiet datasets
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Edit this.</span>
+<span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">&quot;your-org/your-dataset&quot;</span>   <span class="c1"># e.g., &quot;polinaeterna/cifar10&quot;</span>
+<span class="n">SPLIT</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+<span class="n">N_LIMIT</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">DATASET_ID</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SPLIT</span><span class="si">}</span><span class="s2">[:</span><span class="si">{</span><span class="n">N_LIMIT</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="c1"># HF Datasets returns dicts; the image key is usually &quot;image&quot; or &quot;img&quot;</span>
+<span class="n">image_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">column_names</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;img&quot;</span><span class="p">,</span> <span class="s2">&quot;pixel_values&quot;</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">image_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No image column found. Available columns: </span><span class="si">{</span><span class="n">ds</span><span class="o">.</span><span class="n">column_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">image_key</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">]</span>
+<span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">))]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> images from </span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Gated datasets.</strong> Some HF datasets require accepting a license on the website first, plus a <code class="docutils literal notranslate"><span class="pre">huggingface-cli</span> <span class="pre">login</span></code> token. The <code class="docutils literal notranslate"><span class="pre">load_dataset</span></code> call will raise a clear error with a link if so.</p>
+</section>
+<section id="block-f-mt-sinai-box-onedrive-institutional-storage">
+<h2>Block F — Mt Sinai Box / OneDrive (institutional storage)<a class="headerlink" href="#block-f-mt-sinai-box-onedrive-institutional-storage" title="Link to this heading">#</a></h2>
+<p><strong>Short version: you can’t fetch directly from Mt Sinai Box or institutional OneDrive in a Colab notebook</strong>, because both require SSO authentication that doesn’t work cleanly in a Jupyter cell.</p>
+<p><strong>Workaround.</strong> The cleanest path is to mirror the specific files you need into a personal Google Drive folder, then use Block C to mount that. From the Mt Sinai end:</p>
+<ol class="arabic simple">
+<li><p>Open the file in Box / OneDrive on your Mac.</p></li>
+<li><p>Right-click → Download (or open in the desktop client and copy out).</p></li>
+<li><p>Drop the file into your <code class="docutils literal notranslate"><span class="pre">MyDrive/workshop_images/</span></code> folder.</p></li>
+<li><p>In Colab, mount Drive (Block C above) and load.</p></li>
+</ol>
+<p>If you need to pull a Mt Sinai Box file at scale (&gt;1 GB or many files), the Box API is the right answer — but configuring Box’s OAuth flow inside a workshop slot is friction. <strong>Recommend doing the data prep step on your laptop, not in Colab.</strong></p>
+<p>For purely public Mt Sinai resources (anything published on a Mt Sinai-affiliated GitHub or website), Block D (public URL) works fine.</p>
+</section>
+<section id="block-g-run-notebooks-locally-instead-of-on-colab">
+<h2>Block G — Run notebooks locally instead of on Colab<a class="headerlink" href="#block-g-run-notebooks-locally-instead-of-on-colab" title="Link to this heading">#</a></h2>
+<p>Colab is the workshop default — zero-install, free GPU, identical environment for every attendee. But you can also run the lab notebooks on your own machine.</p>
+<section id="why-local">
+<h3>Why local?<a class="headerlink" href="#why-local" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Bigger data.</strong> Colab’s free tier disconnects after ~12 hours and has limited disk. For multi-GB datasets, local is more practical.</p></li>
+<li><p><strong>Faster iteration.</strong> No re-installing packages every fresh runtime.</p></li>
+<li><p><strong>Privacy.</strong> If your data isn’t public, mounting Drive may be inappropriate.</p></li>
+</ul>
+</section>
+<section id="setup">
+<h3>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse.git
+<span class="nb">cd</span><span class="w"> </span>ImageAnalysisCourse
+
+<span class="c1"># Conda is recommended:</span>
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>env/environment.yml
+conda<span class="w"> </span>activate<span class="w"> </span>ai-microscopy-2026
+
+<span class="c1"># Or pip (less reliable for some packages — micro-sam, cellpose can be tricky):</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>env/requirements_notebooks.txt
+
+<span class="c1"># Launch JupyterLab and open the notebook you want:</span>
+jupyter<span class="w"> </span>lab<span class="w"> </span>notebooks/01_cellpose_segmentation.ipynb
+</pre></div>
+</div>
+</section>
+<section id="gpu-notes">
+<h3>GPU notes<a class="headerlink" href="#gpu-notes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>CUDA on Linux/Windows.</strong> Most labs benefit from a GPU. Cellpose, SAM, and the larger U-Nets in NB07/12 will run on CPU but slowly (5–30× longer).</p></li>
+<li><p><strong>Apple Silicon Mac.</strong> PyTorch’s <code class="docutils literal notranslate"><span class="pre">mps</span></code> backend works for most operations. Set <code class="docutils literal notranslate"><span class="pre">device</span> <span class="pre">=</span> <span class="pre">&quot;mps&quot;</span></code> and expect ~50–80% of CUDA performance for the small models in this workshop.</p></li>
+<li><p><strong>No GPU.</strong> Everything still runs; expect total runtime around 60–90 min for the labs that train models.</p></li>
+</ul>
+</section>
+<section id="where-to-put-data">
+<h3>Where to put data<a class="headerlink" href="#where-to-put-data" title="Link to this heading">#</a></h3>
+<p>Put your input images anywhere you like and edit the <code class="docutils literal notranslate"><span class="pre">DATA_DIR</span></code> constant in the lab notebook’s loading cell (or in Block B above) to point at it. The lab notebooks don’t enforce a specific layout — they just consume <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> as a list of NumPy arrays.</p>
+</section>
+</section>
+<section id="variable-name-reference">
+<h2>Variable name reference<a class="headerlink" href="#variable-name-reference" title="Link to this heading">#</a></h2>
+<p>After you load your data into <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> (and optionally <code class="docutils literal notranslate"><span class="pre">real_filenames</span></code>, <code class="docutils literal notranslate"><span class="pre">real_metadata</span></code>), each lab notebook expects specific working variables to be bound. The lab notebook’s decision block does this binding automatically when MABC / canonical succeeds. If you load data manually here, you’ll need to do the binding yourself.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>NB</p></th>
+<th class="head"><p>Working variables expected</p></th>
+<th class="head"><p>Suggested binding</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>NB01</strong> Cellpose pretrained</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img_easy</span></code>, <code class="docutils literal notranslate"><span class="pre">img_hard</span></code>, <code class="docutils literal notranslate"><span class="pre">img_easy_synth</span></code>, <code class="docutils literal notranslate"><span class="pre">img_hard_synth</span></code>, <code class="docutils literal notranslate"><span class="pre">img</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img_easy</span> <span class="pre">=</span> <span class="pre">real_imgs[0];</span> <span class="pre">img_hard</span> <span class="pre">=</span> <span class="pre">real_imgs[1];</span> <span class="pre">img_easy_synth</span> <span class="pre">=</span> <span class="pre">real_imgs[0];</span> <span class="pre">img_hard_synth</span> <span class="pre">=</span> <span class="pre">real_imgs[1];</span> <span class="pre">img</span> <span class="pre">=</span> <span class="pre">real_imgs[0]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NB02</strong> Validation/QC</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gt_easy</span></code>, <code class="docutils literal notranslate"><span class="pre">gt_hard</span></code> (binary masks)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gt_easy</span> <span class="pre">=</span> <span class="pre">(real_imgs[0]</span> <span class="pre">&gt;</span> <span class="pre">0).astype(np.uint8);</span> <span class="pre">gt_hard</span> <span class="pre">=</span> <span class="pre">(real_imgs[-1]</span> <span class="pre">&gt;</span> <span class="pre">0).astype(np.uint8)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>NB03a</strong> Denoising</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clean</span></code>, <code class="docutils literal notranslate"><span class="pre">noisy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clean</span> <span class="pre">=</span> <span class="pre">real_imgs[0].astype(float)/255;</span> <span class="pre">noisy</span> <span class="pre">=</span> <span class="pre">clean</span> <span class="pre">+</span> <span class="pre">0.10*np.random.randn(*clean.shape)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NB03b</strong> Foundation seg (SAM)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img</span> <span class="pre">=</span> <span class="pre">real_imgs[0].astype(float)/255</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>NB06</strong> Virtual staining</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">X_train</span></code>, <code class="docutils literal notranslate"><span class="pre">Y_train</span></code>, <code class="docutils literal notranslate"><span class="pre">X_test</span></code>, <code class="docutils literal notranslate"><span class="pre">Y_test</span></code></p></td>
+<td><p>Split <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> 6/2 train/test, pair channels appropriately</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NB07</strong> Super-resolution</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">hr_test</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train_small</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_test_small</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_test</span></code>, <code class="docutils literal notranslate"><span class="pre">n_train</span></code>, <code class="docutils literal notranslate"><span class="pre">n_test</span></code></p></td>
+<td><p>Split 6/2; LR via Gaussian-blur + 0.5× downsample + bicubic-back-up</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>NB09</strong> Cellpose finetune</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">train_images</span></code>, <code class="docutils literal notranslate"><span class="pre">train_labels</span></code>, <code class="docutils literal notranslate"><span class="pre">test_images</span></code>, <code class="docutils literal notranslate"><span class="pre">test_labels</span></code>, <code class="docutils literal notranslate"><span class="pre">img</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">train_images</span> <span class="pre">=</span> <span class="pre">real_imgs[:6];</span> <span class="pre">test_images</span> <span class="pre">=</span> <span class="pre">real_imgs[6:];</span> <span class="pre">train_labels/test_labels</span> <span class="pre">=</span> <span class="pre">zero</span> <span class="pre">masks</span> <span class="pre">unless</span> <span class="pre">you</span> <span class="pre">have</span> <span class="pre">GT</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NB12</strong> Deconvolution</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">X_train_clean</span></code>, <code class="docutils literal notranslate"><span class="pre">X_train_blurred</span></code>, <code class="docutils literal notranslate"><span class="pre">X_train_blurred_noisy</span></code>, <code class="docutils literal notranslate"><span class="pre">X_test_*</span></code>, <code class="docutils literal notranslate"><span class="pre">n_train</span></code>, <code class="docutils literal notranslate"><span class="pre">n_test</span></code></p></td>
+<td><p>Same 6/2 split; blur via Gaussian σ≈2, noise via N(0, 0.05)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>NB13</strong> Validation case study</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img</span></code>, <code class="docutils literal notranslate"><span class="pre">TEST_IMAGES</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">img</span> <span class="pre">=</span> <span class="pre">real_imgs[0];</span> <span class="pre">TEST_IMAGES</span> <span class="pre">=</span> <span class="pre">{f'real_{i}':</span> <span class="pre">(real_imgs[i],</span> <span class="pre">None)</span> <span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(min(4,</span> <span class="pre">len(real_imgs)))}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NB14</strong> Spot detection</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">train_images</span></code>, <code class="docutils literal notranslate"><span class="pre">train_centers</span></code>, <code class="docutils literal notranslate"><span class="pre">test_images</span></code>, <code class="docutils literal notranslate"><span class="pre">test_centers</span></code></p></td>
+<td><p>Split 6/2; centers = <code class="docutils literal notranslate"><span class="pre">[None]</span> <span class="pre">*</span> <span class="pre">N</span></code> if no GT spot coords</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>NB16</strong> WSI → transcriptomics</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">he_tiles</span></code> (list of RGB arrays)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">he_tiles</span> <span class="pre">=</span> <span class="pre">[np.asarray(img)</span> <span class="pre">for</span> <span class="pre">img</span> <span class="pre">in</span> <span class="pre">real_imgs]</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The decision-block code in each lab notebook embeds the right binding logic, so most attendees never touch this table. It’s here for the case where you load data manually and need to know what to assign.</p>
+</section>
+<section id="further-resources">
+<h2>Further resources<a class="headerlink" href="#further-resources" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Workshop dataset audit:</strong> <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/datasets_audit.md" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">datasets_audit.md</span></code></a> — license + format notes for every canonical source the workshop touches (BBBC, BIA, IDR, Allen Cell, BSCCM, GigaDB, CIL, Cellpose, NIST NexusLIMS).</p></li>
+<li><p><strong>MABC manifest:</strong> <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/data/MANIFEST.json" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">data/MANIFEST.json</span></code></a> — sha256 + size of each <code class="docutils literal notranslate"><span class="pre">data/mabc/&lt;nb&gt;.npz</span></code>.</p></li>
+<li><p><strong>Bake script:</strong> <a class="reference external" href="https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/scripts/bake_dataset_samples.py" rel="noreferer noopener" target="_blank"><code class="docutils literal notranslate"><span class="pre">scripts/bake_dataset_samples.py</span></code></a> — produces the MABC npz files from raw inputs.</p></li>
+</ul>
+<hr class="docutils" />
+<p><em>This notebook is part of the <a class="reference external" href="https://microscopy-core-ismms.github.io/ImageAnalysisCourse/" rel="noreferer noopener" target="_blank">AI for Microscopy Image Analysis</a> workshop.</em></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../lectures/02_walking_the_day/lecture.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lecture 2 — Walking the Day</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="00_setup_self_check.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 00 — Setup and Self-Check</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-this-notebook">How to use this notebook</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-a-workshop-default-mabc-samples-canonical-fallback">Block A — Workshop default (MABC samples + canonical fallback)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-b-load-your-own-local-files">Block B — Load your own local files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-c-mount-google-drive-colab-only">Block C — Mount Google Drive (Colab only)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-d-pull-from-any-public-url">Block D — Pull from any public URL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-e-huggingface-datasets">Block E — HuggingFace Datasets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-f-mt-sinai-box-onedrive-institutional-storage">Block F — Mt Sinai Box / OneDrive (institutional storage)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-g-run-notebooks-locally-instead-of-on-colab">Block G — Run notebooks locally instead of on Colab</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-local">Why local?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-notes">GPU notes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-put-data">Where to put data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-name-reference">Variable name reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-resources">Further resources</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -189,6 +189,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_data_sources.html">Notebook T0 — Data Sources Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="00_setup_self_check.html">Notebook 00 — Setup and Self-Check</a></li>
 <li class="toctree-l1"><a class="reference internal" href="01_cellpose_segmentation.html">Notebook 01 — Pretrained Segmentation with Cellpose-SAM (Lab 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_validation_quantification.html">Notebook 02 — Validation and Quantification (Lab 2)</a></li>
@@ -360,10 +361,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-data-source">Choose your data source</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-a-non-canonical-microscopy-image">Load a non-canonical microscopy image</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-sam-predictor">Set up the SAM predictor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-sam-with-a-point-prompt">Apply SAM with a point prompt</a></li>
@@ -440,149 +438,130 @@
 </div>
 </div>
 </div>
-<!-- DATASET-AUDIT-PATCH -->
+<!-- DATA-DECISION -->
 </section>
-<section id="try-it-on-canonical-real-data">
-<h2>Try it on canonical real data<a class="headerlink" href="#try-it-on-canonical-real-data" title="Link to this heading">#</a></h2>
-<p>This optional block fetches a canonical published microscopy dataset over the
-network and prepares it for the rest of the notebook. <strong>If the download fails</strong>
-(firewall, missing optional dependency, expired URL), the notebook continues
-with the synthetic data below — this cell is safe to skip and re-runnable.</p>
+<section id="choose-your-data-source">
+<h2>Choose your data source<a class="headerlink" href="#choose-your-data-source" title="Link to this heading">#</a></h2>
+<p>This notebook can run on four kinds of data — pick one in the cell below.</p>
 <ul class="simple">
-<li><p><strong>Dataset:</strong> BBBC020 — Murine bone-marrow derived macrophages</p></li>
-<li><p><strong>What it is:</strong> Multi-channel macrophage fluorescence — exactly the ‘non-canonical microscopy’ content SAM/μSAM are tested against.</p></li>
+<li><p><strong>MABC hosted</strong> <em>(default)</em> — curated samples produced by the Mt Sinai Microscopy and Advanced Bioimaging Core, sized and formatted for this notebook. Fast, reproducible, license-clean.</p></li>
+<li><p><strong>Canonical</strong> — fetch the published reference dataset (BBBC020 — Murine bone-marrow derived macrophages) from its upstream source. Slower but pedagogically the same.</p></li>
+<li><p><strong>Synthetic</strong> — generate the toy data the notebook was originally written against. Always works, even offline. The “what you should be seeing” callouts further down were written for this path.</p></li>
+<li><p><strong>My own data → see T0</strong> — opens the <a class="reference external" href="https://microscopy-core-ismms.github.io/ImageAnalysisCourse/notebooks/00_data_sources.html" rel="noreferer noopener" target="_blank">data sources reference notebook</a> with copy-pasteable blocks (local files, Google Drive, public URL, etc.).</p></li>
+</ul>
+<p>If the chosen tier fails (network down, file missing), the loader falls through automatically: MABC → canonical → synthetic. Every cell prints which tier won.</p>
+<ul class="simple">
 <li><p><strong>Source:</strong> <a class="reference external" href="https://bbbc.broadinstitute.org/BBBC020" rel="noreferer noopener" target="_blank">https://bbbc.broadinstitute.org/BBBC020</a></p></li>
 <li><p><strong>License:</strong> CC0</p></li>
 <li><p><strong>Citation:</strong> Ljosa et al., Nature Methods, 2012 — BBBC020</p></li>
 </ul>
-<p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
-dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download failed. The next cell binds working variables
-from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> if available; if it is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the synthetic-generation cell
-below runs as a fallback so the notebook still works end-to-end.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
-<span class="c1"># Real-data option from the dataset audit (2026-05-07).</span>
-<span class="c1"># Tries to fetch a canonical published dataset; falls back to synthetic on any failure.</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATA-DECISION</span>
+<span class="c1"># @title Choose data source { run: &quot;auto&quot;, display-mode: &quot;form&quot; }</span>
+<span class="n">DATA_SOURCE</span> <span class="o">=</span> <span class="s2">&quot;MABC hosted&quot;</span>  <span class="c1"># @param [&quot;MABC hosted&quot;, &quot;Canonical (BBBC etc.)&quot;, &quot;Synthetic&quot;, &quot;My own data → see T0 notebook&quot;]</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.error</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
 
-<span class="n">REAL_DATA_URL</span> <span class="o">=</span> <span class="s1">&#39;https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip&#39;</span>
-<span class="n">REAL_DATA_NAME</span> <span class="o">=</span> <span class="s1">&#39;BBBC020 — Murine bone-marrow derived macrophages&#39;</span>
-<span class="n">USE_REAL_DATA</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># set False to skip the download entirely</span>
+<span class="n">NB_ID</span> <span class="o">=</span> <span class="s1">&#39;03b_foundation_model_segmentation&#39;</span>
+<span class="n">MABC_URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/</span><span class="si">{</span><span class="n">NB_ID</span><span class="si">}</span><span class="s2">.npz&quot;</span>
+<span class="n">CANONICAL_URL</span> <span class="o">=</span> <span class="s1">&#39;https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip&#39;</span>
+<span class="n">CANONICAL_NAME</span> <span class="o">=</span> <span class="s1">&#39;BBBC020 — Murine bone-marrow derived macrophages&#39;</span>
 
 <span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">real_filenames</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">real_metadata</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">loaded_tier</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="k">if</span> <span class="n">USE_REAL_DATA</span><span class="p">:</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_try_mabc</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata).&quot;&quot;&quot;</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">MABC_URL</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching MABC sample: </span><span class="si">{</span><span class="n">MABC_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">MABC_URL</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">imgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">])</span>
+    <span class="n">fnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;filenames&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;filenames&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;mabc_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">))]</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">cache_zip</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">REAL_DATA_URL</span><span class="p">))</span>
-        <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">cache_zip</span> <span class="o">+</span> <span class="s2">&quot;_extracted&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2"> (this can take 10-60 s)...&quot;</span><span class="p">)</span>
-            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">REAL_DATA_URL</span><span class="p">,</span> <span class="n">cache_zip</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  → cached at </span><span class="si">{</span><span class="n">cache_zip</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
-                <span class="n">zf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
-
-        <span class="c1"># Walk the extracted tree for image files. tifffile preferred; PIL fallback.</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
-            <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-            <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-
-        <span class="n">exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;.tiff&quot;</span><span class="p">,</span> <span class="s2">&quot;.TIF&quot;</span><span class="p">,</span> <span class="s2">&quot;.TIFF&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.PNG&quot;</span><span class="p">)</span>
-        <span class="n">all_paths</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">exts</span><span class="p">):</span>
-                    <span class="n">all_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
-        <span class="n">all_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-
-        <span class="c1"># Take only the first few so the cell runs quickly. Attendees can index further.</span>
-        <span class="n">sample_paths</span> <span class="o">=</span> <span class="n">all_paths</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>
-        <span class="n">real_imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sample_paths</span><span class="p">]</span>
-        <span class="n">real_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sample_paths</span><span class="p">]</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> real images from </span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  first image: shape=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Visual confirmation — display the first image inline so you can see the load worked.</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
-            <span class="n">_sample</span> <span class="o">=</span> <span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># Pick a 2D plane to display: handle (H,W), (H,W,C), or (C,H,W) / (Z,H,W).</span>
-            <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
-                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
-            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span>
-                <span class="n">_cmap</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">elif</span> <span class="n">_sample</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="c1"># Multi-channel or Z-stack — pick the largest plane.</span>
-                <span class="n">_axis</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>  <span class="c1"># smallest = channel/Z axis</span>
-                <span class="n">_display</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">_sample</span><span class="p">,</span> <span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">_axis</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">_axis</span><span class="p">)</span>
-                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_display</span> <span class="o">=</span> <span class="n">_sample</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="k">if</span> <span class="n">_sample</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">_sample</span>
-                <span class="n">_cmap</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
-            <span class="c1"># Robust contrast for 16-bit / float images.</span>
-            <span class="n">_vmin</span><span class="p">,</span> <span class="n">_vmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">])</span>
-            <span class="n">_fig</span><span class="p">,</span> <span class="n">_ax</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-            <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_display</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">_vmax</span><span class="p">)</span>
-            <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">REAL_DATA_NAME</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">real_filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (shape=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype=</span><span class="si">{</span><span class="n">_sample</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-                <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-            <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-            <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not render preview (matplotlib issue?); data is still in real_imgs.&quot;</span><span class="p">)</span>
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;metadata&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real-data download failed; continuing with synthetic.&quot;</span><span class="p">)</span>
-        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">real_filenames</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;USE_REAL_DATA = False; skipping download. Synthetic flow runs below.&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<!-- DATASET-AUDIT-PATCH-SWAP -->
-<section id="bind-working-variables-real-if-available-synthetic-as-fallback">
-<h3>Bind working variables — real if available, synthetic as fallback<a class="headerlink" href="#bind-working-variables-real-if-available-synthetic-as-fallback" title="Link to this heading">#</a></h3>
-<p><strong>Real data is the default.</strong> If the download above succeeded, this cell binds
-the working variables (<code class="docutils literal notranslate"><span class="pre">img</span></code>) directly from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code>. The
-synthetic-generation cell below is gated to skip in that case.</p>
-<p>If the download failed (<code class="docutils literal notranslate"><span class="pre">real_imgs</span> <span class="pre">is</span> <span class="pre">None</span></code>), this cell prints a notice and
-the synthetic-generation cell runs as a fallback so the notebook still works
-end-to-end.</p>
-<p>⚠️  The “What you should be seeing” callouts further down were written against
-the synthetic data — when running on real data, your output will differ in
-counts, shapes, and metric values. That’s expected and is itself a useful
-teaching moment.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
-<span class="c1"># Bind working variables. Real is the default; if the download above failed</span>
-<span class="c1"># (real_imgs is None), this is a no-op and the gated synthetic cell below</span>
-<span class="c1"># generates the working variables instead.</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">imgs</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">meta</span>
 
-<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Real data not loaded; the synthetic-generation cell below will run as a fallback.&#39;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_try_canonical</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Existing zip-based fetch from BBBC / GigaDB. Same logic as the prior architecture.&quot;&quot;&quot;</span>
+    <span class="n">cache_zip</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">CANONICAL_URL</span><span class="p">))</span>
+    <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">cache_zip</span> <span class="o">+</span> <span class="s2">&quot;_extracted&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching canonical: </span><span class="si">{</span><span class="n">CANONICAL_NAME</span><span class="si">}</span><span class="s2"> (this can take 10-60 s)...&quot;</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">CANONICAL_URL</span><span class="p">,</span> <span class="n">cache_zip</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  cached at </span><span class="si">{</span><span class="n">cache_zip</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> MB)&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">cache_zip</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+            <span class="n">zf</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+        <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+        <span class="n">_read</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+    <span class="n">exts</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;.tif&#39;</span><span class="p">,</span> <span class="s1">&#39;.tiff&#39;</span><span class="p">,</span> <span class="s1">&#39;.TIF&#39;</span><span class="p">,</span> <span class="s1">&#39;.TIFF&#39;</span><span class="p">,</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.PNG&#39;</span><span class="p">)</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">exts</span><span class="p">):</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
+    <span class="n">paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_read</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
+    <span class="n">fnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">CANONICAL_NAME</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">CANONICAL_URL</span><span class="p">,</span> <span class="s2">&quot;tier&quot;</span><span class="p">:</span> <span class="s2">&quot;canonical&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">imgs</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">meta</span>
+
+
+<span class="c1"># Tier resolution</span>
+<span class="k">if</span> <span class="n">DATA_SOURCE</span> <span class="o">==</span> <span class="s2">&quot;My own data → see T0 notebook&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Open the T0 notebook for copy-paste data-loading blocks:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  https://microscopy-core-ismms.github.io/ImageAnalysisCourse/notebooks/00_data_sources.html&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Once your images are loaded into a list called `real_imgs`, re-run the rest of this notebook.&quot;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">DATA_SOURCE</span> <span class="o">==</span> <span class="s2">&quot;Synthetic&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Synthetic-only mode: skipping all real-data tiers; the synthetic generation cell below will run.&quot;</span><span class="p">)</span>
+
 <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">DATA_SOURCE</span> <span class="o">==</span> <span class="s2">&quot;MABC hosted&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">real_imgs</span><span class="p">,</span> <span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_metadata</span> <span class="o">=</span> <span class="n">_try_mabc</span><span class="p">()</span>
+            <span class="n">loaded_tier</span> <span class="o">=</span> <span class="s2">&quot;MABC&quot;</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MABC sample not yet available; falling through to canonical.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MABC fetch raised an unexpected error; falling through to canonical.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">real_imgs</span><span class="p">,</span> <span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_metadata</span> <span class="o">=</span> <span class="n">_try_canonical</span><span class="p">()</span>
+            <span class="n">loaded_tier</span> <span class="o">=</span> <span class="s2">&quot;Canonical&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Canonical fetch failed; the synthetic-generation cell below will run as the final fallback.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="c1"># Bind working variables and display the loaded grid (only if a real tier won).</span>
+<span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span><span class="si">}</span><span class="s2"> images from tier: </span><span class="si">{</span><span class="n">loaded_tier</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">real_metadata</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  source: </span><span class="si">{</span><span class="n">real_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(unknown)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  license: </span><span class="si">{</span><span class="n">real_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;license&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;see source&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;citation&#39;</span> <span class="ow">in</span> <span class="n">real_metadata</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  cite: </span><span class="si">{</span><span class="n">real_metadata</span><span class="p">[</span><span class="s1">&#39;citation&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ---- Per-NB binding (lifted from the prior architecture&#39;s swap_code) ----</span>
     <span class="k">if</span> <span class="n">real_imgs</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
         <span class="n">_src</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -593,11 +572,45 @@ teaching moment.</p>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: &#39;What you should be seeing&#39; callouts were written for the synthetic image; SAM mask shapes will differ.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real_imgs is None; staying with synthetic.&#39;</span><span class="p">)</span>
+
+
+    <span class="c1"># ---- Universal display grid ----</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
+        <span class="n">_n_show</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">))</span>
+        <span class="n">_ncols</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">_nrows</span> <span class="o">=</span> <span class="p">(</span><span class="n">_n_show</span> <span class="o">+</span> <span class="n">_ncols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">_ncols</span>
+        <span class="n">_fig</span><span class="p">,</span> <span class="n">_axes</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">_nrows</span><span class="p">,</span> <span class="n">_ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">_ncols</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">_nrows</span><span class="p">))</span>
+        <span class="n">_ax_iter</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_axes</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_axes</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">_axes</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_ax_iter</span><span class="p">[:</span><span class="n">_n_show</span><span class="p">]):</span>
+            <span class="n">_disp</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">[</span><span class="n">_i</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_disp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_disp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                    <span class="k">pass</span>  <span class="c1"># RGB(A)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_disp</span> <span class="o">=</span> <span class="n">_disp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">_disp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">_disp</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span> <span class="k">else</span> <span class="n">_disp</span><span class="p">[</span><span class="n">_disp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">_vmin</span><span class="p">,</span> <span class="n">_vmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">_disp</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">_vmax</span> <span class="o">&lt;=</span> <span class="n">_vmin</span><span class="p">:</span>
+                <span class="n">_vmin</span><span class="p">,</span> <span class="n">_vmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_disp</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">_disp</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">_vmax</span> <span class="o">&lt;=</span> <span class="n">_vmin</span><span class="p">:</span>
+                    <span class="n">_vmax</span> <span class="o">=</span> <span class="n">_vmin</span> <span class="o">+</span> <span class="mf">1.0</span>
+            <span class="n">_cmap</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="p">(</span><span class="n">_disp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">_disp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">else</span> <span class="s1">&#39;gray&#39;</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_disp</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">_cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">_vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">_vmax</span><span class="p">)</span>
+            <span class="n">_fn</span> <span class="o">=</span> <span class="p">(</span><span class="n">real_filenames</span><span class="p">[</span><span class="n">_i</span><span class="p">]</span> <span class="k">if</span> <span class="n">real_filenames</span> <span class="ow">and</span> <span class="n">_i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_filenames</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s1">&#39;img </span><span class="si">{</span><span class="n">_i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loaded_tier</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_fn</span><span class="p">)[:</span><span class="mi">32</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">_ax_iter</span><span class="p">[</span><span class="n">_n_show</span><span class="p">:]:</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not render preview grid; data is still in real_imgs.&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Real-data tiers did not produce data. The synthetic-generation cell below will run.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-</section>
 </section>
 <section id="load-a-non-canonical-microscopy-image">
 <h2>Load a non-canonical microscopy image<a class="headerlink" href="#load-a-non-canonical-microscopy-image" title="Link to this heading">#</a></h2>
@@ -989,10 +1002,7 @@ teaching moment.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-data-source">Choose your data source</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-a-non-canonical-microscopy-image">Load a non-canonical microscopy image</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-sam-predictor">Set up the SAM predictor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#apply-sam-with-a-point-prompt">Apply SAM with a point prompt</a></li>
