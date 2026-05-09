@@ -166,7 +166,7 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC005",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
         "what_it_is": "Real in-focus fluorescence as HR; LR is synthesized by blur+downsample (the classic SR degradation model). For true paired widefield/SIM data, see CSBDeep CARE and ZeroCostDL4Mic.",
-        "swap_vars": ["hr_train", "lr_train", "lr_train_small"],
+        "swap_vars": ["hr_train", "lr_train", "lr_train_small", "hr_test", "lr_test", "lr_test_small", "n_train", "n_test"],
         "swap_code": (
             "if real_imgs and len(real_imgs) >= 4:\n"
             "    import numpy as _np\n"
@@ -176,18 +176,35 @@ T1_SPECS = {
             "        if a.ndim == 3:\n"
             "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
             "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
-            "        # center-crop to square then resize\n"
             "        s = min(a.shape)\n"
             "        a = a[:s, :s]\n"
             "        a = _zoom(a, target / s, order=1)\n"
             "        return a\n"
-            "    hr_train = _np.stack([_to_hr(im) for im in real_imgs])\n"
+            "    # Split: 75% train, 25% test (with 8 real images = 6 train + 2 test).\n"
+            "    _split = max(2, int(len(real_imgs) * 0.75))\n"
+            "    hr_train = _np.stack([_to_hr(im) for im in real_imgs[:_split]])\n"
+            "    hr_test = _np.stack([_to_hr(im) for im in real_imgs[_split:]])\n"
             "    lr_train_small = _np.stack([_zoom(_gf(h, sigma=2.0), 0.5, order=1) for h in hr_train])\n"
             "    lr_train = _np.stack([_zoom(s, 2.0, order=3) for s in lr_train_small])\n"
-            "    print(f'hr_train / lr_train now from BBBC005 real fluorescence (synthesized LR via blur+downsample). Shapes: HR={hr_train.shape}, LR={lr_train.shape}.')\n"
-            "    print(\"NOTE: synthesized LR is a *bicubic-style* analogue, not true widefield optics. Real paired SR data lives in CSBDeep CARE / ZeroCostDL4Mic.\")\n"
+            "    lr_test_small = _np.stack([_zoom(_gf(h, sigma=2.0), 0.5, order=1) for h in hr_test])\n"
+            "    lr_test = _np.stack([_zoom(s, 2.0, order=3) for s in lr_test_small])\n"
+            "    n_train = len(hr_train); n_test = len(hr_test)\n"
+            "    print(f'Bound HR/LR train ({n_train}) + test ({n_test}) from BBBC005 real fluorescence (LR via blur+downsample).')\n"
+            "    print('NOTE: synthesized LR is a teaching analogue, not true widefield optics. With n_test=2 the metrics are noisy; the architecture is what is shown end-to-end.')\n"
+            "    # Display all train + test images so you can see what loaded\n"
+            "    import matplotlib.pyplot as _plt\n"
+            "    _n_show = min(8, n_train + n_test)\n"
+            "    _imgs = list(hr_train[:6]) + list(hr_test[:2])\n"
+            "    _titles = [f'train {i}' for i in range(min(6, n_train))] + [f'test {i}' for i in range(min(2, n_test))]\n"
+            "    _ncols = 4; _nrows = (_n_show + _ncols - 1) // _ncols\n"
+            "    _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3*_ncols, 3*_nrows))\n"
+            "    for _ax, _im, _t in zip(_axes.flat, _imgs[:_n_show], _titles[:_n_show]):\n"
+            "        _ax.imshow(_im, cmap='viridis'); _ax.set_title(_t, fontsize=9); _ax.axis('off')\n"
+            "    for _ax in _axes.flat[_n_show:]:\n"
+            "        _ax.axis('off')\n"
+            "    _plt.tight_layout(); _plt.show()\n"
             "else:\n"
-            "    print('real_imgs is None or insufficient; staying with synthetic SR pairs.')\n"
+            "    print('real_imgs is None or insufficient (<4); will fall through to synthetic SR pairs.')\n"
         ),
     },
     "09_cellpose_finetune.ipynb": {
@@ -225,11 +242,11 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC005",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_ground_truth.zip",
         "what_it_is": "Real in-focus fluorescence as the clean ground truth; we apply a Gaussian PSF + Poisson/Gaussian noise to simulate the wide-field forward model.",
-        "swap_vars": ["X_train_clean", "X_train_blurred", "X_train_blurred_noisy"],
+        "swap_vars": ["X_train_clean", "X_train_blurred", "X_train_blurred_noisy", "X_test_clean", "X_test_blurred", "X_test_blurred_noisy", "n_train", "n_test"],
         "swap_code": (
             "if real_imgs and len(real_imgs) >= 4:\n"
             "    import numpy as _np\n"
-            "    from scipy.ndimage import gaussian_filter as _gf\n"
+            "    from scipy.ndimage import gaussian_filter as _gf, zoom as _zoom\n"
             "    def _to_clean(im, target=64):\n"
             "        a = _np.asarray(im).astype(_np.float32)\n"
             "        if a.ndim == 3:\n"
@@ -237,17 +254,33 @@ T1_SPECS = {
             "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
             "        s = min(a.shape)\n"
             "        a = a[:s, :s]\n"
-            "        # downsample to target\n"
-            "        from scipy.ndimage import zoom as _zoom\n"
             "        return _zoom(a, target / s, order=1)\n"
-            "    X_train_clean = _np.stack([_to_clean(im) for im in real_imgs])\n"
+            "    # Split: 75% train, 25% test (with 8 real images = 6 train + 2 test).\n"
+            "    _split = max(2, int(len(real_imgs) * 0.75))\n"
+            "    X_train_clean = _np.stack([_to_clean(im) for im in real_imgs[:_split]])\n"
+            "    X_test_clean = _np.stack([_to_clean(im) for im in real_imgs[_split:]])\n"
             "    X_train_blurred = _np.stack([_gf(c, sigma=2.0) for c in X_train_clean])\n"
+            "    X_test_blurred = _np.stack([_gf(c, sigma=2.0) for c in X_test_clean])\n"
             "    _rng_d = _np.random.default_rng(7)\n"
             "    X_train_blurred_noisy = X_train_blurred + 0.05 * _rng_d.standard_normal(X_train_blurred.shape)\n"
-            "    print(f'X_train_clean / blurred / blurred_noisy now from BBBC005 real images + synthetic Gaussian PSF.')\n"
-            "    print(\"NOTE: PSF is approximate (Gaussian sigma=2.0). For true deconv benchmarks pair with actual measured PSF — see CSBDeep CARE-deconv example data.\")\n"
+            "    X_test_blurred_noisy = X_test_blurred + 0.05 * _rng_d.standard_normal(X_test_blurred.shape)\n"
+            "    n_train = len(X_train_clean); n_test = len(X_test_clean)\n"
+            "    print(f'Bound clean/blurred/blurred_noisy train ({n_train}) + test ({n_test}) from BBBC005 + synthetic Gaussian PSF.')\n"
+            "    print('NOTE: PSF is approximate (Gaussian sigma=2.0). With n_test=2 the metrics are noisy.')\n"
+            "    # Display loaded train+test\n"
+            "    import matplotlib.pyplot as _plt\n"
+            "    _n_show = min(8, n_train + n_test)\n"
+            "    _imgs = list(X_train_clean[:6]) + list(X_test_clean[:2])\n"
+            "    _titles = [f'train clean {i}' for i in range(min(6, n_train))] + [f'test clean {i}' for i in range(min(2, n_test))]\n"
+            "    _ncols = 4; _nrows = (_n_show + _ncols - 1) // _ncols\n"
+            "    _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3*_ncols, 3*_nrows))\n"
+            "    for _ax, _im, _t in zip(_axes.flat, _imgs[:_n_show], _titles[:_n_show]):\n"
+            "        _ax.imshow(_im, cmap='gray'); _ax.set_title(_t, fontsize=9); _ax.axis('off')\n"
+            "    for _ax in _axes.flat[_n_show:]:\n"
+            "        _ax.axis('off')\n"
+            "    _plt.tight_layout(); _plt.show()\n"
             "else:\n"
-            "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
+            "    print('real_imgs is None or insufficient (<4); will fall through to synthetic.')\n"
         ),
     },
     "13_validation_case_study.ipynb": {
@@ -263,8 +296,8 @@ T1_SPECS = {
             "if real_imgs:\n"
             "    img = real_imgs[0]\n"
             "    # Pre-create TEST_IMAGES with real entries. The synthetic creation cell\n"
-            "    # below is gated to skip when USE_REAL_FOR_DOWNSTREAM is True, so this dict\n"
-            "    # survives into the downstream model picker.\n"
+            "    # below is gated to skip when real_imgs is loaded, so this dict survives\n"
+            "    # into the downstream model picker.\n"
             "    # Each entry: name -> (image, ground_truth_or_None).\n"
             "    TEST_IMAGES = {\n"
             "        f'real_bbbc020_{i:02d}': (real_imgs[i], None)\n"
@@ -283,9 +316,9 @@ T1_SPECS = {
         "source_url": "https://bbbc.broadinstitute.org/BBBC020",
         "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
         "what_it_is": "Real fluorescence imagery as a *teaching analogue* for spot detection. True FISH / single-molecule benchmarks live in deepBlink and BIA — see the audit.",
-        "swap_vars": ["train_images", "train_centers"],
+        "swap_vars": ["train_images", "train_centers", "test_images", "test_centers"],
         "swap_code": (
-            "if real_imgs:\n"
+            "if real_imgs and len(real_imgs) >= 4:\n"
             "    import numpy as _np\n"
             "    def _to2d(im, target=128):\n"
             "        a = _np.asarray(im).astype(_np.float32)\n"
@@ -296,13 +329,28 @@ T1_SPECS = {
             "        a = a[:s, :s]\n"
             "        from scipy.ndimage import zoom as _zoom\n"
             "        return _zoom(a, target / s, order=1)\n"
-            "    train_images = _np.stack([_to2d(im) for im in real_imgs])\n"
-            "    # No ground-truth spot coordinates for BBBC020 — set centers to None.\n"
+            "    # Split: 75% train, 25% test (with 8 real images = 6 train + 2 test).\n"
+            "    _split = max(2, int(len(real_imgs) * 0.75))\n"
+            "    train_images = _np.stack([_to2d(im) for im in real_imgs[:_split]])\n"
+            "    test_images = _np.stack([_to2d(im) for im in real_imgs[_split:]])\n"
             "    train_centers = [None] * len(train_images)\n"
-            "    print(f'train_images now from BBBC020. train_centers = None (no ground-truth coords for this dataset).')\n"
-            "    print(\"NOTE: BBBC020 is a *teaching analogue* for spot detection — no annotated coordinates. For true FISH benchmarks see deepBlink (github.com/BBQuercus/deepBlink).\")\n"
+            "    test_centers = [None] * len(test_images)\n"
+            "    print(f'Bound train_images ({len(train_images)}) + test_images ({len(test_images)}) from BBBC020. centers = None (no ground-truth coords for this dataset).')\n"
+            "    print('NOTE: BBBC020 is a teaching analogue for spot detection. For true FISH benchmarks with annotated coords, see deepBlink.')\n"
+            "    # Display loaded\n"
+            "    import matplotlib.pyplot as _plt\n"
+            "    _n_show = min(8, len(train_images) + len(test_images))\n"
+            "    _imgs = list(train_images[:6]) + list(test_images[:2])\n"
+            "    _titles = [f'train {i}' for i in range(min(6, len(train_images)))] + [f'test {i}' for i in range(min(2, len(test_images)))]\n"
+            "    _ncols = 4; _nrows = (_n_show + _ncols - 1) // _ncols\n"
+            "    _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3*_ncols, 3*_nrows))\n"
+            "    for _ax, _im, _t in zip(_axes.flat, _imgs[:_n_show], _titles[:_n_show]):\n"
+            "        _ax.imshow(_im, cmap='gray'); _ax.set_title(_t, fontsize=9); _ax.axis('off')\n"
+            "    for _ax in _axes.flat[_n_show:]:\n"
+            "        _ax.axis('off')\n"
+            "    _plt.tight_layout(); _plt.show()\n"
             "else:\n"
-            "    print('real_imgs is None; staying with synthetic.')\n"
+            "    print('real_imgs is None or insufficient (<4); will fall through to synthetic.')\n"
         ),
     },
 }
@@ -324,9 +372,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.
 - **Citation:** {spec['citation']}
 
 After this cell runs, `real_imgs` is either a list of NumPy arrays from the real
-dataset, or `None` if the download was skipped or failed. The cell after this
-one optionally **redirects the rest of the notebook** to use the real data —
-flip `USE_REAL_FOR_DOWNSTREAM = False` in that cell to revert to synthetic.
+dataset, or `None` if the download failed. The next cell binds working variables
+from `real_imgs` if available; if it is `None`, the synthetic-generation cell
+below runs as a fallback so the notebook still works end-to-end.
 """
 
 
@@ -585,31 +633,34 @@ def _strip_prior_patch(cells: List[dict]) -> List[dict]:
 def t1_swap_markdown(spec: dict) -> str:
     vars_listed = ", ".join(f"`{v}`" for v in spec.get("swap_vars", []))
     return f"""{SWAP_MD_SENTINEL}
-### Use real data for the rest of this notebook
+### Bind working variables — real if available, synthetic as fallback
 
-If the download above succeeded, you can redirect the rest of the notebook to
-work on the real dataset by running the cell below. It re-binds the working
-variables ({vars_listed}) so all downstream cells run on real microscopy.
+**Real data is the default.** If the download above succeeded, this cell binds
+the working variables ({vars_listed}) directly from `real_imgs`. The
+synthetic-generation cell below is gated to skip in that case.
 
-To revert to synthetic, set `USE_REAL_FOR_DOWNSTREAM = False` and re-run, or
-re-run the synthetic generation cell that comes after.
+If the download failed (`real_imgs is None`), this cell prints a notice and
+the synthetic-generation cell runs as a fallback so the notebook still works
+end-to-end.
 
 ⚠️  The "What you should be seeing" callouts further down were written against
-the synthetic data — your output will differ in counts, shapes, and metric
-values. That's expected and is itself a useful teaching moment.
+the synthetic data — when running on real data, your output will differ in
+counts, shapes, and metric values. That's expected and is itself a useful
+teaching moment.
 """
 
 
 def t1_swap_code(spec: dict) -> str:
     body = _indent(spec["swap_code"], 4)
+    # The bind block (`spec["swap_code"]`) is itself a `if real_imgs and ...:`
+    # block per the per-NB specs. We just route execution into it; no flag.
     return f"""{SWAP_CO_SENTINEL}
-# Optional: redirect the rest of the notebook to real data.
-# Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.
+# Bind working variables. Real is the default; if the download above failed
+# (real_imgs is None), this is a no-op and the gated synthetic cell below
+# generates the working variables instead.
 
-USE_REAL_FOR_DOWNSTREAM = True
-
-if not USE_REAL_FOR_DOWNSTREAM:
-    print('USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.')
+if globals().get('real_imgs') is None:
+    print('Real data not loaded; the synthetic-generation cell below will run as a fallback.')
 else:
 {body}"""
 

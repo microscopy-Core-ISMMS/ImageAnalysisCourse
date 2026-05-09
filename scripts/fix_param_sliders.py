@@ -34,29 +34,56 @@ GATE_SENTINEL = "# GATE-SYNTHETIC"
 # the cell, the fix is treated as already applied.
 FIXES = {
     "01_cellpose_segmentation.ipynb": [
-        # When real data is loaded, img_easy is already bound by the swap. The
-        # original PNG-read overwrites that. Make it conditional.
+        # Order matters: migrate-from-old-guard first; only if no old guard is present do
+        # we apply the fresh fix. Otherwise the fresh fix will substring-match inside the
+        # old guard's body and produce a dangling `if`.
         {
-            "issue": "cell 14: skio.imread('sample_easy.png') overwrites real img_easy after swap",
+            "issue": "cell 14 (migrate): old USE_REAL_FOR_DOWNSTREAM guard -> new real_imgs check",
+            "old": (
+                f'{SENTINEL}: when real-data swap is on, img_easy is already bound from real_imgs.\n'
+                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                '    img_easy = skio.imread("sample_easy.png")'
+            ),
+            "new": (
+                f'{SENTINEL}: read PNG only if real data is not loaded (real_imgs is None).\n'
+                'if globals().get("real_imgs") is None:\n'
+                '    img_easy = skio.imread("sample_easy.png")'
+            ),
+        },
+        {
+            "issue": "cell 15 (migrate): old USE_REAL_FOR_DOWNSTREAM guard -> new real_imgs check",
+            "old": (
+                f'{SENTINEL}: when real-data swap is on, img_hard is already bound from real_imgs.\n'
+                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                '    img_hard = skio.imread("sample_hard.png")'
+            ),
+            "new": (
+                f'{SENTINEL}: read PNG only if real data is not loaded (real_imgs is None).\n'
+                'if globals().get("real_imgs") is None:\n'
+                '    img_hard = skio.imread("sample_hard.png")'
+            ),
+        },
+        {
+            "issue": "cell 14 (fresh): skio.imread('sample_easy.png') overwrites real img_easy",
             "old": (
                 'img_easy = skio.imread("sample_easy.png")\n'
                 '# If the image is RGB, Cellpose expects channels in a specific format'
             ),
             "new": (
-                f'{SENTINEL}: when real-data swap is on, img_easy is already bound from real_imgs.\n'
-                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                f'{SENTINEL}: read PNG only if real data is not loaded (real_imgs is None).\n'
+                'if globals().get("real_imgs") is None:\n'
                 '    img_easy = skio.imread("sample_easy.png")\n'
                 '# If the image is RGB, Cellpose expects channels in a specific format'
             ),
         },
         {
-            "issue": "cell 15: skio.imread('sample_hard.png') overwrites real img_hard after swap",
+            "issue": "cell 15 (fresh): skio.imread('sample_hard.png') overwrites real img_hard",
             "old": (
                 'img_hard = skio.imread("sample_hard.png")'
             ),
             "new": (
-                f'{SENTINEL}: when real-data swap is on, img_hard is already bound from real_imgs.\n'
-                'if not (globals().get("USE_REAL_FOR_DOWNSTREAM") and globals().get("real_imgs")):\n'
+                f'{SENTINEL}: read PNG only if real data is not loaded (real_imgs is None).\n'
+                'if globals().get("real_imgs") is None:\n'
                 '    img_hard = skio.imread("sample_hard.png")'
             ),
         },
@@ -257,82 +284,199 @@ FIXES = {
 GATE_FIXES = {
     "01_cellpose_segmentation.ipynb": [
         {
-            "issue": "cell 10: synthetic image generators (skip when real data is in use)",
+            "issue": "cell 10: synthetic image generators (run only as fallback if real data failed)",
             "identifier": "def make_easy_image(seed=0, size=200",
+            "display_synth": (
+                "    # Display the freshly generated synthetic train pair\n"
+                "    import matplotlib.pyplot as _plt\n"
+                "    _fig, _axes = _plt.subplots(1, 2, figsize=(10, 5))\n"
+                "    _axes[0].imshow(img_easy_synth, cmap='gray'); _axes[0].set_title('img_easy_synth (synthetic)', fontsize=10); _axes[0].axis('off')\n"
+                "    _axes[1].imshow(img_hard_synth, cmap='gray'); _axes[1].set_title('img_hard_synth (synthetic)', fontsize=10); _axes[1].axis('off')\n"
+                "    _plt.tight_layout(); _plt.show()\n"
+            ),
         },
     ],
     "03b_foundation_model_segmentation.ipynb": [
         {
-            "issue": "cell 10: synthetic non-canonical image generator",
+            "issue": "cell 10: synthetic non-canonical image generator (fallback)",
             "identifier": "rng = np.random.default_rng(7)\nsize = 256",
+            "display_synth": "    # (display already in original cell — fig/ax/imshow at end of body)\n",
         },
     ],
     "09_cellpose_finetune.ipynb": [
         {
-            "issue": "cell 12: synthetic labeled dataset generator",
+            "issue": "cell 12: synthetic labeled dataset generator (fallback)",
             "identifier": "def make_labeled_image(seed=0, size=200",
+            "display_synth": (
+                "    # Display the freshly generated synthetic train+test set\n"
+                "    import matplotlib.pyplot as _plt\n"
+                "    import numpy as _np\n"
+                "    _n_show = min(8, len(train_images) + len(test_images))\n"
+                "    _imgs = list(train_images[:6]) + list(test_images[:2])\n"
+                "    _titles = [f'train {_i}' for _i in range(min(6, len(train_images)))] + [f'test {_i}' for _i in range(min(2, len(test_images)))]\n"
+                "    _ncols = 4; _nrows = (_n_show + _ncols - 1) // _ncols\n"
+                "    _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3*_ncols, 3*_nrows))\n"
+                "    for _ax, _im, _t in zip(_axes.flat, _imgs[:_n_show], _titles[:_n_show]):\n"
+                "        _ax.imshow(_im, cmap='gray'); _ax.set_title(_t, fontsize=9); _ax.axis('off')\n"
+                "    for _ax in _axes.flat[_n_show:]:\n"
+                "        _ax.axis('off')\n"
+                "    _plt.tight_layout(); _plt.show()\n"
+            ),
         },
     ],
     "13_validation_case_study.ipynb": [
         {
-            "issue": "cell 12: synthetic TEST_IMAGES registry creation",
+            "issue": "cell 12: synthetic TEST_IMAGES registry creation (fallback)",
             "identifier": "def make_synth_easy(seed=0, size=200",
+            "display_synth": (
+                "    # Display the synthetic TEST_IMAGES entries\n"
+                "    import matplotlib.pyplot as _plt\n"
+                "    _entries = list(TEST_IMAGES.items())[:8]\n"
+                "    _ncols = min(4, len(_entries)); _nrows = (len(_entries) + _ncols - 1) // _ncols\n"
+                "    _fig, _axes = _plt.subplots(_nrows, _ncols, figsize=(3*_ncols, 3*_nrows))\n"
+                "    _ax_list = _axes.flat if hasattr(_axes, 'flat') else [_axes]\n"
+                "    for _ax, (_name, _val) in zip(_ax_list, _entries):\n"
+                "        _img = _val[0] if isinstance(_val, tuple) else _val\n"
+                "        _ax.imshow(_img, cmap='gray'); _ax.set_title(_name, fontsize=8); _ax.axis('off')\n"
+                "    for _ax in list(_ax_list)[len(_entries):]:\n"
+                "        _ax.axis('off')\n"
+                "    _plt.tight_layout(); _plt.show()\n"
+            ),
         },
     ],
 }
 
 
-def gate_cell(cell: dict) -> bool:
-    """Wrap a code cell in a USE_REAL_FOR_DOWNSTREAM guard. Idempotent."""
+def _new_gate_wrap(original_src: str, display_synth: str = "") -> str:
+    """Build the new-style gate around an existing cell body."""
+    indented_body = "\n".join(("    " + line if line else "") for line in original_src.splitlines())
+    parts = [
+        f"{GATE_SENTINEL}: synthetic generation runs only as a fallback when real data is not loaded.",
+        "if globals().get('real_imgs') is not None:",
+        "    print('Synthetic generation skipped — real data is loaded into the working variables.')",
+        "else:",
+        indented_body,
+    ]
+    if display_synth.strip():
+        parts.append(display_synth.rstrip("\n"))
+    return "\n".join(parts) + "\n"
+
+
+def gate_cell(cell: dict, display_synth: str = "") -> bool:
+    """Wrap a code cell in a real-vs-synthetic guard. Idempotent: detects either
+    the old (USE_REAL_FOR_DOWNSTREAM-based) or new (real_imgs is not None) form
+    and rewrites to the new form."""
     src = "".join(cell.get("source", []))
-    if GATE_SENTINEL in src:
-        return False
-    indented = "\n".join(("    " + line if line else "") for line in src.splitlines())
-    new_src = (
-        f"{GATE_SENTINEL}: skip when USE_REAL_FOR_DOWNSTREAM is True (real data is in use).\n"
-        "if globals().get('USE_REAL_FOR_DOWNSTREAM') and globals().get('real_imgs'):\n"
-        "    print('Synthetic generation skipped — real data is loaded into the working variables.')\n"
-        "else:\n"
-        f"{indented}\n"
-    )
-    cell["source"] = new_src.splitlines(keepends=True)
-    return True
+    OLD_GUARD = "if globals().get('USE_REAL_FOR_DOWNSTREAM') and globals().get('real_imgs'):"
+    NEW_GUARD = "if globals().get('real_imgs') is not None:"
+
+    if GATE_SENTINEL not in src:
+        # Fresh wrap.
+        cell["source"] = _new_gate_wrap(src, display_synth).splitlines(keepends=True)
+        return True
+
+    # Already wrapped — possibly with the old guard. Migrate if so.
+    if OLD_GUARD in src and NEW_GUARD not in src:
+        # Strip the old wrapper to recover the original body, then re-wrap with the new guard.
+        # Old wrapper shape:
+        #   <SENTINEL line>
+        #   if globals().get('USE_REAL_FOR_DOWNSTREAM') ...
+        #       print(...)
+        #   else:
+        #       <indented original>
+        lines = src.splitlines()
+        try:
+            else_idx = next(i for i, ln in enumerate(lines) if ln.strip() == "else:")
+        except StopIteration:
+            return False
+        # Lines after `else:` are the indented original body.
+        body_indented = lines[else_idx + 1:]
+        body_lines = []
+        for ln in body_indented:
+            if ln.startswith("    "):
+                body_lines.append(ln[4:])
+            elif ln == "":
+                body_lines.append(ln)
+            else:
+                body_lines.append(ln)
+        original_body = "\n".join(body_lines)
+        cell["source"] = _new_gate_wrap(original_body, display_synth).splitlines(keepends=True)
+        return True
+
+    # Already in new form — check if display_synth is already there.
+    if display_synth.strip() and display_synth.strip() not in src:
+        # Re-wrap to pick up the display block.
+        # Recover the body the same way.
+        lines = src.splitlines()
+        try:
+            else_idx = next(i for i, ln in enumerate(lines) if ln.strip() == "else:")
+        except StopIteration:
+            return False
+        body_indented = lines[else_idx + 1:]
+        # Drop trailing display_synth if it was previously applied; otherwise the original body is everything indented.
+        body_lines = []
+        for ln in body_indented:
+            if ln.startswith("    "):
+                body_lines.append(ln[4:])
+            elif ln == "":
+                body_lines.append(ln)
+            else:
+                # Stop at the first non-indented line — likely the display block we already added previously.
+                break
+        original_body = "\n".join(body_lines)
+        cell["source"] = _new_gate_wrap(original_body, display_synth).splitlines(keepends=True)
+        return True
+
+    return False
 
 
 def apply_gates(nb: dict, fn: str, gates: list, dry_run: bool) -> tuple[int, int]:
     """Returns (applied, skipped). Idempotent — detects already-gated cells via
-    indented identifier + GATE_SENTINEL combo."""
+    indented identifier + GATE_SENTINEL combo. Migrates old-style gates to new."""
     applied = skipped = 0
+    OLD_GUARD = "if globals().get('USE_REAL_FOR_DOWNSTREAM') and globals().get('real_imgs'):"
+    NEW_GUARD = "if globals().get('real_imgs') is not None:"
+
     for g in gates:
         target_idx = None
-        already_gated = False
-        # Compute the indented form the identifier would have AFTER gating.
+        needs_migration = False
+        needs_display = False
+        already_done = False
         indented_id = "\n".join("    " + line for line in g["identifier"].splitlines())
+        display_synth = g.get("display_synth", "")
+
         for i, c in enumerate(nb["cells"]):
             if c.get("cell_type") != "code":
                 continue
             src = "".join(c.get("source", []))
-            # Case A: cell hasn't been gated yet — identifier appears verbatim.
+            # Case A: never gated.
             if g["identifier"] in src and GATE_SENTINEL not in src:
                 target_idx = i
                 break
-            # Case B: cell is already gated — identifier is now indented inside else.
+            # Case B/C/D: already gated. Identify by indented form + GATE_SENTINEL.
             if GATE_SENTINEL in src and indented_id in src:
                 target_idx = i
-                already_gated = True
+                if OLD_GUARD in src:
+                    needs_migration = True
+                elif display_synth.strip() and display_synth.strip() not in src:
+                    needs_display = True
+                else:
+                    already_done = True
                 break
+
         if target_idx is None:
             print(f"  [WARN] {fn}: gate target not found for '{g['issue']}'")
             continue
-        if already_gated:
+        if already_done:
             skipped += 1
             continue
+        action = "MIGRATE" if needs_migration else ("ADD-DISPLAY" if needs_display else "GATE")
         if dry_run:
-            print(f"  [DRY ] {fn}: would gate cell {target_idx} — {g['issue']}")
+            print(f"  [DRY ] {fn}: would {action.lower()} cell {target_idx} — {g['issue']}")
             applied += 1
             continue
-        if gate_cell(nb["cells"][target_idx]):
-            print(f"  [GATE] {fn}: cell {target_idx} — {g['issue']}")
+        if gate_cell(nb["cells"][target_idx], display_synth):
+            print(f"  [{action}] {fn}: cell {target_idx} — {g['issue']}")
             applied += 1
         else:
             skipped += 1

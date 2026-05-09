@@ -54,6 +54,7 @@ parts:
       - file: notebooks/13_validation_case_study
       - file: notebooks/14_spot_detection
       - file: notebooks/15_diffusion_models
+      - file: notebooks/16_wsi_transcriptomics
 
   - caption: Setup and data
     chapters:
