@@ -209,6 +209,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_wsi_transcriptomics.html">Notebook 16 — WSI → Transcriptomics (Frontier Demo)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
 <ul class="nav bd-sidenav">
@@ -361,7 +362,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helpers-from-lab-2">Helpers from Lab 2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-image-registry">Test image registry</a></li>
@@ -538,9 +539,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.</p>
 <li><p><strong>Citation:</strong> Ljosa et al., Nature Methods, 2012 — BBBC020</p></li>
 </ul>
 <p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
-dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. The cell after this
-one optionally <strong>redirects the rest of the notebook</strong> to use the real data —
-flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> in that cell to revert to synthetic.</p>
+dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download failed. The next cell binds working variables
+from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> if available; if it is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the synthetic-generation cell
+below runs as a fallback so the notebook still works end-to-end.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
@@ -643,32 +644,33 @@ flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_D
 </div>
 </div>
 <!-- DATASET-AUDIT-PATCH-SWAP -->
-<section id="use-real-data-for-the-rest-of-this-notebook">
-<h3>Use real data for the rest of this notebook<a class="headerlink" href="#use-real-data-for-the-rest-of-this-notebook" title="Link to this heading">#</a></h3>
-<p>If the download above succeeded, you can redirect the rest of the notebook to
-work on the real dataset by running the cell below. It re-binds the working
-variables (<code class="docutils literal notranslate"><span class="pre">img</span></code>, <code class="docutils literal notranslate"><span class="pre">TEST_IMAGES</span></code>) so all downstream cells run on real microscopy.</p>
-<p>To revert to synthetic, set <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> and re-run, or
-re-run the synthetic generation cell that comes after.</p>
+<section id="bind-working-variables-real-if-available-synthetic-as-fallback">
+<h3>Bind working variables — real if available, synthetic as fallback<a class="headerlink" href="#bind-working-variables-real-if-available-synthetic-as-fallback" title="Link to this heading">#</a></h3>
+<p><strong>Real data is the default.</strong> If the download above succeeded, this cell binds
+the working variables (<code class="docutils literal notranslate"><span class="pre">img</span></code>, <code class="docutils literal notranslate"><span class="pre">TEST_IMAGES</span></code>) directly from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code>. The
+synthetic-generation cell below is gated to skip in that case.</p>
+<p>If the download failed (<code class="docutils literal notranslate"><span class="pre">real_imgs</span> <span class="pre">is</span> <span class="pre">None</span></code>), this cell prints a notice and
+the synthetic-generation cell runs as a fallback so the notebook still works
+end-to-end.</p>
 <p>⚠️  The “What you should be seeing” callouts further down were written against
-the synthetic data — your output will differ in counts, shapes, and metric
-values. That’s expected and is itself a useful teaching moment.</p>
+the synthetic data — when running on real data, your output will differ in
+counts, shapes, and metric values. That’s expected and is itself a useful
+teaching moment.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
-<span class="c1"># Optional: redirect the rest of the notebook to real data.</span>
-<span class="c1"># Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.</span>
+<span class="c1"># Bind working variables. Real is the default; if the download above failed</span>
+<span class="c1"># (real_imgs is None), this is a no-op and the gated synthetic cell below</span>
+<span class="c1"># generates the working variables instead.</span>
 
-<span class="n">USE_REAL_FOR_DOWNSTREAM</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">USE_REAL_FOR_DOWNSTREAM</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Real data not loaded; the synthetic-generation cell below will run as a fallback.&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">real_imgs</span><span class="p">:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">real_imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Pre-create TEST_IMAGES with real entries. The synthetic creation cell</span>
-        <span class="c1"># below is gated to skip when USE_REAL_FOR_DOWNSTREAM is True, so this dict</span>
-        <span class="c1"># survives into the downstream model picker.</span>
+        <span class="c1"># below is gated to skip when real_imgs is loaded, so this dict survives</span>
+        <span class="c1"># into the downstream model picker.</span>
         <span class="c1"># Each entry: name -&gt; (image, ground_truth_or_None).</span>
         <span class="n">TEST_IMAGES</span> <span class="o">=</span> <span class="p">{</span>
             <span class="sa">f</span><span class="s1">&#39;real_bbbc020_</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">real_imgs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
@@ -688,8 +690,8 @@ values. That’s expected and is itself a useful teaching moment.</p>
 <p>We curate a small set of test images that span the conditions a real validation study would face: in-distribution, slightly out-of-distribution, and deliberately out-of-distribution. Some have ground truth (the synthetic ones, where we control the generator); others don’t, and that’s the point — most real images don’t.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># GATE-SYNTHETIC: skip when USE_REAL_FOR_DOWNSTREAM is True (real data is in use).</span>
-<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># GATE-SYNTHETIC: synthetic generation runs only as a fallback when real data is not loaded.</span>
+<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Synthetic generation skipped — real data is loaded into the working variables.&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
@@ -745,6 +747,18 @@ values. That’s expected and is itself a useful teaching moment.</p>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span> <span class="ow">in</span> <span class="n">TEST_IMAGES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">truth_note</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;truth=</span><span class="si">{</span><span class="n">gt</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2"> obj&quot;</span> <span class="k">if</span> <span class="n">gt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;no truth&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;45</span><span class="si">}</span><span class="s2">  shape=</span><span class="si">{</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">truth_note</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="c1"># Display the synthetic TEST_IMAGES entries</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
+    <span class="n">_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">TEST_IMAGES</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">_ncols</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_entries</span><span class="p">));</span> <span class="n">_nrows</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_entries</span><span class="p">)</span> <span class="o">+</span> <span class="n">_ncols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">_ncols</span>
+    <span class="n">_fig</span><span class="p">,</span> <span class="n">_axes</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">_nrows</span><span class="p">,</span> <span class="n">_ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">_ncols</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">_nrows</span><span class="p">))</span>
+    <span class="n">_ax_list</span> <span class="o">=</span> <span class="n">_axes</span><span class="o">.</span><span class="n">flat</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_axes</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">_axes</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">_ax</span><span class="p">,</span> <span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">_val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_ax_list</span><span class="p">,</span> <span class="n">_entries</span><span class="p">):</span>
+        <span class="n">_img</span> <span class="o">=</span> <span class="n">_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">_val</span>
+        <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">);</span> <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">);</span> <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">_ax_list</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">_entries</span><span class="p">):]:</span>
+        <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1285,7 +1299,7 @@ values. That’s expected and is itself a useful teaching moment.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helpers-from-lab-2">Helpers from Lab 2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-image-registry">Test image registry</a></li>

@@ -209,6 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_wsi_transcriptomics.html">Notebook 16 — WSI → Transcriptomics (Frontier Demo)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
 <ul class="nav bd-sidenav">
@@ -363,7 +364,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-ground-truth">Generate ground truth</a></li>
@@ -518,9 +519,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.</p>
 <li><p><strong>Citation:</strong> Lehmussola et al., IEEE T. Med. Imaging, 2007; Bray et al., J. Biomol. Screen, 2011</p></li>
 </ul>
 <p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
-dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. The cell after this
-one optionally <strong>redirects the rest of the notebook</strong> to use the real data —
-flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> in that cell to revert to synthetic.</p>
+dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download failed. The next cell binds working variables
+from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> if available; if it is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the synthetic-generation cell
+below runs as a fallback so the notebook still works end-to-end.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
@@ -623,26 +624,27 @@ flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_D
 </div>
 </div>
 <!-- DATASET-AUDIT-PATCH-SWAP -->
-<section id="use-real-data-for-the-rest-of-this-notebook">
-<h3>Use real data for the rest of this notebook<a class="headerlink" href="#use-real-data-for-the-rest-of-this-notebook" title="Link to this heading">#</a></h3>
-<p>If the download above succeeded, you can redirect the rest of the notebook to
-work on the real dataset by running the cell below. It re-binds the working
-variables (<code class="docutils literal notranslate"><span class="pre">gt_easy</span></code>, <code class="docutils literal notranslate"><span class="pre">gt_hard</span></code>) so all downstream cells run on real microscopy.</p>
-<p>To revert to synthetic, set <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> and re-run, or
-re-run the synthetic generation cell that comes after.</p>
+<section id="bind-working-variables-real-if-available-synthetic-as-fallback">
+<h3>Bind working variables — real if available, synthetic as fallback<a class="headerlink" href="#bind-working-variables-real-if-available-synthetic-as-fallback" title="Link to this heading">#</a></h3>
+<p><strong>Real data is the default.</strong> If the download above succeeded, this cell binds
+the working variables (<code class="docutils literal notranslate"><span class="pre">gt_easy</span></code>, <code class="docutils literal notranslate"><span class="pre">gt_hard</span></code>) directly from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code>. The
+synthetic-generation cell below is gated to skip in that case.</p>
+<p>If the download failed (<code class="docutils literal notranslate"><span class="pre">real_imgs</span> <span class="pre">is</span> <span class="pre">None</span></code>), this cell prints a notice and
+the synthetic-generation cell runs as a fallback so the notebook still works
+end-to-end.</p>
 <p>⚠️  The “What you should be seeing” callouts further down were written against
-the synthetic data — your output will differ in counts, shapes, and metric
-values. That’s expected and is itself a useful teaching moment.</p>
+the synthetic data — when running on real data, your output will differ in
+counts, shapes, and metric values. That’s expected and is itself a useful
+teaching moment.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
-<span class="c1"># Optional: redirect the rest of the notebook to real data.</span>
-<span class="c1"># Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.</span>
+<span class="c1"># Bind working variables. Real is the default; if the download above failed</span>
+<span class="c1"># (real_imgs is None), this is a no-op and the gated synthetic cell below</span>
+<span class="c1"># generates the working variables instead.</span>
 
-<span class="n">USE_REAL_FOR_DOWNSTREAM</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">USE_REAL_FOR_DOWNSTREAM</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Real data not loaded; the synthetic-generation cell below will run as a fallback.&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
@@ -1079,7 +1081,7 @@ values. That’s expected and is itself a useful teaching moment.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-ground-truth">Generate ground truth</a></li>

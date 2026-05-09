@@ -209,6 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="15_diffusion_models.html">Notebook 15 — Diffusion Models in Bioimage (Frontier Demo)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="16_wsi_transcriptomics.html">Notebook 16 — WSI → Transcriptomics (Frontier Demo)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Setup and data</span></p>
 <ul class="nav bd-sidenav">
@@ -361,7 +362,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-widefield-sr-paired-data-generator">Synthetic widefield/SR paired-data generator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline">One paired example: HR ground truth, LR widefield input, bicubic baseline</a></li>
@@ -534,9 +535,9 @@ with the synthetic data below — this cell is safe to skip and re-runnable.</p>
 <li><p><strong>Citation:</strong> Lehmussola et al., IEEE T. Med. Imaging, 2007</p></li>
 </ul>
 <p>After this cell runs, <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> is either a list of NumPy arrays from the real
-dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download was skipped or failed. The cell after this
-one optionally <strong>redirects the rest of the notebook</strong> to use the real data —
-flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> in that cell to revert to synthetic.</p>
+dataset, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the download failed. The next cell binds working variables
+from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code> if available; if it is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the synthetic-generation cell
+below runs as a fallback so the notebook still works end-to-end.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH</span>
@@ -639,26 +640,27 @@ flip <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_D
 </div>
 </div>
 <!-- DATASET-AUDIT-PATCH-SWAP -->
-<section id="use-real-data-for-the-rest-of-this-notebook">
-<h3>Use real data for the rest of this notebook<a class="headerlink" href="#use-real-data-for-the-rest-of-this-notebook" title="Link to this heading">#</a></h3>
-<p>If the download above succeeded, you can redirect the rest of the notebook to
-work on the real dataset by running the cell below. It re-binds the working
-variables (<code class="docutils literal notranslate"><span class="pre">hr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train_small</span></code>) so all downstream cells run on real microscopy.</p>
-<p>To revert to synthetic, set <code class="docutils literal notranslate"><span class="pre">USE_REAL_FOR_DOWNSTREAM</span> <span class="pre">=</span> <span class="pre">False</span></code> and re-run, or
-re-run the synthetic generation cell that comes after.</p>
+<section id="bind-working-variables-real-if-available-synthetic-as-fallback">
+<h3>Bind working variables — real if available, synthetic as fallback<a class="headerlink" href="#bind-working-variables-real-if-available-synthetic-as-fallback" title="Link to this heading">#</a></h3>
+<p><strong>Real data is the default.</strong> If the download above succeeded, this cell binds
+the working variables (<code class="docutils literal notranslate"><span class="pre">hr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_train_small</span></code>, <code class="docutils literal notranslate"><span class="pre">hr_test</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_test</span></code>, <code class="docutils literal notranslate"><span class="pre">lr_test_small</span></code>, <code class="docutils literal notranslate"><span class="pre">n_train</span></code>, <code class="docutils literal notranslate"><span class="pre">n_test</span></code>) directly from <code class="docutils literal notranslate"><span class="pre">real_imgs</span></code>. The
+synthetic-generation cell below is gated to skip in that case.</p>
+<p>If the download failed (<code class="docutils literal notranslate"><span class="pre">real_imgs</span> <span class="pre">is</span> <span class="pre">None</span></code>), this cell prints a notice and
+the synthetic-generation cell runs as a fallback so the notebook still works
+end-to-end.</p>
 <p>⚠️  The “What you should be seeing” callouts further down were written against
-the synthetic data — your output will differ in counts, shapes, and metric
-values. That’s expected and is itself a useful teaching moment.</p>
+the synthetic data — when running on real data, your output will differ in
+counts, shapes, and metric values. That’s expected and is itself a useful
+teaching moment.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATASET-AUDIT-PATCH-SWAP</span>
-<span class="c1"># Optional: redirect the rest of the notebook to real data.</span>
-<span class="c1"># Flip USE_REAL_FOR_DOWNSTREAM = False below to leave synthetic in place.</span>
+<span class="c1"># Bind working variables. Real is the default; if the download above failed</span>
+<span class="c1"># (real_imgs is None), this is a no-op and the gated synthetic cell below</span>
+<span class="c1"># generates the working variables instead.</span>
 
-<span class="n">USE_REAL_FOR_DOWNSTREAM</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">USE_REAL_FOR_DOWNSTREAM</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;USE_REAL_FOR_DOWNSTREAM = False — keeping synthetic working variables.&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;real_imgs&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Real data not loaded; the synthetic-generation cell below will run as a fallback.&#39;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
@@ -668,18 +670,35 @@ values. That’s expected and is itself a useful teaching moment.</p>
             <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="k">else</span> <span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span>
-            <span class="c1"># center-crop to square then resize</span>
             <span class="n">s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:</span><span class="n">s</span><span class="p">,</span> <span class="p">:</span><span class="n">s</span><span class="p">]</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">_zoom</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">target</span> <span class="o">/</span> <span class="n">s</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">a</span>
-        <span class="n">hr_train</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_to_hr</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">real_imgs</span><span class="p">])</span>
+        <span class="c1"># Split: 75% train, 25% test (with 8 real images = 6 train + 2 test).</span>
+        <span class="n">_split</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">real_imgs</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.75</span><span class="p">))</span>
+        <span class="n">hr_train</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_to_hr</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">real_imgs</span><span class="p">[:</span><span class="n">_split</span><span class="p">]])</span>
+        <span class="n">hr_test</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_to_hr</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">real_imgs</span><span class="p">[</span><span class="n">_split</span><span class="p">:]])</span>
         <span class="n">lr_train_small</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">_gf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hr_train</span><span class="p">])</span>
         <span class="n">lr_train</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lr_train_small</span><span class="p">])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hr_train / lr_train now from BBBC005 real fluorescence (synthesized LR via blur+downsample). Shapes: HR=</span><span class="si">{</span><span class="n">hr_train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">, LR=</span><span class="si">{</span><span class="n">lr_train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NOTE: synthesized LR is a *bicubic-style* analogue, not true widefield optics. Real paired SR data lives in CSBDeep CARE / ZeroCostDL4Mic.&quot;</span><span class="p">)</span>
+        <span class="n">lr_test_small</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">_gf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hr_test</span><span class="p">])</span>
+        <span class="n">lr_test</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_zoom</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lr_test_small</span><span class="p">])</span>
+        <span class="n">n_train</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hr_train</span><span class="p">);</span> <span class="n">n_test</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hr_test</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Bound HR/LR train (</span><span class="si">{</span><span class="n">n_train</span><span class="si">}</span><span class="s1">) + test (</span><span class="si">{</span><span class="n">n_test</span><span class="si">}</span><span class="s1">) from BBBC005 real fluorescence (LR via blur+downsample).&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOTE: synthesized LR is a teaching analogue, not true widefield optics. With n_test=2 the metrics are noisy; the architecture is what is shown end-to-end.&#39;</span><span class="p">)</span>
+        <span class="c1"># Display all train + test images so you can see what loaded</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_plt</span>
+        <span class="n">_n_show</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">n_train</span> <span class="o">+</span> <span class="n">n_test</span><span class="p">)</span>
+        <span class="n">_imgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">hr_train</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">hr_test</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">_titles</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;train </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">n_train</span><span class="p">))]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;test </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_test</span><span class="p">))]</span>
+        <span class="n">_ncols</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">_nrows</span> <span class="o">=</span> <span class="p">(</span><span class="n">_n_show</span> <span class="o">+</span> <span class="n">_ncols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">_ncols</span>
+        <span class="n">_fig</span><span class="p">,</span> <span class="n">_axes</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">_nrows</span><span class="p">,</span> <span class="n">_ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">_ncols</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="n">_nrows</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_ax</span><span class="p">,</span> <span class="n">_im</span><span class="p">,</span> <span class="n">_t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_axes</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">_imgs</span><span class="p">[:</span><span class="n">_n_show</span><span class="p">],</span> <span class="n">_titles</span><span class="p">[:</span><span class="n">_n_show</span><span class="p">]):</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">_im</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">);</span> <span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">_t</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">);</span> <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_ax</span> <span class="ow">in</span> <span class="n">_axes</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">_n_show</span><span class="p">:]:</span>
+            <span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">_plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">_plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real_imgs is None or insufficient; staying with synthetic SR pairs.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;real_imgs is None or insufficient (&lt;4); will fall through to synthetic SR pairs.&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1248,7 +1267,7 @@ values. That’s expected and is itself a useful teaching moment.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthetic-widefield-sr-paired-data-generator">Synthetic widefield/SR paired-data generator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-it-on-canonical-real-data">Try it on canonical real data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-real-data-for-the-rest-of-this-notebook">Use real data for the rest of this notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-working-variables-real-if-available-synthetic-as-fallback">Bind working variables — real if available, synthetic as fallback</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-paired-example-hr-ground-truth-lr-widefield-input-bicubic-baseline">One paired example: HR ground truth, LR widefield input, bicubic baseline</a></li>
