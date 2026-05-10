@@ -481,11 +481,13 @@
 <span class="n">real_imgs</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">real_filenames</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">real_metadata</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">real_labels</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">loaded_tier</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_try_mabc</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata, labels).</span>
+<span class="sd">    `labels` is None unless the npz includes a `labels.npy` (paired masks, target channels, etc.).&quot;&quot;&quot;</span>
     <span class="n">cache</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">MABC_URL</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching MABC sample: </span><span class="si">{</span><span class="n">MABC_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -497,7 +499,8 @@
         <span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;metadata&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">return</span> <span class="n">imgs</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">meta</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;labels&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">imgs</span><span class="p">,</span> <span class="n">fnames</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">labels</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_try_canonical</span><span class="p">():</span>
@@ -544,7 +547,7 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">DATA_SOURCE</span> <span class="o">==</span> <span class="s2">&quot;MABC hosted&quot;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">real_imgs</span><span class="p">,</span> <span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_metadata</span> <span class="o">=</span> <span class="n">_try_mabc</span><span class="p">()</span>
+            <span class="n">real_imgs</span><span class="p">,</span> <span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_metadata</span><span class="p">,</span> <span class="n">real_labels</span> <span class="o">=</span> <span class="n">_try_mabc</span><span class="p">()</span>
             <span class="n">loaded_tier</span> <span class="o">=</span> <span class="s2">&quot;MABC&quot;</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MABC sample not yet available; falling through to canonical.&quot;</span><span class="p">)</span>
@@ -555,6 +558,7 @@
     <span class="k">if</span> <span class="n">real_imgs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">real_imgs</span><span class="p">,</span> <span class="n">real_filenames</span><span class="p">,</span> <span class="n">real_metadata</span> <span class="o">=</span> <span class="n">_try_canonical</span><span class="p">()</span>
+            <span class="n">real_labels</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">loaded_tier</span> <span class="o">=</span> <span class="s2">&quot;Canonical&quot;</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Canonical fetch failed; the synthetic-generation cell below will run as the final fallback.&quot;</span><span class="p">)</span>
