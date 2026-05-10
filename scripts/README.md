@@ -5,7 +5,7 @@ Helpers for local development and verification of the workshop repo.
 | Script | Purpose |
 |---|---|
 | `dry_run_local.sh` | Build the Jupyter Book site locally and serve at `http://localhost:8000`. Use this to preview what GitHub Pages will look like. Does **not** execute notebook code; renders source. |
-| `dry_run_check.py` | Standalone notebook linter. Stdlib-only, runs without any pip-installed deps. Validates JSON, `nbformat==4`, Colab-badge presence, OWNER/REPO placeholder count, stale outputs, nested duplicates. |
+| `dry_run_check.py` | Standalone notebook linter. Stdlib-only, runs without any pip-installed deps. Validates JSON, `nbformat==4`, Colab-badge presence, microscopy-Core-ISMMS/ImageAnalysisCourse placeholder count, stale outputs, nested duplicates. |
 | `run_jupyter_lab.sh` | Launch Jupyter Lab pointed at the repo for interactive notebook testing. Default profile is *minimal* (install only `jupyterlab` + a couple support packages); `--prefetch` installs every notebook's runtime dep upfront from `requirements_notebooks.txt`. |
 | `test_notebook.sh` | Headlessly execute one notebook via `nbconvert --execute` and report pass/fail. Tight iteration loop without launching Lab. |
 | `requirements_notebooks.txt` | Union of all notebook runtime deps. Used by `run_jupyter_lab.sh --prefetch` and as the reference list when a single notebook needs its deps installed manually. |

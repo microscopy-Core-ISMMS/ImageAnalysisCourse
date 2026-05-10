@@ -10,7 +10,7 @@ Checks per notebook:
   - nbformat == 4
   - At least one cell
   - Colab badge present in cell 0
-  - OWNER/REPO placeholder count (across whole notebook)
+  - microscopy-Core-ISMMS/ImageAnalysisCourse placeholder count (across whole notebook)
   - No stale `execution_count` set on code cells (warning, not error)
   - No `outputs` arrays embedded on code cells (warning — bloats repo)
 
@@ -84,7 +84,7 @@ def check_notebook(path: Path) -> tuple[list[tuple[str, str]], dict]:
         if "notebooks" in path.parts and "ramp-up" not in path.parts:
             issues.append(("WARN", "no Colab badge in cell 0"))
 
-    # OWNER/REPO placeholder count (across whole notebook)
+    # microscopy-Core-ISMMS/ImageAnalysisCourse placeholder count (across whole notebook)
     owner_repo = 0
     code_with_outputs = 0
     stale = 0
@@ -92,7 +92,7 @@ def check_notebook(path: Path) -> tuple[list[tuple[str, str]], dict]:
         s = cell.get("source", "")
         if isinstance(s, list):
             s = "".join(s)
-        owner_repo += s.count("OWNER/REPO")
+        owner_repo += s.count("microscopy-Core-ISMMS/ImageAnalysisCourse")
         if cell.get("cell_type") == "code":
             if cell.get("execution_count") is not None:
                 stale += 1
@@ -200,7 +200,7 @@ def main() -> int:
     print(c("bold", "Summary:"))
     print(f"  Notebooks    : {len(paths)}")
     print(f"  Total cells  : {total_cells}")
-    print(f"  OWNER/REPO   : {total_owner_repo}  (placeholder; replace before publishing)")
+    print(f"  microscopy-Core-ISMMS/ImageAnalysisCourse   : {total_owner_repo}  (placeholder; replace before publishing)")
     print(f"  Errors       : {c('red' if n_errors else 'green', str(n_errors))}")
     print(f"  Warnings     : {c('yellow' if n_warns else 'green', str(n_warns))}")
     print()
