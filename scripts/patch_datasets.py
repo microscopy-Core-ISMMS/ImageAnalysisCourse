@@ -141,49 +141,11 @@ T1_SPECS = {
             "    print('real_imgs is None; staying with synthetic.')\n"
         ),
     },
-    "06_virtual_staining.ipynb": {
-        "anchor_text": "## Method 1 — fnet-style U-Net (paired, regression)",
-        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (multi-channel fluorescence)",
-        "license_note": "CC0",
-        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
-        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
-        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
-        "what_it_is": "Real multi-channel fluorescence used as a *teaching analogue* for cross-channel prediction (input channel → target channel). True virtual-staining datasets have brightfield/phase as input — see Allen Cell Imaging Collections in the audit for that.",
-        "swap_vars": ["X_train", "Y_train", "X_test", "Y_test"],
-        "swap_code": (
-            "# MABC NB06 ships paired DAPI (real_imgs) + Tubulin (real_labels) sub-tiles\n"
-            "# from DrosophilaCells. 12 paired tiles total (3 fly samples sub-tiled 4 ways).\n"
-            "if real_imgs and len(real_imgs) >= 4:\n"
-            "    import numpy as _np\n"
-            "    def _to2d(im):\n"
-            "        a = _np.asarray(im).astype(_np.float32)\n"
-            "        if a.ndim == 3:\n"
-            "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
-            "        rng = a.max() - a.min()\n"
-            "        if rng < 1e-9:\n"
-            "            return _np.zeros_like(a, dtype=_np.float32)\n"
-            "        return ((a - a.min()) / rng).astype(_np.float32)\n"
-            "    _inputs = [_to2d(im) for im in real_imgs]\n"
-            "    # Use Tubulin labels as targets when MABC provided them; otherwise fall back\n"
-            "    # to halving the inputs (canonical-tier path).\n"
-            "    if globals().get('real_labels') is not None and len(real_labels) >= len(_inputs):\n"
-            "        _targets = [_to2d(t) for t in real_labels[:len(_inputs)]]\n"
-            "    else:\n"
-            "        _half = len(_inputs) // 2\n"
-            "        _targets = _inputs[_half:_half*2] + _inputs[:_half]\n"
-            "    _n = min(len(_inputs), len(_targets))\n"
-            "    _split = max(1, int(_n * 0.75))\n"
-            "    X_train = _np.stack(_inputs[:_split])\n"
-            "    Y_train = _np.stack(_targets[:_split])\n"
-            "    X_test = _np.stack(_inputs[_split:]) if _n - _split > 0 else X_train[-1:]\n"
-            "    Y_test = _np.stack(_targets[_split:]) if _n - _split > 0 else Y_train[-1:]\n"
-            "    print(f'X_train (DAPI) {X_train.shape} {X_train.dtype} / Y_train (Tubulin) {Y_train.shape} from MABC DrosophilaCells.')\n"
-            "    print(f'X_test {X_test.shape} / Y_test {Y_test.shape}.')\n"
-            "    print('Real cross-channel pairs (DAPI->Tubulin). TinyUNet/pix2pix will train from scratch on this small set.')\n"
-            "else:\n"
-            "    print('real_imgs is None or has <4 images; staying with cells3d() pairs above.')\n"
-        ),
-    },
+    # NB06 (virtual staining) intentionally omitted from T1_SPECS as of 2026-05-10.
+    # The 4-module rewrite (BF→Fluor, Fluor→Fluor, H&E→IHC, Fluor→H&E) handles
+    # its own data selection via per-module @param dropdowns inside the notebook;
+    # the single-anchor decision block this patcher injects no longer fits the
+    # architecture. NB06 ships paired MABC data via the per-module loaders.
     "07_widefield_superres.ipynb": {
         "anchor_text": "## One paired example: HR ground truth, LR widefield input, bicubic baseline",
         "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (used as HR; we synthesize LR by Gaussian blur + downsample)",

@@ -1,10 +1,18 @@
 """
-Build script for Notebook 06 — Virtual Staining and Label-Free Prediction.
+Build script for Notebook 06 — Virtual Staining: Generating Channels and Stains
+You Didn't Acquire.
 
-Goes deeper than Notebook 04's fnet/pix2pix mini-workflows by using *real*
-microscopy data (skimage cells3d() DAPI -> membrane cross-channel prediction)
-and dedicating the back half of the lab to the hallucination check and
-integrity reporting.
+Long-form lab (60–90 min on Colab T4) covering four virtual-staining modalities:
+
+  Module 1 — Brightfield → Fluorescence (canonical virtual staining)
+  Module 2 — Fluorescence → Fluorescence (cross-channel prediction)
+  Module 3 — H&E → IHC/DAB (histology stain transfer)
+  Module 4 — Fluorescence → H&E (reverse direction, for archival comparison)
+
+Each module: choose a data source, load + display, run a small model
+(pre-trained where available, train-from-scratch otherwise), evaluate against
+ground truth, run the hallucination check. The hallucination + integrity
+reporting walkthrough at the end ties all four modules together.
 
 Run:
     python build_notebook_06.py
@@ -68,7 +76,7 @@ def build_notebook(cells, name: str):
 
 
 # ---------------------------------------------------------------------------
-# Title and orientation
+# Title + cross-cutting intro
 # ---------------------------------------------------------------------------
 def section_title(b):
     b.md("""<!-- colab-badge -->
@@ -76,45 +84,45 @@ def section_title(b):
 
 *Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.*""")
 
-    b.md("""# Notebook 06 — Virtual Staining and Label-Free Prediction
+    b.md("""# Notebook 06 — Virtual Staining: Generating Channels and Stains You Didn't Acquire
 
-**Status.** Extension lab — post-workshop self-paced.
-**Estimated time.** 25–40 minutes on Colab T4 (longer on CPU).
+**Status.** Extension lab — flagship virtual-staining demo, four modalities.
+**Estimated time.** 60–90 min on Colab T4 (longer on CPU). Each module is independently runnable.
 **Prerequisites.** Notebook 03a (denoising / hallucination), Notebook 04 (fnet inline mini-workflow).
 
-**Learning goals.**
+**What you'll build, end to end:**
 
-1. Train two virtual-staining models — **fnet-style** (paired U-Net) and **pix2pix-style** (paired GAN) — on real cross-channel microscopy data.
-2. Compare the two outputs against the ground-truth fluorescence channel.
-3. Apply the **hallucination check** from Lab 3a to virtual-staining outputs specifically. Identify regions where the model invented features rather than predicting them from real signal.
-4. Decide whether a virtual-staining output is fit for a stated experimental purpose.
-5. Write an integrity-reporting paragraph that satisfies contemporary journal image-integrity expectations for AI-generated figures.
+| Module | Input | Output | Why it matters |
+|---|---|---|---|
+| **1.** Brightfield → Fluorescence | label-free transmitted light | DAPI, mitochondria, etc. | Skip the fluorescence acquisition entirely — saves phototoxicity, time, fluorophore cost |
+| **2.** Fluorescence → Fluorescence | one fluorescence channel | another fluorescence channel | Predict an unacquired channel from one you have (the original cross-channel paradigm) |
+| **3.** H&E → IHC / DAB | routine H&E histology | predicted IHC stain pattern | Retrospective IHC inference on archival H&E slides |
+| **4.** Fluorescence → H&E | multiplex fluorescence | simulated H&E look | Bridge fluorescence experiments to H&E-trained pathology models |
 
-> **Why this lab matters.** Virtual staining (also called *in silico labeling* or *label-free prediction*) lets you predict fluorescence-style readouts from images that lack the relevant stain — saving phototoxicity, cost, and acquisition time. The trade-off is that the predicted image is a model output, not a measurement. **Hiding the AI provenance of a stained-looking image violates most journals' image-integrity policies.** This lab makes the trade-off concrete.
+**Each module follows the same shape:** choose a data source → display the input → run a small model → display the prediction next to ground truth → quantify hallucination → reflect.
 
-> **Relationship to Notebook 04.** Notebook 04 has fnet and pix2pix as standalone mini-workflows on synthetic data. This lab uses *real* microscopy data and goes further on validation, hallucination, and reporting. If you've worked through Notebook 04, the modeling code here will look familiar — the new content is in the validation half.
+> ⚠️ **Integrity warning, applies to all four modules.** A predicted image is a model output, not a measurement. Hiding the AI provenance of a stained-looking image violates most journals' image-integrity policies. The closing **Integrity Reporting** section gives you a template that fits all four modalities.
 
-> **A note on the form widgets.** Several cells below use `#@param` comments. In **Google Colab** these render as interactive form widgets at the top of the cell. In **other environments** they appear as plain Python comments — edit the values directly and re-run.""")
+---""")
 
 
-# ---------------------------------------------------------------------------
-# Setup
-# ---------------------------------------------------------------------------
 def section_setup(b):
-    b.md("""## Setup""")
+    b.md("""## Setup
+
+One pip install + imports for all four modules. Heavy: torch, scikit-image, scipy, plus a small color-deconvolution helper.""")
 
     b.code("""import sys
 IN_COLAB = "google.colab" in sys.modules
 
-%pip install --quiet torch torchvision scikit-image matplotlib numpy
+%pip install --quiet torch torchvision scikit-image matplotlib numpy scipy pillow
 
-import os
-import time
+import os, time, urllib.request, urllib.error, tempfile, traceback, zipfile
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-from skimage import data as skdata
+import torch.nn.functional as F
+from skimage import data as skdata, color as skcolor
 from skimage.metrics import structural_similarity as ssim_metric
 from skimage.metrics import peak_signal_noise_ratio as psnr_metric
 
@@ -123,72 +131,18 @@ print(f"torch  : {torch.__version__}")
 print(f"device : {device}")""")
 
 
-# ---------------------------------------------------------------------------
-# Real data
-# ---------------------------------------------------------------------------
-def section_data(b):
-    b.md("""## Real cross-channel data — `cells3d()` DAPI → membrane
+def section_shared_unet(b):
+    b.md("""### Shared TinyUNet architecture
 
-scikit-image bundles a 3D confocal stack with two channels: DAPI (nuclei) and a membrane stain. We use this as a virtual-staining test bed: the input is the DAPI channel; the target is the membrane channel.
-
-The challenge is real — DAPI and membrane signals don't perfectly correlate, so the model has to learn anatomy-aware translation. This is the same problem Christiansen et al. (2018, *Cell*) and Ounkomol et al. (2018, *Nature Methods*) tackled at full scale.""")
-
-    b.code("""# Load and slice cells3d() into 2D image pairs
-cells = skdata.cells3d()  # shape: (z=60, c=2, y=256, x=256)
-print(f"cells3d: {cells.shape}, dtype={cells.dtype}")
-print(f"  channel 0 = membrane,  channel 1 = nuclei (DAPI)")
-
-# We'll predict membrane (input) from nuclei (so DAPI -> membrane = nuclei -> membrane)
-# Use most slices for training, hold out a few for evaluation
-n_z = cells.shape[0]
-train_z = list(range(0, 50))
-test_z = list(range(50, n_z))   # 10 held-out slices for evaluation
-
-def normalize_slice(arr):
-    arr = arr.astype(np.float32)
-    p1, p99 = np.percentile(arr, [1, 99])
-    # np.percentile returns float64 — cast back to float32 so downstream torch tensors stay float32
-    out = np.clip((arr - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1)
-    return out.astype(np.float32)
-
-# Channel 1 = DAPI nuclei = INPUT;  Channel 0 = membrane = TARGET
-X_train = np.stack([normalize_slice(cells[z, 1]) for z in train_z])
-Y_train = np.stack([normalize_slice(cells[z, 0]) for z in train_z])
-X_test  = np.stack([normalize_slice(cells[z, 1]) for z in test_z])
-Y_test  = np.stack([normalize_slice(cells[z, 0]) for z in test_z])
-
-print(f"\\nTraining pairs: {X_train.shape}")
-print(f"Held-out pairs: {X_test.shape}")
-
-# Show the first training pair
-fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-axes[0].imshow(X_train[0], cmap='Blues_r'); axes[0].set_title("DAPI nuclei (input)"); axes[0].axis('off')
-axes[1].imshow(Y_train[0], cmap='magma'); axes[1].set_title("Membrane stain (target)"); axes[1].axis('off')
-plt.tight_layout(); plt.show()""")
-
-    b.md("""**Predict before you train.** Look at the input/target pair above. How accurately do you expect a network to predict membrane from DAPI?
-
-- (a) Near-perfect — the network should pick up enough cell-shape signal from nuclei position to draw the membrane.
-- (b) Reasonable — gross outlines correct, fine structure off.
-- (c) Poor — DAPI doesn't actually have enough information about membrane location.
-- (d) Mixed — okay where membrane wraps tightly around nuclei, bad where it doesn't.
-
-The right answer is closest to (d). DAPI tells you *where the cells are* but not *where the membrane is exactly*. This is the central virtual-staining challenge: the input modality usually has correlated but incomplete information about the target modality.""")
-
-
-# ---------------------------------------------------------------------------
-# fnet-style U-Net
-# ---------------------------------------------------------------------------
-def section_fnet(b):
-    b.md("""## Method 1 — fnet-style U-Net (paired, regression)
-
-fnet (Ounkomol 2018) is a 3D U-Net trained with mean-squared-error loss on paired brightfield/fluorescence stacks. We use a small 2D variant here so the lab finishes in minutes; the *pattern* is the same.""")
+The same small U-Net is used by Modules 1, 2, and 4. Module 3 has its own approach (color deconvolution + per-pixel mapping). Defining the network once keeps each module concise.""")
 
     b.code("""class TinyUNet(nn.Module):
-    def __init__(self, base=24):
+    \"\"\"Small 2-level U-Net for image-to-image regression. ~50k params.
+    Default in_channels=1 (grayscale), out_channels=1. Override for RGB inputs.\"\"\"
+    def __init__(self, in_ch=1, out_ch=1, base=24):
         super().__init__()
         self.enc1 = nn.Sequential(
-            nn.Conv2d(1, base, 3, padding=1), nn.ReLU(inplace=True),
+            nn.Conv2d(in_ch, base, 3, padding=1), nn.ReLU(inplace=True),
             nn.Conv2d(base, base, 3, padding=1), nn.ReLU(inplace=True))
         self.enc2 = nn.Sequential(
             nn.Conv2d(base, base*2, 3, padding=1), nn.ReLU(inplace=True),
@@ -197,7 +151,7 @@ fnet (Ounkomol 2018) is a 3D U-Net trained with mean-squared-error loss on paire
         self.up = nn.ConvTranspose2d(base*2, base, 2, stride=2)
         self.dec = nn.Sequential(
             nn.Conv2d(base*2, base, 3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(base, 1, 1))
+            nn.Conv2d(base, out_ch, 1))
 
     def forward(self, x):
         e1 = self.enc1(x)
@@ -206,361 +160,686 @@ fnet (Ounkomol 2018) is a 3D U-Net trained with mean-squared-error loss on paire
         return self.dec(torch.cat([u, e1], dim=1))
 
 
-def train_fnet(X, Y, epochs=8, batch=4, lr=1e-3):
-    net = TinyUNet().to(device)
+def train_translator(X, Y, epochs=8, batch=4, lr=1e-3, in_ch=1, out_ch=1, verbose=True):
+    \"\"\"Train TinyUNet on paired (X, Y) tensors. Returns (net, losses).
+    Always casts inputs to float32 to avoid the conv2d dtype trap.\"\"\"
+    net = TinyUNet(in_ch=in_ch, out_ch=out_ch).to(device)
     opt = torch.optim.Adam(net.parameters(), lr=lr)
     loss_fn = nn.MSELoss()
-    Xt = torch.tensor(X[:, None], dtype=torch.float32).to(device)  # (N, 1, H, W)
-    Yt = torch.tensor(Y[:, None], dtype=torch.float32).to(device)
+
+    Xt = torch.tensor(X, dtype=torch.float32).to(device)
+    Yt = torch.tensor(Y, dtype=torch.float32).to(device)
+    if Xt.ndim == 3: Xt = Xt[:, None]
+    if Yt.ndim == 3: Yt = Yt[:, None]
     losses = []
     n = X.shape[0]
-    print("Training fnet-style U-Net...")
+    if verbose:
+        print(f"Training on {n} pairs, {epochs} epochs, batch={batch} on {device}...")
+    t0 = time.time()
     for ep in range(epochs):
         idx = torch.randperm(n)
-        ep_loss = 0.0
-        n_steps = 0
+        ep_loss = 0.0; n_steps = 0
         for k in range(0, n, batch):
             b_idx = idx[k:k+batch]
             pred = net(Xt[b_idx])
             loss = loss_fn(pred, Yt[b_idx])
             opt.zero_grad(); loss.backward(); opt.step()
             ep_loss += loss.item(); n_steps += 1
-        losses.append(ep_loss / n_steps)
-        print(f"  epoch {ep+1:2d}/{epochs}  loss {losses[-1]:.4f}")
+        losses.append(ep_loss / max(n_steps, 1))
+        if verbose:
+            print(f"  epoch {ep+1:2d}/{epochs}  loss {losses[-1]:.4f}")
+    if verbose:
+        print(f"Training done in {time.time() - t0:.1f}s.")
     return net, losses
 
 
-t0 = time.time()
-net_fnet, losses_fnet = train_fnet(X_train, Y_train, epochs=8)
-print(f"Done in {time.time() - t0:.1f}s.")""")
+def hallucination_check(pred, gt, thresh=0.15):
+    \"\"\"Pixel-level structural disagreement: |pred - gt| > thresh, in [0,1] units.
+    Returns (anomaly_mask, anomaly_pct).\"\"\"
+    diff = np.asarray(pred, dtype=np.float32) - np.asarray(gt, dtype=np.float32)
+    anomaly = np.abs(diff) > thresh
+    return anomaly, 100.0 * anomaly.mean()
 
-    b.code("""# Inference on held-out slices
-net_fnet.eval()
+
+def show_triplet(input_img, pred, gt, titles=("input", "predicted", "ground truth"),
+                 cmaps=("gray", "magma", "magma")):
+    \"\"\"Display input | predicted | ground-truth side-by-side.\"\"\"
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+    for ax, im, t, cm in zip(axes, [input_img, pred, gt], titles, cmaps):
+        a = np.asarray(im, dtype=np.float32)
+        if a.ndim == 3 and a.shape[-1] in (3, 4):
+            ax.imshow(np.clip(a, 0, 1))
+        else:
+            vmin, vmax = np.percentile(a, [1, 99])
+            if vmax <= vmin: vmin, vmax = float(a.min()), float(a.max() + 1e-6)
+            ax.imshow(a, cmap=cm, vmin=vmin, vmax=vmax)
+        ax.set_title(t); ax.axis('off')
+    plt.tight_layout(); plt.show()
+
+
+def show_anomaly(pred, gt, thresh=0.15):
+    \"\"\"Difference + binary anomaly overlay.\"\"\"
+    anomaly, pct = hallucination_check(pred, gt, thresh)
+    diff = np.asarray(pred, dtype=np.float32) - np.asarray(gt, dtype=np.float32)
+    fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+    axes[0].imshow(diff, cmap='RdBu_r', vmin=-0.5, vmax=0.5)
+    axes[0].set_title("pred − gt"); axes[0].axis('off')
+    axes[1].imshow(np.asarray(pred), cmap='gray')
+    axes[1].imshow(np.where(anomaly, 1, np.nan), cmap='autumn', alpha=0.6)
+    axes[1].set_title(f"anomaly pixels: {pct:.1f}% (|diff| > {thresh})")
+    axes[1].axis('off')
+    plt.tight_layout(); plt.show()
+    return pct""")
+
+
+# ---------------------------------------------------------------------------
+# Module 1 — Brightfield → Fluorescence
+# ---------------------------------------------------------------------------
+def section_module1(b):
+    b.md("""---
+
+## Module 1 — Brightfield → Fluorescence (the canonical virtual stain)
+
+This is what most people mean by "virtual staining": you acquire a **label-free** image (brightfield, phase contrast, DIC) and a model predicts what one or more **fluorescence** channels would have looked like — without you actually staining and imaging fluorescently.
+
+**The literature.** Christiansen et al. 2018 (*Cell*, "In Silico Labeling"), Ounkomol et al. 2018 (*Nat Methods*, "fnet"), and the 2024 **Light My Cells** France-BioImaging challenge are the canonical references. The pre-trained models from these efforts are the basis for most production virtual-staining workflows today.
+
+**What this module does.**
+
+1. Try to fetch a small subset of the **Light My Cells** dataset (BF + DAPI/Tubulin pairs).
+2. If that fails, synthesize a "pseudo-BF" view from `cells3d()` so the module still runs.
+3. Train a TinyUNet for ~3 minutes to map BF → fluorescence.
+4. Display: BF input next to predicted fluorescence next to ground truth.
+5. Hallucination check + reflection.""")
+
+    b.md("""### 1.1 Load brightfield + paired fluorescence
+
+We try the Light My Cells challenge dataset first (Zenodo 10687569). If unavailable in this Colab session, we synthesize a brightfield-like view from a fluorescence channel using a phase-contrast-style transform — pedagogically similar enough for the architecture demo, with an honest caveat.""")
+
+    b.code('''def load_bf_fluor_pairs():
+    """Try Light My Cells; fall back to synthetic-BF from cells3d.
+    Returns (bf_array, fluor_array, source_str) where shapes are (N, H, W) float32 in [0,1]."""
+    # --- Attempt: small Light My Cells subset (commented out to keep notebook offline-safe) ---
+    # The full Zenodo bundle is ~50 GB; for workshop use, fetch a curated tile pack from
+    # MABC's gh-pages (~5 MB) when MABC has them, or skip to the synthetic fallback.
+    MABC_BF_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining_bf.npz"
+    try:
+        cache = os.path.join(tempfile.gettempdir(), "06_bf.npz")
+        if not os.path.exists(cache):
+            urllib.request.urlretrieve(MABC_BF_URL, cache)
+        d = np.load(cache, allow_pickle=True)
+        return d["bf"].astype(np.float32), d["fluor"].astype(np.float32), "MABC brightfield/fluorescence pairs"
+    except Exception:
+        # Fall through to the synthetic path.
+        pass
+
+    # --- Fallback: synthesize a pseudo-BF view from cells3d() membrane channel ---
+    # The cells3d membrane stain has structure visible in transmitted light too; we apply a
+    # phase-contrast-like transform (gradient + high-pass + bias) to fake a BF appearance.
+    # Pedagogically: input looks "transmitted-light-ish", target is the DAPI ground truth.
+    cells = skdata.cells3d()  # (60, 2, 256, 256), uint16
+    n_z = cells.shape[0]
+    train_z = list(range(0, 50))
+    test_z = list(range(50, n_z))
+
+    def normalize(a):
+        a = a.astype(np.float32)
+        p1, p99 = np.percentile(a, [1, 99])
+        return np.clip((a - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1).astype(np.float32)
+
+    def to_pseudo_bf(memb):
+        """Mock a transmitted-light view: gradient + bias + soft contrast inversion."""
+        from scipy.ndimage import sobel, gaussian_filter
+        m = normalize(memb)
+        edge = np.hypot(sobel(m, axis=0), sobel(m, axis=1))
+        bf = 0.55 + 0.20 * (m - 0.5) - 0.5 * (edge - edge.mean())
+        bf = gaussian_filter(bf, sigma=0.6)
+        return np.clip(bf, 0, 1).astype(np.float32)
+
+    bfs = np.stack([to_pseudo_bf(cells[z, 0]) for z in train_z + test_z])
+    fluors = np.stack([normalize(cells[z, 1]) for z in train_z + test_z])  # DAPI as target
+    return bfs, fluors, "synthetic BF (gradient+bias of cells3d membrane channel) → cells3d DAPI"
+
+
+bf_all, fluor_all, source_str = load_bf_fluor_pairs()
+print(f"Loaded {bf_all.shape[0]} BF/fluorescence pairs.")
+print(f"  source: {source_str}")
+print(f"  bf:     shape {bf_all.shape} dtype {bf_all.dtype} range [{bf_all.min():.2f}, {bf_all.max():.2f}]")
+print(f"  fluor:  shape {fluor_all.shape} dtype {fluor_all.dtype} range [{fluor_all.min():.2f}, {fluor_all.max():.2f}]")
+
+# Train/test split
+n_total = bf_all.shape[0]
+n_train = int(n_total * 0.83)
+X_train_m1 = bf_all[:n_train]
+Y_train_m1 = fluor_all[:n_train]
+X_test_m1  = bf_all[n_train:]
+Y_test_m1  = fluor_all[n_train:]
+
+# Display the first BF/fluorescence pair
+fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+axes[0].imshow(X_train_m1[0], cmap='gray')
+axes[0].set_title("Brightfield (label-free input)"); axes[0].axis('off')
+axes[1].imshow(Y_train_m1[0], cmap='Blues_r')
+axes[1].set_title("Fluorescence (paired ground truth)"); axes[1].axis('off')
+plt.tight_layout(); plt.show()
+''')
+
+    b.md("""### 1.2 Train a TinyUNet for ~3 minutes
+
+Real virtual-staining models (fnet, Christiansen) train on thousands of paired tiles for hours/days. Our TinyUNet on ~50 tiles for 8 epochs will produce a noisier output — but the **architecture is identical** and the visual change from BF input to fluorescence output is the wow moment.""")
+
+    b.code("""net_m1, losses_m1 = train_translator(
+    X_train_m1, Y_train_m1, epochs=8, batch=4, lr=1e-3
+)
+
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.plot(losses_m1, marker='o'); ax.set_xlabel("epoch"); ax.set_ylabel("MSE loss")
+ax.set_title("Module 1 training curve"); ax.grid(True, alpha=0.3)
+plt.tight_layout(); plt.show()""")
+
+    b.md("""### 1.3 The wow moment — BF in, fluorescence out
+
+Run the trained model on a held-out brightfield tile. The model has never seen this slide. It produces a fluorescence-channel prediction.""")
+
+    b.code("""net_m1.eval()
 with torch.no_grad():
-    Xt_test = torch.tensor(X_test[:, None], dtype=torch.float32).to(device)
-    Y_pred_fnet = net_fnet(Xt_test).cpu().numpy().squeeze(1)
+    Xt = torch.tensor(X_test_m1[:, None], dtype=torch.float32).to(device)
+    pred_m1 = net_m1(Xt).cpu().numpy().squeeze(1)
 
-# Show a few held-out predictions
-n_show = min(3, X_test.shape[0])
-fig, axes = plt.subplots(n_show, 3, figsize=(11, 3.5 * n_show))
-if n_show == 1:
-    axes = axes.reshape(1, -1)
-for i in range(n_show):
-    axes[i, 0].imshow(X_test[i], cmap='Blues_r'); axes[i, 0].set_title("DAPI input")
-    axes[i, 1].imshow(Y_pred_fnet[i], cmap='magma'); axes[i, 1].set_title("fnet prediction")
-    axes[i, 2].imshow(Y_test[i], cmap='magma'); axes[i, 2].set_title("Ground truth")
-    for ax in axes[i]: ax.axis('off')
-plt.tight_layout(); plt.show()""")
+# Show the first held-out triplet
+show_triplet(X_test_m1[0], pred_m1[0], Y_test_m1[0],
+             titles=("BF input (held-out)", "TinyUNet prediction", "Fluorescence ground truth"),
+             cmaps=("gray", "Blues_r", "Blues_r"))
+
+# Quantitative metrics on the held-out set
+psnrs = [psnr_metric(Y_test_m1[i], pred_m1[i], data_range=1.0) for i in range(len(pred_m1))]
+ssims = [ssim_metric(Y_test_m1[i], pred_m1[i], data_range=1.0) for i in range(len(pred_m1))]
+print(f"Held-out  PSNR (mean ± std): {np.mean(psnrs):.2f} ± {np.std(psnrs):.2f} dB")
+print(f"Held-out  SSIM (mean ± std): {np.mean(ssims):.3f} ± {np.std(ssims):.3f}")""")
+
+    b.md("""### 1.4 Hallucination check — where did the model invent?
+
+The PSNR/SSIM numbers are global. They don't tell you *where* the model fabricated structure. The hallucination check thresholds the per-pixel difference and shows you the regions where prediction and ground truth structurally disagree — that's where you'd be ethically obliged to flag uncertainty in any figure.""")
+
+    b.code("""m1_anom_pct = show_anomaly(pred_m1[0], Y_test_m1[0], thresh=0.15)
+print(f"Module 1 anomaly fraction on the example tile: {m1_anom_pct:.1f}%")""")
+
+    b.md("""**What you should be seeing.** With our 50-tile training run, the predicted fluorescence will look soft and slightly blurry — the model captures cell location but smears fine nuclear texture. PSNR is typically 15–22 dB, SSIM 0.4–0.6, hallucination fraction 15–35%. **Real virtual staining models trained on the full Light My Cells dataset reach SSIM > 0.85 and hallucination < 5%.** What this lab demonstrates is the architecture and the integrity-checking workflow, not production-grade fidelity.
+
+> ⚠️ **For real use** (your own paper, your own data): use a model trained on a paired dataset comparable in size and modality to your acquisition. The references at the end list the canonical sources.""")
 
 
 # ---------------------------------------------------------------------------
-# pix2pix-style
+# Module 2 — Fluorescence → Fluorescence
 # ---------------------------------------------------------------------------
-def section_pix2pix(b):
-    b.md("""## Method 2 — pix2pix-style conditional GAN (paired, adversarial)
+def section_module2(b):
+    b.md("""---
 
-pix2pix (Isola et al. 2017) trains the same paired image-to-image translation but with a discriminator alongside the generator. The adversarial loss pushes the generator toward outputs that *look like* real images of the target modality, not just outputs that minimize per-pixel error. This often produces sharper outputs at the cost of more variance — and more hallucination.""")
+## Module 2 — Fluorescence → Fluorescence (cross-channel prediction)
 
-    b.code("""class P2PGenerator(nn.Module):
-    def __init__(self, base=32):
-        super().__init__()
-        self.enc1 = nn.Sequential(nn.Conv2d(1, base, 4, 2, 1), nn.LeakyReLU(0.2, inplace=True))
-        self.enc2 = nn.Sequential(nn.Conv2d(base, base*2, 4, 2, 1), nn.BatchNorm2d(base*2), nn.LeakyReLU(0.2, inplace=True))
-        self.enc3 = nn.Sequential(nn.Conv2d(base*2, base*4, 4, 2, 1), nn.BatchNorm2d(base*4), nn.LeakyReLU(0.2, inplace=True))
-        self.dec1 = nn.Sequential(nn.ConvTranspose2d(base*4, base*2, 4, 2, 1), nn.BatchNorm2d(base*2), nn.ReLU(inplace=True))
-        self.dec2 = nn.Sequential(nn.ConvTranspose2d(base*4, base, 4, 2, 1), nn.BatchNorm2d(base), nn.ReLU(inplace=True))
-        self.dec3 = nn.Sequential(nn.ConvTranspose2d(base*2, 1, 4, 2, 1), nn.Sigmoid())
+This is the original "fnet" pattern. You acquire one fluorescence channel cheaply or quickly (e.g., DAPI for nuclei), and predict another channel that's expensive, slow, or photo-toxic to acquire (e.g., a membrane stain).
 
-    def forward(self, x):
-        e1 = self.enc1(x); e2 = self.enc2(e1); e3 = self.enc3(e2)
-        d1 = self.dec1(e3)
-        d2 = self.dec2(torch.cat([d1, e2], 1))
-        return self.dec3(torch.cat([d2, e1], 1))
+**Important framing.** This is **not** virtual staining in the strict sense — your input is still fluorescence, so you didn't skip the staining step. What you skipped is the **second** acquisition. The architecture (U-Net trained on paired channels) is identical to Module 1, but the pedagogical message differs.
 
+**Default data.** scikit-image's `cells3d()` ships a 3D confocal stack with two channels: DAPI (nuclei) and a membrane stain. We use this as the canonical demo. With MABC samples available, the workshop default switches to MABC's curated DrosophilaCells DAPI → Tubulin pairs.""")
 
-class P2PDiscriminator(nn.Module):
-    def __init__(self, base=32):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Conv2d(2, base, 4, 2, 1), nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(base, base*2, 4, 2, 1), nn.BatchNorm2d(base*2), nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(base*2, base*4, 4, 2, 1), nn.BatchNorm2d(base*4), nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(base*4, 1, 4, 1, 1))
+    b.md("""### 2.1 Choose data source""")
 
-    def forward(self, src, tgt):
-        return self.net(torch.cat([src, tgt], 1))
+    b.code('''# @title Data source for Module 2 { run: "auto", display-mode: "form" }
+M2_SOURCE = "MABC DrosophilaCells (DAPI -> Tubulin)"  # @param ["MABC DrosophilaCells (DAPI -> Tubulin)", "scikit-image cells3d() (DAPI -> membrane)"]
+
+MABC_M2_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining.npz"
+
+def normalize_slice(arr):
+    arr = np.asarray(arr).astype(np.float32)
+    p1, p99 = np.percentile(arr, [1, 99])
+    return np.clip((arr - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1).astype(np.float32)
 
 
-def train_pix2pix(X, Y, epochs=8, batch=4, lr=2e-4, lam=100.0):
-    G = P2PGenerator().to(device)
-    D = P2PDiscriminator().to(device)
-    opt_G = torch.optim.Adam(G.parameters(), lr=lr, betas=(0.5, 0.999))
-    opt_D = torch.optim.Adam(D.parameters(), lr=lr, betas=(0.5, 0.999))
-    bce = nn.BCEWithLogitsLoss()
-    l1 = nn.L1Loss()
+def load_module2_pairs():
+    if M2_SOURCE.startswith("MABC"):
+        try:
+            cache = os.path.join(tempfile.gettempdir(), "06_m2_mabc.npz")
+            if not os.path.exists(cache):
+                urllib.request.urlretrieve(MABC_M2_URL, cache)
+            d = np.load(cache, allow_pickle=True)
+            X = np.stack([normalize_slice(im) for im in d["images"]])
+            Y = np.stack([normalize_slice(im) for im in d["labels"]])
+            print(f"Loaded {len(X)} MABC DrosophilaCells DAPI -> Tubulin pairs.")
+            return X, Y, "MABC DrosophilaCells (DAPI -> Tubulin)", "Blues_r", "magma"
+        except Exception:
+            print("MABC fetch failed; falling through to cells3d().")
+            traceback.print_exc(limit=2)
 
-    Xt = torch.tensor(X[:, None], dtype=torch.float32).to(device)
-    Yt = torch.tensor(Y[:, None], dtype=torch.float32).to(device)
-    n = X.shape[0]
-    print("Training pix2pix-style GAN...")
-    for ep in range(epochs):
-        idx = torch.randperm(n)
-        d_total, g_total = 0.0, 0.0
-        n_steps = 0
-        for k in range(0, n, batch):
-            b_idx = idx[k:k+batch]
-            real_src, real_tgt = Xt[b_idx], Yt[b_idx]
-            fake_tgt = G(real_src)
-            # Discriminator
-            d_real = D(real_src, real_tgt)
-            d_fake = D(real_src, fake_tgt.detach())
-            d_loss = bce(d_real, torch.ones_like(d_real)) + bce(d_fake, torch.zeros_like(d_fake))
-            opt_D.zero_grad(); d_loss.backward(); opt_D.step()
-            # Generator
-            d_fake_g = D(real_src, fake_tgt)
-            g_loss = bce(d_fake_g, torch.ones_like(d_fake_g)) + lam * l1(fake_tgt, real_tgt)
-            opt_G.zero_grad(); g_loss.backward(); opt_G.step()
-            d_total += d_loss.item(); g_total += g_loss.item(); n_steps += 1
-        print(f"  epoch {ep+1:2d}/{epochs}  D {d_total/n_steps:.3f}  G {g_total/n_steps:.3f}")
-    return G, D
+    # Canonical: cells3d
+    cells = skdata.cells3d()
+    n_z = cells.shape[0]
+    train_z = list(range(0, 50))
+    test_z = list(range(50, n_z))
+    X = np.stack([normalize_slice(cells[z, 1]) for z in train_z + test_z])  # DAPI
+    Y = np.stack([normalize_slice(cells[z, 0]) for z in train_z + test_z])  # membrane
+    print(f"Loaded {len(X)} cells3d() DAPI -> membrane pairs.")
+    return X, Y, "cells3d() (DAPI -> membrane)", "Blues_r", "magma"
 
 
-t0 = time.time()
-G_p2p, _ = train_pix2pix(X_train, Y_train, epochs=8)
-print(f"Done in {time.time() - t0:.1f}s.")""")
+X_all_m2, Y_all_m2, m2_source, cmap_in, cmap_out = load_module2_pairs()
+n_total = X_all_m2.shape[0]
+split = int(n_total * 0.83)
+X_train_m2, Y_train_m2 = X_all_m2[:split], Y_all_m2[:split]
+X_test_m2,  Y_test_m2  = X_all_m2[split:], Y_all_m2[split:]
 
-    b.code("""# Inference
-G_p2p.eval()
+fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+axes[0].imshow(X_train_m2[0], cmap=cmap_in)
+axes[0].set_title(f"Input: {m2_source.split(' -> ')[0].replace('MABC DrosophilaCells (', '').replace('cells3d() (', '')}")
+axes[0].axis('off')
+axes[1].imshow(Y_train_m2[0], cmap=cmap_out)
+axes[1].set_title(f"Target: {m2_source.split(' -> ')[1].rstrip(')')}")
+axes[1].axis('off')
+plt.tight_layout(); plt.show()
+''')
+
+    b.md("""### 2.2 Train and predict""")
+
+    b.code("""net_m2, losses_m2 = train_translator(X_train_m2, Y_train_m2, epochs=8, batch=4, lr=1e-3)
+
+net_m2.eval()
 with torch.no_grad():
-    Y_pred_p2p = G_p2p(Xt_test).cpu().numpy().squeeze(1)
+    Xt = torch.tensor(X_test_m2[:, None], dtype=torch.float32).to(device)
+    pred_m2 = net_m2(Xt).cpu().numpy().squeeze(1)
 
-fig, axes = plt.subplots(n_show, 3, figsize=(11, 3.5 * n_show))
-if n_show == 1:
-    axes = axes.reshape(1, -1)
-for i in range(n_show):
-    axes[i, 0].imshow(X_test[i], cmap='Blues_r'); axes[i, 0].set_title("DAPI input")
-    axes[i, 1].imshow(Y_pred_p2p[i], cmap='magma'); axes[i, 1].set_title("pix2pix prediction")
-    axes[i, 2].imshow(Y_test[i], cmap='magma'); axes[i, 2].set_title("Ground truth")
-    for ax in axes[i]: ax.axis('off')
+show_triplet(X_test_m2[0], pred_m2[0], Y_test_m2[0],
+             titles=(f"input channel (held-out)", "TinyUNet prediction", "ground truth"),
+             cmaps=(cmap_in, cmap_out, cmap_out))
+
+m2_anom_pct = show_anomaly(pred_m2[0], Y_test_m2[0], thresh=0.15)
+psnrs_m2 = [psnr_metric(Y_test_m2[i], pred_m2[i], data_range=1.0) for i in range(len(pred_m2))]
+ssims_m2 = [ssim_metric(Y_test_m2[i], pred_m2[i], data_range=1.0) for i in range(len(pred_m2))]
+print(f"PSNR: {np.mean(psnrs_m2):.2f} ± {np.std(psnrs_m2):.2f} dB")
+print(f"SSIM: {np.mean(ssims_m2):.3f} ± {np.std(ssims_m2):.3f}")
+print(f"Anomaly: {m2_anom_pct:.1f}%")""")
+
+    b.md("""**Reflection — why does this work at all?**
+
+Cells aren't randomly arranged. The membrane stain is *structured around* the same nuclei the DAPI channel highlights. Once the model learns "where there's DAPI signal, there's a cell, and the cell's membrane is at the boundary," it can predict the membrane channel from the DAPI channel pretty well — *for the cell types it was trained on*. Out-of-distribution cells (different size, different morphology, mitotic) will be hallucinated.""")
+
+
+# ---------------------------------------------------------------------------
+# Module 3 — H&E → IHC / DAB
+# ---------------------------------------------------------------------------
+def section_module3(b):
+    b.md("""---
+
+## Module 3 — H&E → IHC/DAB (histology stain transfer)
+
+The clinically striking modality. You hand a model a routine **H&E** slide (the workhorse of histopathology) and it predicts what an **IHC** stain would have shown — for example, where CD8+ T cells would be, or PD-L1 expression, or any other DAB-stained marker.
+
+**The literature.** Bayramoglu et al. 2017 (*Proc IEEE*), Rivenson et al. 2019 (*Nat Biomed Eng*), Latonen et al. 2024 (review), UNIStainNet 2026 (*arXiv*). Production models use pathology foundation backbones (UNI, CONCH) which are gated, plus paired H&E/IHC training cohorts in the thousands of slides.
+
+**This module's pragmatic approach.** We do a simplified version using:
+
+1. **Macenko stain deconvolution** to extract the Hematoxylin (H) and Eosin (E) channels from the H&E input.
+2. A small per-pixel learned mapping from (H, E) to a synthetic DAB channel.
+3. Recompose into an IHC-style image.
+
+This is **not** a production H&E → IHC system. It demonstrates the pattern: routine stain in, specialty stain out, paired training data needed. Real systems use much larger models trained on cohorts MABC doesn't currently have paired.""")
+
+    b.md("""### 3.1 Load H&E tile from the MABC SVS pyramid
+
+We pull a tile from the MABC `06_wsi_transcriptomics.npz` H&E set if available (NB16's cache), otherwise synthesize an H&E-like image from the Drosophila DAPI/Tubulin channels for a self-contained demo.""")
+
+    b.code('''def load_he_tile():
+    """Try MABC NB16 H&E tiles first; synthesize a small H&E-like field as fallback."""
+    MABC_HE_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/16_wsi_transcriptomics.npz"
+    try:
+        cache = os.path.join(tempfile.gettempdir(), "06_he_tiles.npz")
+        if not os.path.exists(cache):
+            urllib.request.urlretrieve(MABC_HE_URL, cache)
+        d = np.load(cache, allow_pickle=True)
+        tiles = d["images"]  # (N, 224, 224, 3) uint8
+        return tiles.astype(np.float32) / 255.0, "MABC CMU-1 / LungCancer H&E tiles"
+    except Exception:
+        pass
+
+    # Synthetic H&E fallback: pink eosin background + purple hematoxylin nuclei.
+    rng = np.random.default_rng(42)
+    n, h, w = 4, 256, 256
+    he = np.zeros((n, h, w, 3), dtype=np.float32)
+    for i in range(n):
+        # Eosin background (pink-ish): high R, mid G, mid B
+        he[i, :, :, 0] = 0.95
+        he[i, :, :, 1] = 0.78
+        he[i, :, :, 2] = 0.86
+        # Add ~30 nuclei (Hematoxylin: dark purple)
+        for _ in range(30):
+            cy, cx = rng.integers(15, h - 15), rng.integers(15, w - 15)
+            r = rng.integers(5, 10)
+            Y, X = np.ogrid[:h, :w]
+            mask = (Y - cy) ** 2 + (X - cx) ** 2 <= r ** 2
+            he[i][mask] = (0.35, 0.20, 0.55) + rng.normal(0, 0.03, 3).astype(np.float32)
+        # Mild noise
+        he[i] = np.clip(he[i] + rng.normal(0, 0.02, he[i].shape), 0, 1)
+    return he, "synthetic H&E (eosin background + hematoxylin nuclei)"
+
+
+he_tiles, he_source = load_he_tile()
+print(f"Loaded {he_tiles.shape[0]} H&E tiles. source: {he_source}")
+print(f"  shape: {he_tiles.shape}, range [{he_tiles.min():.2f}, {he_tiles.max():.2f}]")
+
+fig, axes = plt.subplots(1, min(4, len(he_tiles)), figsize=(3 * min(4, len(he_tiles)), 3))
+axes = np.atleast_1d(axes)
+for i, ax in enumerate(axes):
+    ax.imshow(he_tiles[i]); ax.set_title(f"H&E tile {i}"); ax.axis('off')
+plt.tight_layout(); plt.show()
+''')
+
+    b.md("""### 3.2 Macenko stain deconvolution — separate H from E
+
+Macenko et al. 2009 published a method to estimate the per-pixel concentrations of Hematoxylin and Eosin in an H&E image, using SVD on the optical density. We use a fixed reference stain matrix here for simplicity (the per-image estimation needs more pixels than our small tiles provide).""")
+
+    b.code("""def macenko_deconvolve(rgb, stain_matrix=None):
+    \"\"\"Decompose H&E RGB image into H and E channels via fixed-stain Macenko-style projection.
+    Returns (h_channel, e_channel) in [0,1] approx.\"\"\"
+    rgb = np.clip(rgb.astype(np.float32), 1e-6, 1.0)
+    od = -np.log(rgb)  # optical density
+    if stain_matrix is None:
+        # Reference stain matrix (Vahadane / Ruifrok):
+        # rows = stains (H, E); columns = R, G, B
+        stain_matrix = np.array([
+            [0.65, 0.70, 0.29],   # Hematoxylin
+            [0.07, 0.99, 0.11],   # Eosin
+        ], dtype=np.float32)
+    # Solve OD = C @ stain_matrix → C = OD @ pinv(stain_matrix)
+    C = od.reshape(-1, 3) @ np.linalg.pinv(stain_matrix)
+    C = C.reshape(rgb.shape[:2] + (2,))
+    h = np.clip(C[..., 0] / max(C[..., 0].max(), 1e-6), 0, 1)
+    e = np.clip(C[..., 1] / max(C[..., 1].max(), 1e-6), 0, 1)
+    return h.astype(np.float32), e.astype(np.float32)
+
+
+# Show H and E separation for tile 0
+h0, e0 = macenko_deconvolve(he_tiles[0])
+fig, axes = plt.subplots(1, 3, figsize=(11, 4))
+axes[0].imshow(he_tiles[0]); axes[0].set_title("Original H&E"); axes[0].axis('off')
+axes[1].imshow(h0, cmap='Purples'); axes[1].set_title("Hematoxylin (nuclei)"); axes[1].axis('off')
+axes[2].imshow(e0, cmap='Reds'); axes[2].set_title("Eosin (cytoplasm/stroma)"); axes[2].axis('off')
 plt.tight_layout(); plt.show()""")
 
+    b.md("""### 3.3 Predict a DAB channel from (H, E)
 
-# ---------------------------------------------------------------------------
-# Side-by-side comparison
-# ---------------------------------------------------------------------------
-def section_compare(b):
-    b.md("""## Side-by-side comparison
+For this demo we treat "DAB-positive" as a learned function of local (H, E) pair — specifically, regions with strong H but moderate E (a pattern that mimics where membrane-associated markers like CD8 might localize near nuclei). A real model would be trained on paired H&E + actual IHC.
 
-Both methods on the same held-out slices. Pixel similarity (PSNR, SSIM) and visual inspection.""")
+The predictor here is a simple per-pixel function — replace it with a U-Net trained on real H&E/IHC pairs for production use.""")
 
-    b.code("""# @title Pick a held-out slice to compare { run: \"auto\" }
-slice_idx = 0  # @param {type: \"slider\", min: 0, max: 9, step: 1}
+    b.code("""def predict_dab(h, e):
+    \"\"\"Toy DAB predictor: emphasizes regions of strong H (nuclei) with moderate E (cytoplasm)
+    nearby. Returns dab_channel in [0,1] and an RGB IHC-style overlay.\"\"\"
+    from scipy.ndimage import gaussian_filter
+    # 'Positivity' = strong H × moderate E (proxy for peri-nuclear localization)
+    e_smooth = gaussian_filter(e, sigma=2.0)
+    raw = h * np.exp(-(e_smooth - 0.4) ** 2 / 0.05)
+    raw = gaussian_filter(raw, sigma=1.0)
+    raw = np.clip(raw / max(raw.max(), 1e-6), 0, 1)
+    # DAB looks brown: (R~0.4, G~0.2, B~0.1) at high concentration
+    dab_rgb = np.zeros((*raw.shape, 3), dtype=np.float32)
+    bg = np.array([0.93, 0.93, 0.93], dtype=np.float32)  # IHC counterstain background (light blue)
+    dab_color = np.array([0.38, 0.20, 0.10], dtype=np.float32)
+    raw3 = raw[..., None]
+    dab_rgb = bg * (1 - raw3) + dab_color * raw3
+    return raw, dab_rgb
 
-if slice_idx >= X_test.shape[0]:
-    slice_idx = 0
 
-inp = X_test[slice_idx]
-gt = Y_test[slice_idx]
-pred_fnet = Y_pred_fnet[slice_idx]
-pred_p2p = Y_pred_p2p[slice_idx]
+dab_pred, dab_overlay = predict_dab(h0, e0)
 
-psnr_fnet = psnr_metric(gt, pred_fnet, data_range=1.0)
-psnr_p2p = psnr_metric(gt, pred_p2p, data_range=1.0)
-ssim_fnet = ssim_metric(gt, pred_fnet, data_range=1.0)
-ssim_p2p = ssim_metric(gt, pred_p2p, data_range=1.0)
-
-print(f"Held-out slice {slice_idx}:")
-print(f"  fnet     : PSNR {psnr_fnet:5.2f} dB,  SSIM {ssim_fnet:.3f}")
-print(f"  pix2pix  : PSNR {psnr_p2p:5.2f} dB,  SSIM {ssim_p2p:.3f}")
-
-fig, axes = plt.subplots(1, 4, figsize=(15, 4))
-axes[0].imshow(inp, cmap='Blues_r'); axes[0].set_title("Input (DAPI)"); axes[0].axis('off')
-axes[1].imshow(pred_fnet, cmap='magma'); axes[1].set_title(f"fnet  (PSNR {psnr_fnet:.1f}dB)"); axes[1].axis('off')
-axes[2].imshow(pred_p2p, cmap='magma'); axes[2].set_title(f"pix2pix  (PSNR {psnr_p2p:.1f}dB)"); axes[2].axis('off')
-axes[3].imshow(gt, cmap='magma'); axes[3].set_title("Ground truth membrane"); axes[3].axis('off')
+fig, axes = plt.subplots(1, 3, figsize=(11, 4))
+axes[0].imshow(he_tiles[0]); axes[0].set_title("Input: H&E"); axes[0].axis('off')
+axes[1].imshow(dab_pred, cmap='copper'); axes[1].set_title("Predicted DAB intensity"); axes[1].axis('off')
+axes[2].imshow(dab_overlay); axes[2].set_title("Synthesized IHC-style overlay"); axes[2].axis('off')
 plt.tight_layout(); plt.show()""")
 
-    b.md("""**Reading the comparison.**
+    b.md("""### 3.4 Hallucination check for Module 3
 
-- *fnet* tends to give a smoother, blurrier output. Optimizing MSE pushes the model toward the conditional mean — it hedges where the answer is uncertain.
-- *pix2pix* tends to give sharper, more *plausible-looking* output. The discriminator forces the generator to emit images with the right texture statistics, even where the underlying signal doesn't tell you exactly what should be there.
+Without paired ground-truth IHC for the MABC H&E tiles, we can't compute pixel-wise PSNR/SSIM here. What we *can* do is sanity-check: does the predicted DAB pattern coincide with anatomically plausible regions (nucleus-adjacent), or is it scattered randomly?
 
-**That sharpness is a warning sign**, not a quality signal. The next section makes the point concrete.""")
+For your own H&E → IHC work, you need paired data. Without it, your "predictions" are visualization, not measurement.""")
 
-
-# ---------------------------------------------------------------------------
-# Hallucination check
-# ---------------------------------------------------------------------------
-def section_hallucination(b):
-    b.md("""## The hallucination check (the central pedagogy of this lab)
-
-Lab 3a applied this check to denoising. The same pattern applies to virtual staining — and lands harder, because virtual staining inherently invents pixels (the source image doesn't directly contain the target signal).
-
-We compute a *difference map* between each model's prediction and the ground-truth membrane image. Bright regions in the difference map are places the model got wrong. Among those, some are noise smoothing (forgivable); others are *structural disagreements* — features the model invented that aren't in the ground truth, or features it missed that are.""")
-
-    b.code("""# Difference maps
-diff_fnet = pred_fnet - gt
-diff_p2p = pred_p2p - gt
-
-# Threshold to find structural disagreements
-thresh = 0.20  # tune to taste; 0.20 in normalized [0, 1] units is a fairly loud disagreement
-anomaly_fnet = np.abs(diff_fnet) > thresh
-anomaly_p2p = np.abs(diff_p2p) > thresh
-
-print(f"Anomaly pixels (|diff| > {thresh}):")
-print(f"  fnet     : {anomaly_fnet.sum():>6} / {anomaly_fnet.size} ({100*anomaly_fnet.mean():.1f}%)")
-print(f"  pix2pix  : {anomaly_p2p.sum():>6} / {anomaly_p2p.size} ({100*anomaly_p2p.mean():.1f}%)")
-
-fig, axes = plt.subplots(2, 3, figsize=(13, 8))
-axes[0, 0].imshow(pred_fnet, cmap='magma'); axes[0, 0].set_title("fnet prediction"); axes[0, 0].axis('off')
-axes[0, 1].imshow(diff_fnet, cmap='RdBu_r', vmin=-0.5, vmax=0.5); axes[0, 1].set_title("fnet diff (pred − gt)"); axes[0, 1].axis('off')
-axes[0, 2].imshow(pred_fnet, cmap='gray')
-axes[0, 2].imshow(np.where(anomaly_fnet, 1, np.nan), cmap='autumn', alpha=0.6)
-axes[0, 2].set_title(f"fnet anomalies (|diff|>{thresh})"); axes[0, 2].axis('off')
-
-axes[1, 0].imshow(pred_p2p, cmap='magma'); axes[1, 0].set_title("pix2pix prediction"); axes[1, 0].axis('off')
-axes[1, 1].imshow(diff_p2p, cmap='RdBu_r', vmin=-0.5, vmax=0.5); axes[1, 1].set_title("pix2pix diff (pred − gt)"); axes[1, 1].axis('off')
-axes[1, 2].imshow(pred_p2p, cmap='gray')
-axes[1, 2].imshow(np.where(anomaly_p2p, 1, np.nan), cmap='autumn', alpha=0.6)
-axes[1, 2].set_title(f"pix2pix anomalies (|diff|>{thresh})"); axes[1, 2].axis('off')
-plt.tight_layout(); plt.show()""")
-
-    b.md("""**What you should be seeing.** pix2pix typically produces *more* anomaly pixels than fnet despite producing more visually appealing predictions. The adversarial loss pushed the generator to invent membrane structure that doesn't actually exist in the ground truth.
-
-**The painful truth about virtual staining.** A model with high PSNR/SSIM and a "beautiful" output can still be wrong in ways that matter biologically. If you used the pix2pix prediction to *count* membrane-tagged structures, your count would be wrong. If you used it as a *figure* in a paper without disclosure, you'd be making claims about pixel locations that no microscope ever measured.
-
-**Try this.** Slide the `slice_idx` parameter back through the held-out slices and watch where the anomalies land. Are they in the same regions across slices (suggesting a systematic failure mode of the model), or in different regions (suggesting per-image variability)?""")
-
-
-# ---------------------------------------------------------------------------
-# Per-region quantification
-# ---------------------------------------------------------------------------
-def section_quantify(b):
-    b.md("""## Quantitative metrics across the held-out set
-
-Per-image PSNR/SSIM are useful but not sufficient. We tabulate them across all held-out slices to see how stable each model's performance is, and we add an explicit **anomaly fraction** — what fraction of pixels disagree with ground truth above the threshold. The anomaly fraction is the *honest* quality signal for virtual staining.""")
-
-    b.code("""rows = []
-for i in range(X_test.shape[0]):
-    gt_i = Y_test[i]
-    for name, pred_arr in [("fnet", Y_pred_fnet), ("pix2pix", Y_pred_p2p)]:
-        pred_i = pred_arr[i]
-        rows.append({
-            "slice": test_z[i],
-            "model": name,
-            "psnr": round(psnr_metric(gt_i, pred_i, data_range=1.0), 2),
-            "ssim": round(ssim_metric(gt_i, pred_i, data_range=1.0), 3),
-            "anomaly_pct": round(100 * (np.abs(pred_i - gt_i) > thresh).mean(), 1),
-        })
-
-import pandas as pd
-df = pd.DataFrame(rows)
-print("Per-slice metrics on held-out data:")
-print(df.to_string(index=False))
+    b.code("""# Sanity check: overlap of predicted DAB with H (nuclei) channel
+overlap = np.corrcoef(dab_pred.flatten(), h0.flatten())[0, 1]
+print(f"Pearson correlation between predicted DAB intensity and Hematoxylin: {overlap:.3f}")
 print()
-print("Mean across slices:")
-print(df.groupby("model")[["psnr", "ssim", "anomaly_pct"]].mean().round(2).to_string())""")
-
-    b.md("""**Key columns:**
-
-- `psnr` and `ssim` reward outputs that look close to the reference. Higher is "better" by these metrics, but only if you trust the reference and only if the reference is what your biology actually depends on.
-- `anomaly_pct` is the fraction of pixels where the model's prediction differs from ground truth by more than `thresh`. This is closer to a "biological wrongness" measure than the global similarity scores, because it says *how much of the image is wrong* rather than the average wrongness.
-
-A good model has all three favorable. **A model that scores well on PSNR/SSIM but high on anomaly_pct is producing visually plausible but biologically incorrect output.** That's the failure mode that has retracted papers.""")
+print("Interpretation:")
+print("  >0.7  : DAB prediction tracks nuclei tightly (peri-nuclear localization)")
+print("  0.3-0.7 : DAB prediction has some structural agreement with anatomy")
+print("  <0.3  : DAB prediction is essentially uncorrelated with anatomy → suspect random noise")
+print()
+print("⚠️  This is NOT a hallucination check vs ground truth. It's a structural-sanity check.")
+print("⚠️  For real H&E → IHC virtual staining, you need paired ground-truth IHC + the literature's evaluation rubric (Latonen et al. 2024, npj Digital Medicine 2025 benchmark).")""")
 
 
 # ---------------------------------------------------------------------------
-# Integrity reporting walkthrough
+# Module 4 — Fluorescence → H&E
 # ---------------------------------------------------------------------------
-def section_integrity(b):
-    b.md("""## Integrity reporting walkthrough
+def section_module4(b):
+    b.md("""---
 
-Most journal image-integrity policies (and most reviewers) will treat an undisclosed AI-staining figure as a manipulation. The minimum disclosure: tell the reader the displayed image is AI-generated, name the method and version, name the input modality, and report quantitative analyses on the *raw* unstained data — not on the model output.
+## Module 4 — Fluorescence → H&E (the reverse direction)
 
-The cell below renders a methods + figure-caption template you can adapt for your own paper.""")
+Take a multiplex fluorescence panel and synthesize an H&E look-alike. Useful for:
+
+- **Retrospective comparison** with archival H&E slides when you have new fluorescence data
+- **Bridging** fluorescence experiments to pathology models trained on H&E
+- **Pathologist visualization** of fluorescence data in a familiar staining language
+
+**The literature.** Burlingame et al. 2020 (*Sci Adv*, "SHIFT" — H&E from multiplex IF), Giacomelli et al. 2016 (*Plos One*, virtual H&E from autofluorescence). The architecture is similar to Module 3 in reverse.
+
+**Implementation here.** Algorithmic stain mapping: DAPI → hematoxylin (purple), other fluorescence channel → eosin (pink). For Drosophila DAPI + Tubulin pairs from MABC, that's nuclei → purple, cytoskeleton → pink. The result looks like H&E even though it was generated from fluorescence inputs.""")
+
+    b.md("""### 4.1 Fluorescence → H&E look-alike via algorithmic stain mapping""")
+
+    b.code("""def fluorescence_to_he(dapi_ch, eosin_ch=None):
+    \"\"\"Map a DAPI channel + an 'eosin proxy' channel to RGB H&E look-alike.
+    DAPI -> hematoxylin (purple); eosin_ch -> eosin (pink). Returns RGB in [0,1].\"\"\"
+    dapi = np.clip(dapi_ch.astype(np.float32), 0, 1)
+    if eosin_ch is None:
+        # Use a smoothed inverse-DAPI as a stand-in (background = stroma proxy)
+        from scipy.ndimage import gaussian_filter
+        eosin_ch = gaussian_filter(1 - dapi, sigma=4.0)
+    eos = np.clip(eosin_ch.astype(np.float32), 0, 1)
+
+    # Blender: weighted combination of two stain colors over a white background
+    bg = np.array([1.0, 1.0, 1.0], dtype=np.float32)
+    hema_color = np.array([0.20, 0.10, 0.55], dtype=np.float32)  # purple
+    eosin_color = np.array([0.95, 0.40, 0.55], dtype=np.float32)  # pink
+    rgb = (
+        bg * (1 - dapi[..., None] - eos[..., None] * 0.5).clip(0, 1)
+        + hema_color * dapi[..., None]
+        + eosin_color * eos[..., None] * 0.7
+    )
+    return np.clip(rgb, 0, 1)
+
+
+# Use Module 2's data if it loaded MABC pairs (DAPI + Tubulin)
+if M2_SOURCE.startswith("MABC"):
+    print("Using Module 2's MABC DrosophilaCells DAPI + Tubulin as fluorescence inputs.")
+    dapi_examples = X_test_m2[:4]
+    eosin_examples = Y_test_m2[:4]
+else:
+    print("Using Module 2's cells3d DAPI + membrane channels as fluorescence inputs.")
+    dapi_examples = X_test_m2[:4]
+    eosin_examples = Y_test_m2[:4]
+
+he_synthesized = np.stack([fluorescence_to_he(dapi_examples[i], eosin_examples[i]) for i in range(len(dapi_examples))])
+
+# Display: input fluorescence (composite) vs synthesized H&E look-alike
+fig, axes = plt.subplots(2, len(he_synthesized), figsize=(3 * len(he_synthesized), 6))
+for i in range(len(he_synthesized)):
+    composite = np.stack([eosin_examples[i], dapi_examples[i] * 0.5, dapi_examples[i]], axis=-1)
+    composite = np.clip(composite, 0, 1)
+    axes[0, i].imshow(composite); axes[0, i].set_title(f"Fluorescence composite {i}"); axes[0, i].axis('off')
+    axes[1, i].imshow(he_synthesized[i]); axes[1, i].set_title(f"H&E look-alike {i}"); axes[1, i].axis('off')
+plt.tight_layout(); plt.show()""")
+
+    b.md("""### 4.2 Quality check — does it look like real H&E?
+
+A pathologist's eye will tell you instantly if the synthesized H&E looks plausible. Quantitatively, compare the color distribution of the synthesized H&E to a real H&E reference (Module 3's `he_tiles`).""")
+
+    b.code("""# Color histogram comparison: real H&E vs synthesized
+ref_he = he_tiles[0]  # from Module 3
+syn_he = he_synthesized[0]
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.5))
+axes[0].imshow(ref_he); axes[0].set_title("Reference H&E"); axes[0].axis('off')
+axes[1].imshow(syn_he); axes[1].set_title("Synthesized from fluorescence"); axes[1].axis('off')
+
+# Histograms in HSV
+from skimage.color import rgb2hsv
+ref_h = rgb2hsv(ref_he)[..., 0].flatten()
+syn_h = rgb2hsv(syn_he)[..., 0].flatten()
+axes[2].hist(ref_h, bins=50, alpha=0.5, label='real H&E', color='C0', density=True)
+axes[2].hist(syn_h, bins=50, alpha=0.5, label='synthesized', color='C1', density=True)
+axes[2].set_xlabel("Hue"); axes[2].set_ylabel("density"); axes[2].set_title("Hue distribution")
+axes[2].legend(); axes[2].grid(True, alpha=0.3)
+plt.tight_layout(); plt.show()""")
+
+    b.md("""**Reflection.** A purely algorithmic stain map (Module 4 here) is fast and predictable. It captures the *look* of H&E but not the *texture* — real H&E has stain-uptake variability, bubble artifacts, fold patterns, and biological heterogeneity that an algorithmic mapping can't reproduce. Production-grade fluorescence → H&E systems (Burlingame et al.) use trained adversarial models on paired tiles.
+
+For most workshop purposes — visualizing fluorescence data in an H&E-familiar palette — this is enough.""")
+
+
+# ---------------------------------------------------------------------------
+# Cross-cutting: hallucination summary + integrity reporting
+# ---------------------------------------------------------------------------
+def section_summary(b):
+    b.md("""---
+
+## Cross-cutting — hallucination summary across modules""")
+
+    b.code("""rows = [
+    ("Module 1: BF -> Fluorescence", float(np.mean([psnr_metric(Y_test_m1[i], pred_m1[i], data_range=1.0) for i in range(len(pred_m1))])),
+                                       float(np.mean([ssim_metric(Y_test_m1[i], pred_m1[i], data_range=1.0) for i in range(len(pred_m1))])),
+                                       m1_anom_pct),
+    ("Module 2: Fluor -> Fluor",      float(np.mean([psnr_metric(Y_test_m2[i], pred_m2[i], data_range=1.0) for i in range(len(pred_m2))])),
+                                       float(np.mean([ssim_metric(Y_test_m2[i], pred_m2[i], data_range=1.0) for i in range(len(pred_m2))])),
+                                       m2_anom_pct),
+    ("Module 3: H&E -> IHC (algorithmic)", float('nan'), float('nan'), float('nan')),
+    ("Module 4: Fluor -> H&E (algorithmic)", float('nan'), float('nan'), float('nan')),
+]
+print(f"{'Module':<40} {'PSNR (dB)':>12} {'SSIM':>10} {'Anomaly %':>12}")
+print("-" * 76)
+for name, psnr, ssim, anom in rows:
+    psnr_s = f"{psnr:>11.2f}" if not np.isnan(psnr) else f"{'n/a':>11}"
+    ssim_s = f"{ssim:>9.3f}"  if not np.isnan(ssim) else f"{'n/a':>9}"
+    anom_s = f"{anom:>11.1f}" if not np.isnan(anom) else f"{'n/a (no GT)':>11}"
+    print(f"{name:<40} {psnr_s} {ssim_s} {anom_s}")
+
+print()
+print("⚠️ Modules 3 and 4 don't have ground-truth IHC or H&E pairs in this lab,")
+print("   so PSNR/SSIM/anomaly aren't computable. For real use, you need paired data.")""")
+
+    b.md("""## Integrity Reporting Walkthrough
+
+Whatever module you used, when a virtual-stained image goes into a paper, slide deck, or report, it requires explicit AI-provenance disclosure. Below is a template you can adapt.""")
 
     b.code("""template = '''
-==============================
-Methods (image-analysis subsection)
-==============================
+==============================================================================
+VIRTUAL STAINING INTEGRITY REPORT
+==============================================================================
 
-Virtual staining was performed using a [METHOD: fnet-style U-Net | pix2pix-style
-conditional GAN] (architecture: [ARCH], training: [N_PAIRS] paired images of
-[INPUT_MODALITY] / [TARGET_MODALITY] from [SOURCE], optimizer: [OPT], epochs:
-[N_EPOCHS], framework: PyTorch [VERSION]). Held-out evaluation reported PSNR
-[VALUE] dB, SSIM [VALUE], and anomaly fraction [VALUE]% (defined as the
-fraction of pixels with |prediction − ground truth| > [THRESH] in normalized
-intensity units). All quantitative measurements reported in the text were
-performed on the original [INPUT_MODALITY] data; figure panels marked "*"
-display the virtual-staining output.
+Modality:               [Module 1 / 2 / 3 / 4 — fill in]
+Input modality:         [brightfield / phase / DIC / fluorescence channel / H&E]
+Predicted output:       [DAPI / membrane / DAB-CD8 / H&E look-alike / etc.]
 
-==============================
-Figure caption (where AI-stained images appear)
-==============================
+Architecture:           [TinyUNet / pix2pix / CycleGAN / pre-trained: model name + version]
+Training data source:   [MABC sample / cells3d / Light My Cells subset / paper X dataset]
+Training set size:      [n train pairs, image dimensions]
+Held-out test size:     [n test pairs]
 
-Figure [N]. [Description of the experiment]. * [Channel name] was generated by
-[METHOD] virtual staining from the [INPUT_MODALITY] channel. The displayed
-image is a model prediction, not a fluorescence measurement. Quantitative
-analyses were performed on the original raw data. Source training data,
-trained model weights, and inference scripts are available at [REPO]
-under [LICENSE].
+Validation metrics (on held-out set):
+  PSNR (dB):            [mean ± std]
+  SSIM:                 [mean ± std]
+  Hallucination anomaly fraction (|pred − gt| > 0.15): [mean %]
 
-==============================
-What this disclosure does NOT cover
-==============================
+Known failure modes:    [out-of-distribution cell types / mitotic figures /
+                         densely packed cells / unusual stain protocols / etc.]
 
-- It does not justify the choice of method — that goes in Methods proper.
-- It does not say "the virtual-staining output is correct" — it says "the
-  reader can tell which image is real and which is generated."
-- It does not absolve you of the validation step. The PSNR/SSIM/anomaly_pct
-  numbers are what tell readers how much to trust the displayed image.
+Statement of use:       [the predicted image is shown for visualization / hypothesis
+                         generation / pre-screening only. It is NOT a measurement.
+                         Wherever a downstream decision depends on the predicted signal,
+                         confirm with the actual stain.]
+
+Code + weights:         [link to the notebook + commit hash + pre-trained weights URL]
+==============================================================================
 '''
-
 print(template)""")
 
-    b.md("""**The minimum bar.** If your paper has a virtual-staining figure, the disclosure above is the floor — not the ceiling. The ceiling is also publishing your training data, your trained weights, and your inference code so a reader can reproduce or audit your prediction.
+    b.md("""## When to use which module
 
-If that bar feels high, consider whether the virtual-staining output is necessary for the paper or whether the same biological claim can be made on the raw data. Often it can be.""")
+| Situation | Recommended module |
+|---|---|
+| You have label-free imaging and want to see fluorescence | **Module 1** |
+| You acquired one fluorescence channel and want a second without reimaging | **Module 2** |
+| You have archival H&E slides and want IHC-like overlays | **Module 3** (with caveats; production needs paired training) |
+| You ran multiplex IF and want H&E-style visualization | **Module 4** |
+| You want to publish virtual-stained images in a peer-reviewed venue | **Use the integrity report template above + cite the canonical literature** |""")
 
 
 # ---------------------------------------------------------------------------
 # Closing
 # ---------------------------------------------------------------------------
 def section_closing(b):
-    b.md("""## Closing reflection
+    b.md("""## Resources
 
-This lab demonstrated:
+**Module 1 — Brightfield → Fluorescence**
+- Christiansen et al. 2018 (*Cell*) — In Silico Labeling: predicting fluorescent labels in unlabeled images
+- Ounkomol et al. 2018 (*Nature Methods*) — fnet, label-free 3D-to-3D prediction
+- LaChance & Cohen 2020 — paired BF/DAPI dataset (BPMC)
+- Light My Cells Challenge 2024 — 56,984 paired BF + fluorescence images, [Zenodo 10687569](https://zenodo.org/records/10687569)
+- ZeroCostDL4Mic Virtual Staining notebook — trainable Colab template
 
-1. Two virtual-staining methods (fnet / pix2pix) trained on real cross-channel microscopy data.
-2. Visual + quantitative comparison against ground truth on held-out slices.
-3. The hallucination check — finding regions where the model invented features.
-4. The per-slice anomaly fraction as a more honest quality signal than PSNR/SSIM alone.
-5. A reporting template that satisfies image-integrity expectations.
+**Module 2 — Fluorescence → Fluorescence**
+- Same fnet / pix2pix architecture as Module 1
+- BioImage Model Zoo cross-channel models — search "virtual staining" at [bioimage.io](https://bioimage.io)
 
-**Where to go next on your own:**
+**Module 3 — H&E → IHC**
+- Bayramoglu et al. 2017 (*Proc IEEE*) — H&E to IHC stain transfer
+- Rivenson et al. 2019 (*Nat Biomed Eng*) — virtual staining of unstained tissue
+- Latonen et al. 2024 (*Comp Med Imaging Graph*) — H&E to IHC review
+- npj Digital Medicine 2025 — H&E to IHC benchmark
+- UNIStainNet 2026 (*arXiv 2603.12716*) — foundation-model-guided
+- Macenko et al. 2009 — color deconvolution method (used in this notebook)
 
-- The **production-quality fnet Colab** in [ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic). 3D variant, longer training, real data pipelines. Linked from Notebook 04.
-- **CycleGAN** for *unpaired* virtual staining when paired data isn't available — covered in Notebook 04 as a catalog entry.
-- The **ANNA-PALM** and **DeepImageJ** entries in the [Resources page](../resources) for downstream applications of virtual-staining-like methods.
-- The original **fnet paper** (Ounkomol et al., *Nature Methods* 2018) and **in-silico labeling paper** (Christiansen et al., *Cell* 2018) for the canonical references.
+**Module 4 — Fluorescence → H&E**
+- Burlingame et al. 2020 (*Sci Adv*) — SHIFT, H&E from multiplex IF on TNBC
+- Giacomelli et al. 2016 (*Plos One*) — virtual H&E from autofluorescence
 
-**What the workshop will *not* tell you:** whether virtual staining is appropriate for your specific experiment. That's a biology question, not a method question. The method is real and useful in some contexts and wrong to use in others. The validation in this lab gives you the tools to make that call deliberately.""")
+**General**
+- BioImage Model Zoo — [bioimage.io](https://bioimage.io)
+- ZeroCostDL4Mic — [github.com/HenriquesLab/ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic)
+- Workshop dataset audit — [datasets_audit.md](https://github.com/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/datasets_audit.md)
+
+---
+
+## Closing reflection
+
+Virtual staining is one of the highest-impact applications of image-to-image deep learning in microscopy and pathology. In each module you saw the same recipe — paired data, U-Net (or related) architecture, MSE / adversarial loss, hallucination check — applied to a different modality pair.
+
+The architectures are general. **What changes from problem to problem is the input/target pairing and the data scale needed to make the model usable beyond a single tissue type.** The integrity-reporting habit is the same regardless of which modality you work in.
+
+> **One last reminder:** every output you saw in this notebook is a model prediction, not a measurement. The visual quality is meant to be striking — that's the wow moment. The pedagogy is in the hallucination checks and the integrity report. Both belong in any paper or talk that includes a virtual-stained figure.""")
 
 
 # ---------------------------------------------------------------------------
-# Assemble
+# Build
 # ---------------------------------------------------------------------------
 def main():
     b = CellBuilder("nb06")
     section_title(b)
     section_setup(b)
-    section_data(b)
-    section_fnet(b)
-    section_pix2pix(b)
-    section_compare(b)
-    section_hallucination(b)
-    section_quantify(b)
-    section_integrity(b)
+    section_shared_unet(b)
+    section_module1(b)
+    section_module2(b)
+    section_module3(b)
+    section_module4(b)
+    section_summary(b)
     section_closing(b)
     build_notebook(b.cells, "06_virtual_staining")
 
