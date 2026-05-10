@@ -69,11 +69,11 @@ SAMPLES = {
 
     # ---- NB06 — Virtual staining ----
     "06_virtual_staining": {
-        "description": "Drosophila cell pairs (3 samples × 3 channels) — DAPI predicts Tubulin or Actin.",
+        "description": "Drosophila cell pairs (3 samples × 4 sub-tiles = 12 paired) — DAPI predicts Tubulin.",
         "raw_input": "Exercise Images/DrosophilaCells/",
-        "n_samples": 3,                                          # 3 paired sample sets
+        "n_samples": 12,                                         # 3 samples × 4 sub-tiles per sample
         "transform": "drosophila_paired_channels",
-        "target_hw": (512, 512),                                 # native size
+        "target_hw": (256, 256),                                 # half native, fits TinyUNet
         "labels": "paired_target_channel",
         "license": COMMON_LICENSE,
         "citation": COMMON_CITATION,

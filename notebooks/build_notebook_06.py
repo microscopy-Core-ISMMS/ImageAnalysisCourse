@@ -147,7 +147,9 @@ test_z = list(range(50, n_z))   # 10 held-out slices for evaluation
 def normalize_slice(arr):
     arr = arr.astype(np.float32)
     p1, p99 = np.percentile(arr, [1, 99])
-    return np.clip((arr - p1) / max(p99 - p1, 1e-8), 0, 1)
+    # np.percentile returns float64 — cast back to float32 so downstream torch tensors stay float32
+    out = np.clip((arr - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1)
+    return out.astype(np.float32)
 
 # Channel 1 = DAPI nuclei = INPUT;  Channel 0 = membrane = TARGET
 X_train = np.stack([normalize_slice(cells[z, 1]) for z in train_z])
@@ -208,8 +210,8 @@ def train_fnet(X, Y, epochs=8, batch=4, lr=1e-3):
     net = TinyUNet().to(device)
     opt = torch.optim.Adam(net.parameters(), lr=lr)
     loss_fn = nn.MSELoss()
-    Xt = torch.tensor(X[:, None]).to(device)  # (N, 1, H, W)
-    Yt = torch.tensor(Y[:, None]).to(device)
+    Xt = torch.tensor(X[:, None], dtype=torch.float32).to(device)  # (N, 1, H, W)
+    Yt = torch.tensor(Y[:, None], dtype=torch.float32).to(device)
     losses = []
     n = X.shape[0]
     print("Training fnet-style U-Net...")
@@ -235,7 +237,7 @@ print(f"Done in {time.time() - t0:.1f}s.")""")
     b.code("""# Inference on held-out slices
 net_fnet.eval()
 with torch.no_grad():
-    Xt_test = torch.tensor(X_test[:, None]).to(device)
+    Xt_test = torch.tensor(X_test[:, None], dtype=torch.float32).to(device)
     Y_pred_fnet = net_fnet(Xt_test).cpu().numpy().squeeze(1)
 
 # Show a few held-out predictions
@@ -297,8 +299,8 @@ def train_pix2pix(X, Y, epochs=8, batch=4, lr=2e-4, lam=100.0):
     bce = nn.BCEWithLogitsLoss()
     l1 = nn.L1Loss()
 
-    Xt = torch.tensor(X[:, None]).to(device)
-    Yt = torch.tensor(Y[:, None]).to(device)
+    Xt = torch.tensor(X[:, None], dtype=torch.float32).to(device)
+    Yt = torch.tensor(Y[:, None], dtype=torch.float32).to(device)
     n = X.shape[0]
     print("Training pix2pix-style GAN...")
     for ep in range(epochs):

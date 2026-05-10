@@ -188,23 +188,39 @@ def _transform_drosophila_paired_channels(raws_dir: Path, n_samples: int,
     """Load the 9 DrosophilaCells files (3 samples × DAPI/Tub/Actin) and produce
     paired (input, target) tensors for virtual-staining demos.
 
-    Convention used: input = DAPI (nuclei), target = Tubulin (cytoskeleton).
-    Output shape: images (n_samples, H, W) DAPI; labels (n_samples, H, W) Tubulin.
+    Each native 512×512 image is sub-tiled into 4 non-overlapping quadrants of
+    256×256 (or whatever target_hw is). With 3 samples × 4 sub-tiles = 12
+    paired examples — enough to train a tiny U-Net + hold a few out for test.
+
+    Convention: input = DAPI (nuclei), target = Tubulin (cytoskeleton).
+    Tiles are paired identically: sample i sub-tile q's DAPI maps to sample i
+    sub-tile q's Tubulin (same field of view, different channel).
     """
     out_in, out_tgt = [], []
+    th, tw = target_hw
     for sample_idx in range(1, 4):  # samples 1, 2, 3
-        if len(out_in) >= n_samples:
-            break
         dapi_p = raws_dir / f"Dros{sample_idx}Dapi.TIF"
         tub_p = raws_dir / f"Dros{sample_idx}Tub.TIF"
         if not (dapi_p.exists() and tub_p.exists()):
             continue
         dapi = _to_grayscale(_read_image_file(dapi_p))
         tub = _to_grayscale(_read_image_file(tub_p))
-        out_in.append(_normalize_uint8(_resize_2d(dapi, target_hw)))
-        out_tgt.append(_normalize_uint8(_resize_2d(tub, target_hw)))
+        # Sub-tile into 2x2 = 4 non-overlapping quadrants. Each quadrant is half the
+        # native height/width, then resized to target_hw.
+        h, w = dapi.shape
+        hh, hw = h // 2, w // 2
+        for r in (0, hh):
+            for c in (0, hw):
+                d_tile = dapi[r:r + hh, c:c + hw]
+                t_tile = tub[r:r + hh, c:c + hw]
+                out_in.append(_normalize_uint8(_resize_2d(d_tile, target_hw)))
+                out_tgt.append(_normalize_uint8(_resize_2d(t_tile, target_hw)))
     if not out_in:
         raise ValueError("No DrosophilaCells DAPI/Tub pairs found.")
+    # Trim to n_samples if specified; default keeps all 12.
+    if n_samples and len(out_in) > n_samples:
+        out_in = out_in[:n_samples]
+        out_tgt = out_tgt[:n_samples]
     return np.stack(out_in), np.stack(out_tgt)
 
 

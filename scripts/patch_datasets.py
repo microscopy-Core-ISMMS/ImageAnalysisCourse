@@ -151,24 +151,37 @@ T1_SPECS = {
         "what_it_is": "Real multi-channel fluorescence used as a *teaching analogue* for cross-channel prediction (input channel → target channel). True virtual-staining datasets have brightfield/phase as input — see Allen Cell Imaging Collections in the audit for that.",
         "swap_vars": ["X_train", "Y_train", "X_test", "Y_test"],
         "swap_code": (
+            "# MABC NB06 ships paired DAPI (real_imgs) + Tubulin (real_labels) sub-tiles\n"
+            "# from DrosophilaCells. 12 paired tiles total (3 fly samples sub-tiled 4 ways).\n"
             "if real_imgs and len(real_imgs) >= 4:\n"
             "    import numpy as _np\n"
             "    def _to2d(im):\n"
             "        a = _np.asarray(im).astype(_np.float32)\n"
             "        if a.ndim == 3:\n"
             "            a = a.mean(axis=-1) if a.shape[-1] in (3,4) else a[a.shape[0]//2]\n"
-            "        a = (a - a.min()) / (a.max() - a.min() + 1e-9)\n"
-            "        return a\n"
-            "    _planes = [_to2d(im) for im in real_imgs]\n"
-            "    _half = len(_planes) // 2\n"
-            "    X_train = _np.stack(_planes[:_half])\n"
-            "    Y_train = _np.stack(_planes[_half:_half*2])\n"
-            "    X_test = X_train[-1:]\n"
-            "    Y_test = Y_train[-1:]\n"
-            "    print(f'X_train/Y_train now from BBBC020 real images, shapes: X={X_train.shape}, Y={Y_train.shape}.')\n"
-            "    print(\"NOTE: pedagogical analogue only — these are not true paired bright-field/fluorescence pairs. The cells3d() pairing above remains the canonical demo.\")\n"
+            "        rng = a.max() - a.min()\n"
+            "        if rng < 1e-9:\n"
+            "            return _np.zeros_like(a, dtype=_np.float32)\n"
+            "        return ((a - a.min()) / rng).astype(_np.float32)\n"
+            "    _inputs = [_to2d(im) for im in real_imgs]\n"
+            "    # Use Tubulin labels as targets when MABC provided them; otherwise fall back\n"
+            "    # to halving the inputs (canonical-tier path).\n"
+            "    if globals().get('real_labels') is not None and len(real_labels) >= len(_inputs):\n"
+            "        _targets = [_to2d(t) for t in real_labels[:len(_inputs)]]\n"
+            "    else:\n"
+            "        _half = len(_inputs) // 2\n"
+            "        _targets = _inputs[_half:_half*2] + _inputs[:_half]\n"
+            "    _n = min(len(_inputs), len(_targets))\n"
+            "    _split = max(1, int(_n * 0.75))\n"
+            "    X_train = _np.stack(_inputs[:_split])\n"
+            "    Y_train = _np.stack(_targets[:_split])\n"
+            "    X_test = _np.stack(_inputs[_split:]) if _n - _split > 0 else X_train[-1:]\n"
+            "    Y_test = _np.stack(_targets[_split:]) if _n - _split > 0 else Y_train[-1:]\n"
+            "    print(f'X_train (DAPI) {X_train.shape} {X_train.dtype} / Y_train (Tubulin) {Y_train.shape} from MABC DrosophilaCells.')\n"
+            "    print(f'X_test {X_test.shape} / Y_test {Y_test.shape}.')\n"
+            "    print('Real cross-channel pairs (DAPI->Tubulin). TinyUNet/pix2pix will train from scratch on this small set.')\n"
             "else:\n"
-            "    print('real_imgs is None or insufficient; staying with cells3d() pairs above.')\n"
+            "    print('real_imgs is None or has <4 images; staying with cells3d() pairs above.')\n"
         ),
     },
     "07_widefield_superres.ipynb": {
@@ -744,11 +757,13 @@ CANONICAL_NAME = {spec['dataset_name']!r}
 real_imgs = None
 real_filenames = None
 real_metadata = None
+real_labels = None
 loaded_tier = None
 
 
 def _try_mabc():
-    \"\"\"Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata).\"\"\"
+    \"\"\"Fetch the MABC sample npz from gh-pages. Returns (imgs, filenames, metadata, labels).
+    `labels` is None unless the npz includes a `labels.npy` (paired masks, target channels, etc.).\"\"\"
     cache = os.path.join(tempfile.gettempdir(), os.path.basename(MABC_URL))
     if not os.path.exists(cache):
         print(f"Fetching MABC sample: {{MABC_URL}}")
@@ -760,7 +775,8 @@ def _try_mabc():
         meta = data['metadata'].item() if 'metadata' in data.files else {{}}
     except Exception:
         meta = {{}}
-    return imgs, fnames, meta
+    labels = list(data['labels']) if 'labels' in data.files else None
+    return imgs, fnames, meta, labels
 
 
 def _try_canonical():
@@ -807,7 +823,7 @@ elif DATA_SOURCE == "Synthetic":
 else:
     if DATA_SOURCE == "MABC hosted":
         try:
-            real_imgs, real_filenames, real_metadata = _try_mabc()
+            real_imgs, real_filenames, real_metadata, real_labels = _try_mabc()
             loaded_tier = "MABC"
         except (urllib.error.HTTPError, urllib.error.URLError, FileNotFoundError):
             print("MABC sample not yet available; falling through to canonical.")
@@ -818,6 +834,7 @@ else:
     if real_imgs is None:
         try:
             real_imgs, real_filenames, real_metadata = _try_canonical()
+            real_labels = None
             loaded_tier = "Canonical"
         except Exception:
             print("Canonical fetch failed; the synthetic-generation cell below will run as the final fallback.")
