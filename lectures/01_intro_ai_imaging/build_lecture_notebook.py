@@ -87,6 +87,18 @@ CELLS = []
 
 
 # =============================================================================
+# Pre-title Colab badge (slide_type="skip" → appears in the Jupyter Book
+# notebook view and in Colab, but is excluded from the reveal.js slideshow
+# so it does NOT show up on the title slide of lecture_slides.html).
+# =============================================================================
+CELLS.append(md("skip", """
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/lectures/01_intro_ai_imaging/lecture.ipynb)
+
+*Open the source notebook in Google Colab to run the four interactive demo cells (numpy + matplotlib, no GPU needed). The slideshow does not paginate in Colab — for the slide experience, view `lecture_slides.html` instead.*
+"""))
+
+
+# =============================================================================
 # Title slide
 # =============================================================================
 CELLS.append(md("slide", f"""

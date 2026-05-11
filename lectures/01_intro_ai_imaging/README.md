@@ -1,5 +1,9 @@
 # Lecture 1 — Interactive Notebook and HTML Slides
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/lectures/01_intro_ai_imaging/lecture.ipynb)
+
+Click the badge above to open `lecture.ipynb` in Google Colab and run the four interactive demo cells (numpy + matplotlib, no GPU needed). The slideshow does **not** paginate in Colab — for the presentation experience, view `lecture_slides.html` in a browser instead.
+
 This folder contains the interactive Jupyter notebook and exported HTML slide deck for **Lecture 1: AI for Scientific Image Analysis — What Works, What Doesn't, and Why**. The notebook is the canonical source; the HTML is exported from it.
 
 ## Contents
@@ -30,9 +34,7 @@ Two options:
 
 ### Run interactive code cells
 
-Open `lecture.ipynb` in Jupyter Lab or Colab and run cells normally. The Phase 1 skeleton has placeholder code cells; Phase 2 will populate them with working demonstrations.
-
-For Colab, click the "Open in Colab" badge that will be added to the README in Phase 3, or upload `lecture.ipynb` directly to `colab.research.google.com`.
+Open `lecture.ipynb` in Jupyter Lab or Colab — click the **Open in Colab** badge at the top of this README — and run cells normally. The notebook contains four runnable demonstration cells (setup check, train/val/test split, Cellpose-style result viewer, metrics-vs-biology scatter); the rest are markdown slides that render as plain markdown when viewed in Colab.
 
 ### Edit and rebuild
 
