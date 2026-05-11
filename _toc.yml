@@ -60,4 +60,3 @@ parts:
   - caption: Setup and data
     chapters:
       - file: env/README
-      - file: data/README
