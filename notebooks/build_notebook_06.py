@@ -297,9 +297,10 @@ The loader honors your **M1_SOURCE** choice from the data-decision cell above. I
 def load_bf_fluor_pairs():
     """Return (bf, fluor, source_str). Shapes: (N, H, W) float32 in [0,1].
 
-    Tier order honors M1_SOURCE; fall-through on failure.
+    Tier order honors M1_SOURCE; fall-through on failure. Self-heals if M1_SOURCE
+    is undefined (e.g. user skipped the @param cell) by defaulting to MABC.
     """
-    tier = M1_SOURCE
+    tier = globals().get("M1_SOURCE", "MABC hosted (recommended)")
 
     if tier.startswith("MABC"):
         MABC_BF_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining_bf.npz"
@@ -458,9 +459,10 @@ The loader honors **M2_SOURCE** from the data-decision cell. MABC ships real Dro
     b.code('''def load_module2_pairs():
     """Return (X, Y, src_str, cmap_in, cmap_out). Shapes (N, H, W) float32 in [0,1].
 
-    Tier order honors M2_SOURCE; fall-through on failure.
+    Tier order honors M2_SOURCE; fall-through on failure. Self-heals if M2_SOURCE
+    is undefined.
     """
-    tier = M2_SOURCE
+    tier = globals().get("M2_SOURCE", "MABC hosted (recommended)")
 
     if tier.startswith("MABC"):
         MABC_M2_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining.npz"
@@ -578,9 +580,10 @@ The loader honors **M3_SOURCE** from the data-decision cell. MABC ships real CMU
     b.code('''def load_he_tiles():
     """Return (he_tiles, source_str). Shape (N, H, W, 3) float32 in [0,1].
 
-    Tier order honors M3_SOURCE; fall-through on failure.
+    Tier order honors M3_SOURCE; fall-through on failure. Self-heals if M3_SOURCE
+    is undefined.
     """
-    tier = M3_SOURCE
+    tier = globals().get("M3_SOURCE", "MABC hosted (recommended)")
 
     if tier.startswith("MABC"):
         MABC_HE_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/16_wsi_transcriptomics.npz"
