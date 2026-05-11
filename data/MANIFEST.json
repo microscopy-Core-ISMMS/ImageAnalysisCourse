@@ -1,10 +1,54 @@
 {
   "bake_version": "1.0.0",
-  "generated_at": "2026-05-10T10:52:35+00:00",
+  "generated_at": "2026-05-11T11:09:06+00:00",
   "files": {
+    "01_cellpose_segmentation.npz": {
+      "size_bytes": 263374,
+      "sha256": "19c71e391ebf4bcafbf94d36e36ed0c7b77bad682415ede0201f657982ad61f8"
+    },
+    "02_validation_quantification.npz": {
+      "size_bytes": 268125,
+      "sha256": "4c303750a7d2981c1ab7291dff6284b2710259f583b0e53d505b359cb3ace54c"
+    },
+    "03a_denoising_n2v.npz": {
+      "size_bytes": 3843588,
+      "sha256": "d3a5a724cf6901609b6b4ccc365204373b68ba1795164c69b9060a182dadd27a"
+    },
+    "03b_foundation_model_segmentation.npz": {
+      "size_bytes": 177628,
+      "sha256": "5fa68922b939b135329e52c5b66b399cd5ea8156c9c5d8820d39f929ddd12972"
+    },
     "06_virtual_staining.npz": {
-      "size_bytes": 1117597,
-      "sha256": "c622965419c5d86ab10f8b6136b5611935382374bc962c95674f024b43266331"
+      "size_bytes": 1117598,
+      "sha256": "a26eeec7d808ba3dff9db10f557288f8f23d2661510870287ae3db247c13203d"
+    },
+    "07_widefield_superres.npz": {
+      "size_bytes": 381150,
+      "sha256": "a9f313cc586f70fce82ef2657335ab7a0ddca2be2d76bfbd13223d7bdd245d8a"
+    },
+    "09_cellpose_finetune.npz": {
+      "size_bytes": 268135,
+      "sha256": "4acac571a092dc14152d14f7ae7cdf3c5ab0354a837b883702078522445e4b6f"
+    },
+    "10_3d_segmentation.npz": {
+      "size_bytes": 1572230,
+      "sha256": "14c719dbed54a60331cf4654d7dab1cde778ea7a0bb842fd171d605f32c9d439"
+    },
+    "12_deconvolution.npz": {
+      "size_bytes": 14377,
+      "sha256": "a264f15cf7bbea796d6bfd269db92fdf7292a11552742e5503f21c902c5fd328"
+    },
+    "13_validation_case_study.npz": {
+      "size_bytes": 173003,
+      "sha256": "596d842572be099bdd5cdb79659b39192e945a2da16a81329dd7a8dc9c477f13"
+    },
+    "14_spot_detection.npz": {
+      "size_bytes": 54715,
+      "sha256": "8f26ddd5b63202e1ad3c8d603a30f0b6f0ddc8c64b89332b840e7c5ddd54249a"
+    },
+    "16_wsi_transcriptomics.npz": {
+      "size_bytes": 703590,
+      "sha256": "f41210a8d9ee92475124d1e465e606e3cff80a50c86806ce4c5de04dc489397b"
     }
   }
 }
