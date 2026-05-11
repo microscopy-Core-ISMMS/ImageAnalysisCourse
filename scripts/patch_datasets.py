@@ -94,31 +94,11 @@ T1_SPECS = {
             "    print('real_imgs is None or insufficient; staying with synthetic.')\n"
         ),
     },
-    "03a_denoising_n2v.ipynb": {
-        "anchor_text": "**The Noise2Void principle.**",
-        "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages (real fluorescence, used as clean reference)",
-        "license_note": "CC0",
-        "citation": "Ljosa et al., Nature Methods, 2012 — BBBC020",
-        "source_url": "https://bbbc.broadinstitute.org/BBBC020",
-        "zip_url": "https://data.broadinstitute.org/bbbc/BBBC020/BBBC020_v1_images.zip",
-        "what_it_is": "Real fluorescence as the 'clean' reference. We add controlled synthetic noise on top so we can still measure PSNR/SSIM against a known truth.",
-        "swap_vars": ["clean", "noisy"],
-        "swap_code": (
-            "if real_imgs:\n"
-            "    import numpy as _np\n"
-            "    _src = _np.asarray(real_imgs[0]).astype(float)\n"
-            "    if _src.ndim == 3:\n"
-            "        _src = _src.mean(axis=-1) if _src.shape[-1] in (3, 4) else _src[_src.shape[0]//2]\n"
-            "    _src = (_src - _src.min()) / (_src.max() - _src.min() + 1e-9)\n"
-            "    clean = _src\n"
-            "    _rng_real = _np.random.default_rng(0)\n"
-            "    noisy = clean + 0.10 * _rng_real.standard_normal(clean.shape)\n"
-            "    print('clean / noisy now derived from BBBC020 real fluorescence + simulated Gaussian noise (sigma=0.10).')\n"
-            "    print(\"NOTE: synthetic Gaussian noise is a *teaching analogue*. Real microscopy noise has Poisson + read components; for true denoising benchmarks see GigaDB 100888.\")\n"
-            "else:\n"
-            "    print('real_imgs is None; staying with synthetic.')\n"
-        ),
-    },
+    # NB03a (denoising) intentionally omitted from T1_SPECS as of 2026-05-11.
+    # The rewrite (build_notebook_03a.py) handles its own data selection via a
+    # single DATA_SOURCE @param with MABC/Canonical/Synthetic fallback chain, and
+    # owns its own loader function — the single-anchor decision block this patcher
+    # would inject no longer fits the architecture.
     "03b_foundation_model_segmentation.ipynb": {
         "anchor_text": "## Load a non-canonical microscopy image",
         "dataset_name": "BBBC020 — Murine bone-marrow derived macrophages",

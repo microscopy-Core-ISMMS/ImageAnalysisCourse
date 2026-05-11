@@ -43,16 +43,24 @@ SAMPLES = {
         "citation": COMMON_CITATION,
     },
 
-    # ---- NB03a — Denoising (Noise2Void) ----
+    # ---- NB03a — Denoising (CARE / Noise2Void) ----
+    # Real PAM mice E0771 Z-stack: pick Z-slices as 'noisy' inputs; axial-averaged
+    # neighbors (±axial_window) as 'clean reference' proxy for supervised training.
+    # NB03a's loader expects these npz keys: images (noisy training), labels (clean ref
+    # training), test_noisy, test_clean_ref, full_stack (for Z browsing).
     "03a_denoising_n2v": {
-        "description": "16-bit DAPI fluorescence as a real low-noise reference; noisy versions added downstream.",
-        "raw_input": "Exercise Images/BitDepth/Dapi_WhatBitDepth.tif",
-        "n_samples": 8,
-        "transform": "tile_crop_to_grayscale",
-        "target_hw": DEFAULT_HW,
-        "labels": None,
+        "description": "PAM mice E0771 Z-stack — noisy Z-slices + axial-averaged clean-ref proxy. Full Z-stack also exported for browsing.",
+        "raw_input": "Possible datasets for vendors/PAM mice E0771 prolif ex vivo base good 4_Sent/Tiff/",
+        "n_samples": 5,                                          # noisy training slices
+        "transform": "z_stack_axial_pair",
+        "target_hw": (256, 256),                                 # center-cropped from 512
+        "channel": 0,                                            # C0 has brighter signal
+        "train_z_slices": [20, 23, 26, 29, 32],                  # mid-stack, spaced 3 apart
+        "test_z_slice": 40,                                      # held-out for §10 production demo
+        "axial_window": 5,                                       # ±5 → 11-slice average for clean_ref
+        "labels": "axial_averaged_clean_ref",
         "license": COMMON_LICENSE,
-        "citation": COMMON_CITATION,
+        "citation": PAM_CITATION,
     },
 
     # ---- NB03b — Foundation-model segmentation (SAM/μSAM) ----

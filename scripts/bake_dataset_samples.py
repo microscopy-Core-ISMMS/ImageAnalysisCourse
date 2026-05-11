@@ -247,6 +247,70 @@ def _transform_z_stack_to_3d_volume(raws_dir: Path, target_hw,
     return vol[np.newaxis, ...]
 
 
+def _transform_z_stack_axial_pair(raws_dir: Path, target_hw, spec_extras: dict):
+    """For NB03a denoising. Walks *_C{channel}_Z*.tif files in a PAM-style Z-stack
+    folder. Picks specified `train_z_slices` as noisy training inputs; computes
+    axial-averaged neighbors (±axial_window) as the 'clean reference' proxy.
+    Also extracts a held-out test slice + full stack for browsing.
+
+    Returns (images, labels, extras_dict) where:
+      images = (N, H, W) uint8   — noisy training slices, center-cropped to target_hw
+      labels = (N, H, W) uint8   — clean_ref training slices (axial average)
+      extras_dict keys:
+        test_noisy      = (H, W) uint8
+        test_clean_ref  = (H, W) uint8
+        full_stack      = (Z, H, W) uint8   (full channel stack for Z browsing)
+    """
+    channel = int(spec_extras.get("channel", 0))
+    train_z = list(spec_extras.get("train_z_slices", [20, 23, 26, 29, 32]))
+    test_z = int(spec_extras.get("test_z_slice", 40))
+    axial_window = int(spec_extras.get("axial_window", 5))
+
+    # Find the channel-specific Z-files. Sorted by name = sorted by Z-index.
+    c_paths = sorted(raws_dir.glob(f"*_C{channel}_Z*.tif"))
+    if not c_paths:
+        raise ValueError(f"No *_C{channel}_Z*.tif files found in {raws_dir}")
+    n_z = len(c_paths)
+    print(f"    z_stack_axial_pair: channel={channel}, {n_z} z-slices, train_z={train_z}, test_z={test_z}, axial_window=±{axial_window}")
+
+    # Read full channel volume into memory (73 × 512 × 512 = ~38 MB at uint16).
+    vol_raw = np.stack([_to_grayscale(_read_image_file(p)) for p in c_paths]).astype(np.float32)
+
+    def _center_crop_resize(arr_2d):
+        """Center-crop to a square if non-square, then resize to target_hw."""
+        h, w = arr_2d.shape[:2]
+        s = min(h, w)
+        cy, cx = h // 2, w // 2
+        cropped = arr_2d[cy - s // 2: cy - s // 2 + s, cx - s // 2: cx - s // 2 + s]
+        return _resize_2d(cropped, target_hw)
+
+    def _slice_to_uint8(arr_2d):
+        return _normalize_uint8(_center_crop_resize(arr_2d))
+
+    def _axial_average(z_center):
+        z_lo = max(0, z_center - axial_window)
+        z_hi = min(n_z, z_center + axial_window + 1)
+        return vol_raw[z_lo:z_hi].mean(axis=0)
+
+    # Training pairs
+    images = np.stack([_slice_to_uint8(vol_raw[z]) for z in train_z])
+    labels = np.stack([_slice_to_uint8(_axial_average(z)) for z in train_z])
+
+    # Held-out test
+    test_noisy = _slice_to_uint8(vol_raw[test_z])
+    test_clean_ref = _slice_to_uint8(_axial_average(test_z))
+
+    # Full stack for Z browsing — center-crop + resize each slice, uint8
+    full_stack = np.stack([_slice_to_uint8(vol_raw[z]) for z in range(n_z)])
+
+    extras = {
+        "test_noisy": test_noisy,
+        "test_clean_ref": test_clean_ref,
+        "full_stack": full_stack,
+    }
+    return images, labels, extras
+
+
 def _transform_wsi_tile_extract(raws: list[np.ndarray], n_samples: int,
                                 target_hw) -> np.ndarray:
     """For each Aperio SVS pyramid given as a raw, extract n_per_input tiles from
@@ -325,6 +389,13 @@ def _apply_transform(transform_name: str, raws_obj, target_hw, n_samples, spec_e
         if raws_dir is None:
             raise ValueError("Need raws_dir for z_stack transform.")
         return _transform_z_stack_to_3d_volume(raws_dir, target_hw, z_subsample), None
+
+    if transform_name == "z_stack_axial_pair":
+        raws_dir = spec_extras.get("raws_dir")
+        if raws_dir is None:
+            raise ValueError("Need raws_dir for z_stack_axial_pair transform.")
+        # Returns (images, labels, extras_dict) — 3-tuple form.
+        return _transform_z_stack_axial_pair(raws_dir, target_hw, spec_extras)
 
     if transform_name == "wsi_tile_extract":
         return _transform_wsi_tile_extract(raws_obj, n_samples, target_hw), None
@@ -454,10 +525,20 @@ def _bake_one(nb_id: str, spec: dict, raws_dir: Path, placeholder: bool) -> Opti
         # Pass z_subsample if spec has it
         if "z_subsample" in spec:
             extras["z_subsample"] = spec["z_subsample"]
+        # Pass spec-level extras the transform may need (used by z_stack_axial_pair).
+        for k in ("channel", "train_z_slices", "test_z_slice", "axial_window"):
+            if k in spec:
+                extras[k] = spec[k]
         try:
-            images, labels = _apply_transform(
+            result = _apply_transform(
                 spec["transform"], raws, spec["target_hw"], spec["n_samples"], extras
             )
+            # Transforms return either (images, labels) or (images, labels, payload_extras).
+            payload_extras = {}
+            if len(result) == 3:
+                images, labels, payload_extras = result
+            else:
+                images, labels = result
         except Exception as e:
             import traceback
             print(f"  [ERR] {nb_id}: transform failed: {e}")
@@ -485,6 +566,10 @@ def _bake_one(nb_id: str, spec: dict, raws_dir: Path, placeholder: bool) -> Opti
     }
     if labels is not None:
         payload["labels"] = labels
+    # Merge per-transform payload extras (e.g. test_noisy / test_clean_ref / full_stack
+    # from z_stack_axial_pair). Placeholder branch has no extras → dict stays empty.
+    for k, v in (locals().get("payload_extras") or {}).items():
+        payload[k] = v
 
     np.savez_compressed(out, **payload)
     size = out.stat().st_size
