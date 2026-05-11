@@ -43,6 +43,21 @@ class CellBuilder:
         return self
 
 
+def _colab_badge(builder, repo_path):
+    """Prepend an Open-in-Colab shield cell to a CellBuilder. repo_path is the
+    notebook's path relative to the repository root, e.g.
+    'ramp-up/notebooks/python_basics.ipynb'."""
+    url = (
+        "https://colab.research.google.com/github/"
+        "microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/"
+        f"{repo_path}"
+    )
+    builder.md(
+        f"[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)]({url})\n\n"
+        "*Click the badge to open this notebook in Google Colab and run the cells interactively.*"
+    )
+
+
 def build_notebook(cells, name):
     notebook = {
         "cells": cells,
@@ -71,6 +86,7 @@ def build_notebook(cells, name):
 # ---------------------------------------------------------------------------
 def build_python_basics():
     b = CellBuilder("py")
+    _colab_badge(b, "ramp-up/notebooks/python_basics.ipynb")
     b.md("""# Ramp-up — Python and numpy basics for image work
 
 **Goal.** Refresh the minimum Python the workshop assumes:
@@ -226,6 +242,7 @@ Tomorrow's workshop adds image-specific concepts on top of these. The setup self
 # ---------------------------------------------------------------------------
 def build_image_basics():
     b = CellBuilder("img")
+    _colab_badge(b, "ramp-up/notebooks/image_basics.ipynb")
     b.md("""# Ramp-up — Image data fundamentals
 
 **Goal.** Build the minimum image-data fluency the workshop assumes:
