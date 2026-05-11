@@ -233,6 +233,36 @@ def show_anomaly(pred, gt, thresh=0.15):
 
 
 # ---------------------------------------------------------------------------
+# Unified data-decision block (one cell, all modules)
+# ---------------------------------------------------------------------------
+def section_data_decision(b):
+    b.md("""---
+
+## Choose data source for each module
+
+Three tiers per module, **picked once** in the form below. Every module's loader honors your pick, and falls through to the next tier if the chosen tier fails (network down, file missing). Print confirms which tier loaded.
+
+| Tier | What it is | When it fails |
+|---|---|---|
+| **MABC hosted (recommended)** | Curated paired samples baked from Mt Sinai Microscopy Core acquisitions. Small (~1 MB each), license-clean (CC-BY 4.0). | URL 404 — falls through to canonical. |
+| **Canonical** | Real publicly-available microscopy: `scikit-image.data.cells3d()` for fluorescence modules (in-focus Z=20–45), real recolored cells for H&E. Always works offline. | Won't fail unless your scikit-image install is broken. |
+| **Synthetic** | Generated paired blobs / stains. Deterministic, always succeeds. | Never. |
+
+Module 4 (Fluorescence → H&E) auto-derives its inputs from Module 2 — no separate dropdown needed.""")
+
+    b.code('''# @title Data source for each module { run: "auto", display-mode: "form" }
+M1_SOURCE = "MABC hosted (recommended)"  # @param ["MABC hosted (recommended)", "Canonical (cells3d in-focus + phase-contrast pseudo-BF)", "Synthetic (paired blobs)"]
+M2_SOURCE = "MABC hosted (recommended)"  # @param ["MABC hosted (recommended)", "Canonical (cells3d DAPI -> membrane)", "Synthetic (paired gaussian blobs)"]
+M3_SOURCE = "MABC hosted (recommended)"  # @param ["MABC hosted (recommended)", "Canonical (cells3d recolored as H&E)", "Synthetic (pink+purple circles)"]
+
+print("Module 1:", M1_SOURCE)
+print("Module 2:", M2_SOURCE)
+print("Module 3:", M3_SOURCE)
+print("Module 4: auto-derived from Module 2 above")
+''')
+
+
+# ---------------------------------------------------------------------------
 # Module 1 — Brightfield → Fluorescence
 # ---------------------------------------------------------------------------
 def section_module1(b):
@@ -246,59 +276,93 @@ This is what most people mean by "virtual staining": you acquire a **label-free*
 
 **What this module does.**
 
-1. Try to fetch a small subset of the **Light My Cells** dataset (BF + DAPI/Tubulin pairs).
-2. If that fails, synthesize a "pseudo-BF" view from `cells3d()` so the module still runs.
-3. Train a TinyUNet for ~3 minutes to map BF → fluorescence.
-4. Display: BF input next to predicted fluorescence next to ground truth.
-5. Hallucination check + reflection.""")
+1. Load BF + paired fluorescence per **M1_SOURCE** (MABC → canonical cells3d-derived pseudo-BF → synthetic blob pairs).
+2. Train a TinyUNet for ~3 minutes to map BF → fluorescence.
+3. Display: BF input next to predicted fluorescence next to ground truth.
+4. Hallucination check + reflection.
+
+> ⚠️ **MABC tier is not yet baked.** No paired BF + fluorescence microscopy is available in the MABC raws bundle. Until that's added, the MABC option falls through to the canonical tier — real `cells3d()` Z-slices with a phase-contrast-style synthetic BF input. Real virtual staining training uses Light My Cells (Zenodo 10687569, ~50 GB) or the Allen Cell Imaging Collection — see references.""")
 
     b.md("""### 1.1 Load brightfield + paired fluorescence
 
-We try the Light My Cells challenge dataset first (Zenodo 10687569). If unavailable in this Colab session, we synthesize a brightfield-like view from a fluorescence channel using a phase-contrast-style transform — pedagogically similar enough for the architecture demo, with an honest caveat.""")
+The loader honors your **M1_SOURCE** choice from the data-decision cell above. If the chosen tier fails, it falls through automatically and prints which tier loaded.""")
 
-    b.code('''def load_bf_fluor_pairs():
-    """Try Light My Cells; fall back to synthetic-BF from cells3d.
-    Returns (bf_array, fluor_array, source_str) where shapes are (N, H, W) float32 in [0,1]."""
-    # --- Attempt: small Light My Cells subset (commented out to keep notebook offline-safe) ---
-    # The full Zenodo bundle is ~50 GB; for workshop use, fetch a curated tile pack from
-    # MABC's gh-pages (~5 MB) when MABC has them, or skip to the synthetic fallback.
-    MABC_BF_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining_bf.npz"
-    try:
-        cache = os.path.join(tempfile.gettempdir(), "06_bf.npz")
-        if not os.path.exists(cache):
-            urllib.request.urlretrieve(MABC_BF_URL, cache)
-        d = np.load(cache, allow_pickle=True)
-        return d["bf"].astype(np.float32), d["fluor"].astype(np.float32), "MABC brightfield/fluorescence pairs"
-    except Exception:
-        # Fall through to the synthetic path.
-        pass
+    b.code('''def _normalize_slice(a):
+    """Percentile-stretch to [0,1] float32. Robust against 16-bit and uint8 inputs."""
+    a = np.asarray(a).astype(np.float32)
+    p1, p99 = np.percentile(a, [1, 99])
+    return np.clip((a - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1).astype(np.float32)
 
-    # --- Fallback: synthesize a pseudo-BF view from cells3d() membrane channel ---
-    # The cells3d membrane stain has structure visible in transmitted light too; we apply a
-    # phase-contrast-like transform (gradient + high-pass + bias) to fake a BF appearance.
-    # Pedagogically: input looks "transmitted-light-ish", target is the DAPI ground truth.
-    cells = skdata.cells3d()  # (60, 2, 256, 256), uint16
-    n_z = cells.shape[0]
-    train_z = list(range(0, 50))
-    test_z = list(range(50, n_z))
 
-    def normalize(a):
-        a = a.astype(np.float32)
-        p1, p99 = np.percentile(a, [1, 99])
-        return np.clip((a - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1).astype(np.float32)
+def load_bf_fluor_pairs():
+    """Return (bf, fluor, source_str). Shapes: (N, H, W) float32 in [0,1].
 
-    def to_pseudo_bf(memb):
-        """Mock a transmitted-light view: gradient + bias + soft contrast inversion."""
-        from scipy.ndimage import sobel, gaussian_filter
-        m = normalize(memb)
-        edge = np.hypot(sobel(m, axis=0), sobel(m, axis=1))
-        bf = 0.55 + 0.20 * (m - 0.5) - 0.5 * (edge - edge.mean())
-        bf = gaussian_filter(bf, sigma=0.6)
-        return np.clip(bf, 0, 1).astype(np.float32)
+    Tier order honors M1_SOURCE; fall-through on failure.
+    """
+    tier = M1_SOURCE
 
-    bfs = np.stack([to_pseudo_bf(cells[z, 0]) for z in train_z + test_z])
-    fluors = np.stack([normalize(cells[z, 1]) for z in train_z + test_z])  # DAPI as target
-    return bfs, fluors, "synthetic BF (gradient+bias of cells3d membrane channel) → cells3d DAPI"
+    if tier.startswith("MABC"):
+        MABC_BF_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining_bf.npz"
+        try:
+            cache = os.path.join(tempfile.gettempdir(), "06_bf.npz")
+            if not os.path.exists(cache):
+                urllib.request.urlretrieve(MABC_BF_URL, cache)
+            d = np.load(cache, allow_pickle=True)
+            return (d["bf"].astype(np.float32),
+                    d["fluor"].astype(np.float32),
+                    "MABC: real brightfield + paired fluorescence")
+        except (urllib.error.HTTPError, urllib.error.URLError, FileNotFoundError):
+            print("MABC BF/fluor pack not yet available on gh-pages; falling through to canonical (cells3d).")
+            tier = "Canonical"
+        except Exception:
+            print("MABC BF/fluor read failed unexpectedly; falling through to canonical.")
+            traceback.print_exc(limit=1)
+            tier = "Canonical"
+
+    if tier.startswith("Canonical"):
+        from scipy.ndimage import gaussian_filter
+        cells = skdata.cells3d()              # (60, 2, 256, 256) uint16, channels = (membrane, DAPI)
+        z_range = list(range(20, 45))         # in-focus middle of the stack only
+
+        def to_pseudo_bf(memb_slice):
+            """Phase-contrast-like transform of the membrane channel.
+
+            Real BF transmitted light shows cells as dim regions with bright halos at edges
+            (refractive-index-driven phase contrast). We approximate this with a band-pass on
+            the membrane signal, then bias-shift to a transmitted-light-style brightness."""
+            m = _normalize_slice(memb_slice)
+            smooth = gaussian_filter(m, sigma=2.0)
+            edge = m - smooth                  # band-pass = halo
+            bf = 0.7 - 0.4 * m + 0.6 * edge    # dim cells + bright halos on bright background
+            bf = gaussian_filter(bf, sigma=0.5)
+            return np.clip(bf, 0, 1).astype(np.float32)
+
+        bfs = np.stack([to_pseudo_bf(cells[z, 0]) for z in z_range])
+        fluors = np.stack([_normalize_slice(cells[z, 1]) for z in z_range])  # DAPI as target
+        return (bfs, fluors,
+                "Canonical: cells3d Z=20-45 + phase-contrast pseudo-BF (target = DAPI)")
+
+    # Synthetic last resort — paired blob fields that obviously demonstrate BF -> fluor learning.
+    rng = np.random.default_rng(42)
+    n, h, w = 16, 128, 128
+    bfs = np.zeros((n, h, w), dtype=np.float32)
+    fluors = np.zeros((n, h, w), dtype=np.float32)
+    for i in range(n):
+        bf = np.ones((h, w), dtype=np.float32) * 0.75
+        fluor = np.zeros((h, w), dtype=np.float32)
+        for _ in range(rng.integers(6, 12)):
+            cy, cx = rng.integers(15, h - 15), rng.integers(15, w - 15)
+            r = int(rng.integers(6, 12))
+            YY, XX = np.ogrid[:h, :w]
+            d2 = (YY - cy) ** 2 + (XX - cx) ** 2
+            cell = d2 <= r ** 2
+            halo = (d2 > r ** 2) & (d2 <= (r + 2) ** 2)
+            bf[cell] = 0.30          # dim cell body
+            bf[halo] = 0.97          # bright halo (phase-contrast effect)
+            fluor[cell] = float(rng.uniform(0.7, 1.0))
+        bfs[i] = np.clip(bf + rng.normal(0, 0.03, (h, w)).astype(np.float32), 0, 1)
+        fluors[i] = np.clip(fluor + rng.normal(0, 0.02, (h, w)).astype(np.float32), 0, 1)
+    return bfs, fluors, "Synthetic: 16 paired BF/fluor blob fields (halos + spots)"
 
 
 bf_all, fluor_all, source_str = load_bf_fluor_pairs()
@@ -307,15 +371,15 @@ print(f"  source: {source_str}")
 print(f"  bf:     shape {bf_all.shape} dtype {bf_all.dtype} range [{bf_all.min():.2f}, {bf_all.max():.2f}]")
 print(f"  fluor:  shape {fluor_all.shape} dtype {fluor_all.dtype} range [{fluor_all.min():.2f}, {fluor_all.max():.2f}]")
 
-# Train/test split
+# Train/test split (80/20)
 n_total = bf_all.shape[0]
-n_train = int(n_total * 0.83)
+n_train = max(1, int(n_total * 0.83))
 X_train_m1 = bf_all[:n_train]
 Y_train_m1 = fluor_all[:n_train]
-X_test_m1  = bf_all[n_train:]
-Y_test_m1  = fluor_all[n_train:]
+X_test_m1  = bf_all[n_train:] if n_total > n_train else bf_all[-1:]
+Y_test_m1  = fluor_all[n_train:] if n_total > n_train else fluor_all[-1:]
 
-# Display the first BF/fluorescence pair
+# Display the first BF / fluorescence pair
 fig, axes = plt.subplots(1, 2, figsize=(8, 4))
 axes[0].imshow(X_train_m1[0], cmap='gray')
 axes[0].set_title("Brightfield (label-free input)"); axes[0].axis('off')
@@ -381,60 +445,84 @@ This is the original "fnet" pattern. You acquire one fluorescence channel cheapl
 
 **Important framing.** This is **not** virtual staining in the strict sense — your input is still fluorescence, so you didn't skip the staining step. What you skipped is the **second** acquisition. The architecture (U-Net trained on paired channels) is identical to Module 1, but the pedagogical message differs.
 
-**Default data.** scikit-image's `cells3d()` ships a 3D confocal stack with two channels: DAPI (nuclei) and a membrane stain. We use this as the canonical demo. With MABC samples available, the workshop default switches to MABC's curated DrosophilaCells DAPI → Tubulin pairs.""")
+**Data tiers (set via M2_SOURCE above).**
 
-    b.md("""### 2.1 Choose data source""")
+- *MABC* — curated DrosophilaCells DAPI → Tubulin pairs (12 paired tiles, baked from Mt Sinai imaging).
+- *Canonical* — scikit-image `cells3d()` 3D confocal stack, DAPI → membrane (real microscopy, public).
+- *Synthetic* — paired nucleus + cytoplasmic-ring blob fields (deterministic, offline-safe).""")
 
-    b.code('''# @title Data source for Module 2 { run: "auto", display-mode: "form" }
-M2_SOURCE = "MABC DrosophilaCells (DAPI -> Tubulin)"  # @param ["MABC DrosophilaCells (DAPI -> Tubulin)", "scikit-image cells3d() (DAPI -> membrane)"]
+    b.md("""### 2.1 Load paired fluorescence channels
 
-MABC_M2_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining.npz"
+The loader honors **M2_SOURCE** from the data-decision cell. MABC ships real Drosophila DAPI → Tubulin pairs; canonical uses scikit-image's `cells3d()` confocal stack (DAPI → membrane); synthetic generates paired blob fields.""")
 
-def normalize_slice(arr):
-    arr = np.asarray(arr).astype(np.float32)
-    p1, p99 = np.percentile(arr, [1, 99])
-    return np.clip((arr - np.float32(p1)) / np.float32(max(p99 - p1, 1e-8)), 0, 1).astype(np.float32)
+    b.code('''def load_module2_pairs():
+    """Return (X, Y, src_str, cmap_in, cmap_out). Shapes (N, H, W) float32 in [0,1].
 
+    Tier order honors M2_SOURCE; fall-through on failure.
+    """
+    tier = M2_SOURCE
 
-def load_module2_pairs():
-    if M2_SOURCE.startswith("MABC"):
+    if tier.startswith("MABC"):
+        MABC_M2_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining.npz"
         try:
             cache = os.path.join(tempfile.gettempdir(), "06_m2_mabc.npz")
             if not os.path.exists(cache):
                 urllib.request.urlretrieve(MABC_M2_URL, cache)
             d = np.load(cache, allow_pickle=True)
-            X = np.stack([normalize_slice(im) for im in d["images"]])
-            Y = np.stack([normalize_slice(im) for im in d["labels"]])
-            print(f"Loaded {len(X)} MABC DrosophilaCells DAPI -> Tubulin pairs.")
+            X = np.stack([_normalize_slice(im) for im in d["images"]])
+            Y = np.stack([_normalize_slice(im) for im in d["labels"]])
             return X, Y, "MABC DrosophilaCells (DAPI -> Tubulin)", "Blues_r", "magma"
+        except (urllib.error.HTTPError, urllib.error.URLError, FileNotFoundError):
+            print("MABC M2 pack not available; falling through to canonical (cells3d).")
+            tier = "Canonical"
         except Exception:
-            print("MABC fetch failed; falling through to cells3d().")
-            traceback.print_exc(limit=2)
+            print("MABC M2 read failed unexpectedly; falling through to canonical.")
+            traceback.print_exc(limit=1)
+            tier = "Canonical"
 
-    # Canonical: cells3d
-    cells = skdata.cells3d()
-    n_z = cells.shape[0]
-    train_z = list(range(0, 50))
-    test_z = list(range(50, n_z))
-    X = np.stack([normalize_slice(cells[z, 1]) for z in train_z + test_z])  # DAPI
-    Y = np.stack([normalize_slice(cells[z, 0]) for z in train_z + test_z])  # membrane
-    print(f"Loaded {len(X)} cells3d() DAPI -> membrane pairs.")
-    return X, Y, "cells3d() (DAPI -> membrane)", "Blues_r", "magma"
+    if tier.startswith("Canonical"):
+        cells = skdata.cells3d()                 # (60, 2, 256, 256), uint16
+        z_range = list(range(20, 45))            # in-focus only
+        X = np.stack([_normalize_slice(cells[z, 1]) for z in z_range])  # DAPI
+        Y = np.stack([_normalize_slice(cells[z, 0]) for z in z_range])  # membrane
+        return X, Y, "Canonical: cells3d Z=20-45 (DAPI -> membrane)", "Blues_r", "magma"
+
+    # Synthetic last resort — paired blob channels (input = nuclei, target = cytoplasmic ring)
+    rng = np.random.default_rng(43)
+    n, h, w = 16, 128, 128
+    X = np.zeros((n, h, w), dtype=np.float32)
+    Y = np.zeros((n, h, w), dtype=np.float32)
+    for i in range(n):
+        for _ in range(rng.integers(6, 12)):
+            cy, cx = rng.integers(15, h - 15), rng.integers(15, w - 15)
+            r = int(rng.integers(7, 13))
+            YY, XX = np.ogrid[:h, :w]
+            d2 = (YY - cy) ** 2 + (XX - cx) ** 2
+            nucleus = d2 <= (r * 0.55) ** 2
+            ring = (d2 > (r * 0.55) ** 2) & (d2 <= r ** 2)
+            X[i][nucleus] = float(rng.uniform(0.7, 1.0))   # DAPI channel = nuclei
+            Y[i][ring] = float(rng.uniform(0.6, 0.95))     # second channel = cytoplasmic ring
+        X[i] = np.clip(X[i] + rng.normal(0, 0.02, (h, w)).astype(np.float32), 0, 1)
+        Y[i] = np.clip(Y[i] + rng.normal(0, 0.02, (h, w)).astype(np.float32), 0, 1)
+    return X, Y, "Synthetic: paired nucleus + cytoplasmic-ring blob fields", "Blues_r", "magma"
 
 
 X_all_m2, Y_all_m2, m2_source, cmap_in, cmap_out = load_module2_pairs()
+print(f"Loaded {X_all_m2.shape[0]} paired pairs.")
+print(f"  source: {m2_source}")
+print(f"  X:      shape {X_all_m2.shape} range [{X_all_m2.min():.2f}, {X_all_m2.max():.2f}]")
+print(f"  Y:      shape {Y_all_m2.shape} range [{Y_all_m2.min():.2f}, {Y_all_m2.max():.2f}]")
+
 n_total = X_all_m2.shape[0]
-split = int(n_total * 0.83)
+split = max(1, int(n_total * 0.83))
 X_train_m2, Y_train_m2 = X_all_m2[:split], Y_all_m2[:split]
-X_test_m2,  Y_test_m2  = X_all_m2[split:], Y_all_m2[split:]
+X_test_m2,  Y_test_m2  = (X_all_m2[split:], Y_all_m2[split:]) if n_total > split else (X_all_m2[-1:], Y_all_m2[-1:])
 
 fig, axes = plt.subplots(1, 2, figsize=(8, 4))
 axes[0].imshow(X_train_m2[0], cmap=cmap_in)
-axes[0].set_title(f"Input: {m2_source.split(' -> ')[0].replace('MABC DrosophilaCells (', '').replace('cells3d() (', '')}")
-axes[0].axis('off')
+axes[0].set_title(f"Input channel"); axes[0].axis('off')
 axes[1].imshow(Y_train_m2[0], cmap=cmap_out)
-axes[1].set_title(f"Target: {m2_source.split(' -> ')[1].rstrip(')')}")
-axes[1].axis('off')
+axes[1].set_title(f"Target channel"); axes[1].axis('off')
 plt.tight_layout(); plt.show()
 ''')
 
@@ -483,47 +571,74 @@ The clinically striking modality. You hand a model a routine **H&E** slide (the 
 
 This is **not** a production H&E → IHC system. It demonstrates the pattern: routine stain in, specialty stain out, paired training data needed. Real systems use much larger models trained on cohorts MABC doesn't currently have paired.""")
 
-    b.md("""### 3.1 Load H&E tile from the MABC SVS pyramid
+    b.md("""### 3.1 Load H&E tiles
 
-We pull a tile from the MABC `06_wsi_transcriptomics.npz` H&E set if available (NB16's cache), otherwise synthesize an H&E-like image from the Drosophila DAPI/Tubulin channels for a self-contained demo.""")
+The loader honors **M3_SOURCE** from the data-decision cell. MABC ships real CMU-1 / LungCancer H&E tiles (from baked NB16 SVS pyramid); canonical recolors `cells3d()` into an H&E look-alike (nuclei → purple, membrane → pink); synthetic generates pink eosin + purple nuclei circles from scratch.""")
 
-    b.code('''def load_he_tile():
-    """Try MABC NB16 H&E tiles first; synthesize a small H&E-like field as fallback."""
-    MABC_HE_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/16_wsi_transcriptomics.npz"
-    try:
-        cache = os.path.join(tempfile.gettempdir(), "06_he_tiles.npz")
-        if not os.path.exists(cache):
-            urllib.request.urlretrieve(MABC_HE_URL, cache)
-        d = np.load(cache, allow_pickle=True)
-        tiles = d["images"]  # (N, 224, 224, 3) uint8
-        return tiles.astype(np.float32) / 255.0, "MABC CMU-1 / LungCancer H&E tiles"
-    except Exception:
-        pass
+    b.code('''def load_he_tiles():
+    """Return (he_tiles, source_str). Shape (N, H, W, 3) float32 in [0,1].
 
-    # Synthetic H&E fallback: pink eosin background + purple hematoxylin nuclei.
+    Tier order honors M3_SOURCE; fall-through on failure.
+    """
+    tier = M3_SOURCE
+
+    if tier.startswith("MABC"):
+        MABC_HE_URL = "https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/16_wsi_transcriptomics.npz"
+        try:
+            cache = os.path.join(tempfile.gettempdir(), "06_he_tiles.npz")
+            if not os.path.exists(cache):
+                urllib.request.urlretrieve(MABC_HE_URL, cache)
+            d = np.load(cache, allow_pickle=True)
+            tiles = d["images"]  # (N, 224, 224, 3) uint8
+            return tiles.astype(np.float32) / 255.0, "MABC: CMU-1 / LungCancer H&E tiles (real WSI)"
+        except (urllib.error.HTTPError, urllib.error.URLError, FileNotFoundError):
+            print("MABC H&E pack not available; falling through to canonical (cells3d recolored).")
+            tier = "Canonical"
+        except Exception:
+            print("MABC H&E read failed unexpectedly; falling through to canonical.")
+            traceback.print_exc(limit=1)
+            tier = "Canonical"
+
+    if tier.startswith("Canonical"):
+        cells = skdata.cells3d()                       # (60, 2, 256, 256) uint16
+        z_picks = list(range(20, 45, 3))               # 9 in-focus slices
+        bg = np.array([1.0, 1.0, 1.0], dtype=np.float32)
+        hema_color = np.array([0.20, 0.10, 0.55], dtype=np.float32)   # purple H
+        eosin_color = np.array([0.95, 0.40, 0.55], dtype=np.float32)  # pink E
+        tiles = []
+        for z in z_picks:
+            dapi = _normalize_slice(cells[z, 1])       # nuclei → hematoxylin proxy
+            memb = _normalize_slice(cells[z, 0])       # membrane → eosin proxy
+            rgb = (
+                bg * np.clip(1 - dapi[..., None] - memb[..., None] * 0.5, 0, 1)
+                + hema_color * dapi[..., None]
+                + eosin_color * memb[..., None] * 0.7
+            )
+            tiles.append(np.clip(rgb, 0, 1).astype(np.float32))
+        return np.stack(tiles), "Canonical: cells3d Z=20-45 recolored as H&E (nuclei -> purple, membrane -> pink)"
+
+    # Synthetic last resort — pink eosin background + purple hematoxylin nuclei circles.
     rng = np.random.default_rng(42)
     n, h, w = 4, 256, 256
     he = np.zeros((n, h, w, 3), dtype=np.float32)
     for i in range(n):
-        # Eosin background (pink-ish): high R, mid G, mid B
         he[i, :, :, 0] = 0.95
         he[i, :, :, 1] = 0.78
         he[i, :, :, 2] = 0.86
-        # Add ~30 nuclei (Hematoxylin: dark purple)
         for _ in range(30):
             cy, cx = rng.integers(15, h - 15), rng.integers(15, w - 15)
-            r = rng.integers(5, 10)
-            Y, X = np.ogrid[:h, :w]
-            mask = (Y - cy) ** 2 + (X - cx) ** 2 <= r ** 2
+            r = int(rng.integers(5, 10))
+            YY, XX = np.ogrid[:h, :w]
+            mask = (YY - cy) ** 2 + (XX - cx) ** 2 <= r ** 2
             he[i][mask] = (0.35, 0.20, 0.55) + rng.normal(0, 0.03, 3).astype(np.float32)
-        # Mild noise
-        he[i] = np.clip(he[i] + rng.normal(0, 0.02, he[i].shape), 0, 1)
-    return he, "synthetic H&E (eosin background + hematoxylin nuclei)"
+        he[i] = np.clip(he[i] + rng.normal(0, 0.02, he[i].shape).astype(np.float32), 0, 1)
+    return he, "Synthetic: pink eosin background + purple hematoxylin nuclei circles"
 
 
-he_tiles, he_source = load_he_tile()
-print(f"Loaded {he_tiles.shape[0]} H&E tiles. source: {he_source}")
-print(f"  shape: {he_tiles.shape}, range [{he_tiles.min():.2f}, {he_tiles.max():.2f}]")
+he_tiles, he_source = load_he_tiles()
+print(f"Loaded {he_tiles.shape[0]} H&E tiles.")
+print(f"  source: {he_source}")
+print(f"  shape:  {he_tiles.shape}, range [{he_tiles.min():.2f}, {he_tiles.max():.2f}]")
 
 fig, axes = plt.subplots(1, min(4, len(he_tiles)), figsize=(3 * min(4, len(he_tiles)), 3))
 axes = np.atleast_1d(axes)
@@ -657,15 +772,10 @@ Take a multiplex fluorescence panel and synthesize an H&E look-alike. Useful for
     return np.clip(rgb, 0, 1)
 
 
-# Use Module 2's data if it loaded MABC pairs (DAPI + Tubulin)
-if M2_SOURCE.startswith("MABC"):
-    print("Using Module 2's MABC DrosophilaCells DAPI + Tubulin as fluorescence inputs.")
-    dapi_examples = X_test_m2[:4]
-    eosin_examples = Y_test_m2[:4]
-else:
-    print("Using Module 2's cells3d DAPI + membrane channels as fluorescence inputs.")
-    dapi_examples = X_test_m2[:4]
-    eosin_examples = Y_test_m2[:4]
+# Reuse Module 2's two-channel fluorescence pairs (whichever tier won there).
+print(f"Using Module 2's loaded pair as fluorescence inputs ({m2_source}).")
+dapi_examples = X_test_m2[:4]
+eosin_examples = Y_test_m2[:4]
 
 he_synthesized = np.stack([fluorescence_to_he(dapi_examples[i], eosin_examples[i]) for i in range(len(dapi_examples))])
 
@@ -835,6 +945,7 @@ def main():
     section_title(b)
     section_setup(b)
     section_shared_unet(b)
+    section_data_decision(b)
     section_module1(b)
     section_module2(b)
     section_module3(b)
