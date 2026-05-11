@@ -416,8 +416,11 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Install Cellpose. The latest release pulls in cellpose-SAM by default.</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet &quot;cellpose&gt;=3.0&quot; matplotlib scikit-image tifffile pandas
+<span class="c1"># Install Cellpose. Colab already ships numpy, scipy, matplotlib, scikit-image,</span>
+<span class="c1"># pandas, tifffile, and torch — reinstalling them causes an ABI skew with the</span>
+<span class="c1"># preloaded numpy (&quot;cannot import name &#39;_center&#39; from &#39;numpy._core.umath&#39;&quot;),</span>
+<span class="c1"># so we install ONLY cellpose. The latest release pulls in cellpose-SAM by default.</span>
+<span class="o">%</span><span class="k">pip</span> install --quiet &quot;cellpose&gt;=3.0&quot;
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
