@@ -657,9 +657,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">load_bf_fluor_pairs</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (bf, fluor, source_str). Shapes: (N, H, W) float32 in [0,1].</span>
 
-<span class="sd">    Tier order honors M1_SOURCE; fall-through on failure.</span>
+<span class="sd">    Tier order honors M1_SOURCE; fall-through on failure. Self-heals if M1_SOURCE</span>
+<span class="sd">    is undefined (e.g. user skipped the @param cell) by defaulting to MABC.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tier</span> <span class="o">=</span> <span class="n">M1_SOURCE</span>
+    <span class="n">tier</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;M1_SOURCE&quot;</span><span class="p">,</span> <span class="s2">&quot;MABC hosted (recommended)&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tier</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MABC&quot;</span><span class="p">):</span>
         <span class="n">MABC_BF_URL</span> <span class="o">=</span> <span class="s2">&quot;https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining_bf.npz&quot;</span>
@@ -830,9 +831,10 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_module2_pairs</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (X, Y, src_str, cmap_in, cmap_out). Shapes (N, H, W) float32 in [0,1].</span>
 
-<span class="sd">    Tier order honors M2_SOURCE; fall-through on failure.</span>
+<span class="sd">    Tier order honors M2_SOURCE; fall-through on failure. Self-heals if M2_SOURCE</span>
+<span class="sd">    is undefined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tier</span> <span class="o">=</span> <span class="n">M2_SOURCE</span>
+    <span class="n">tier</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;M2_SOURCE&quot;</span><span class="p">,</span> <span class="s2">&quot;MABC hosted (recommended)&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tier</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MABC&quot;</span><span class="p">):</span>
         <span class="n">MABC_M2_URL</span> <span class="o">=</span> <span class="s2">&quot;https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/06_virtual_staining.npz&quot;</span>
@@ -950,9 +952,10 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_he_tiles</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (he_tiles, source_str). Shape (N, H, W, 3) float32 in [0,1].</span>
 
-<span class="sd">    Tier order honors M3_SOURCE; fall-through on failure.</span>
+<span class="sd">    Tier order honors M3_SOURCE; fall-through on failure. Self-heals if M3_SOURCE</span>
+<span class="sd">    is undefined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tier</span> <span class="o">=</span> <span class="n">M3_SOURCE</span>
+    <span class="n">tier</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;M3_SOURCE&quot;</span><span class="p">,</span> <span class="s2">&quot;MABC hosted (recommended)&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tier</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MABC&quot;</span><span class="p">):</span>
         <span class="n">MABC_HE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://microscopy-core-ismms.github.io/ImageAnalysisCourse/data/mabc/16_wsi_transcriptomics.npz&quot;</span>
