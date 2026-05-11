@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Lecture 1 — Prerequisites check (Tier 0) &#8212; AI for Microscopy Image Analysis</title>
+    <title>Lecture 1 — Overview &amp; Setup &#8212; AI for Microscopy Image Analysis</title>
   
   
   
@@ -65,7 +65,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="AI for Scientific Image Analysis" href="lecture.html" />
-    <link rel="prev" title="Lecture 1 — Interactive Notebook and HTML Slides" href="README.html" />
+    <link rel="prev" title="Ramp-up — Image data fundamentals" href="../../ramp-up/notebooks/image_basics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -175,16 +175,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../ramp-up/notebooks/python_basics.html">Ramp-up — Python and numpy basics for image work</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ramp-up/notebooks/image_basics.html">Ramp-up — Image data fundamentals</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 1 — Intro to AI for imaging</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lectures</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="README.html">Lecture 1 — Interactive Notebook and HTML Slides</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lecture 1 — Prerequisites check (Tier 0)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lecture.html">AI for Scientific Image Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="speaker_cues.html">Speaker Cues — Lecture 1</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification_log.html">Verification Log — Lecture 1</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Lecture 1 — Overview &amp; Setup</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="lecture.html">AI for Scientific Image Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="extras.html">Extras</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="speaker_cues.html">Speaker Cues — Lecture 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="verification_log.html">Verification Log — Lecture 1</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lecture 2 — Walking the day</span></p>
-<ul class="nav bd-sidenav">
+</details></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="../02_walking_the_day/lecture.html">Lecture 2 — Walking the Day</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Lab notebooks (core)</span></p>
@@ -346,7 +347,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Lecture 1 — Prerequisites check (Tier 0)</h1>
+    <h1>Lecture 1 — Overview & Setup</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -356,6 +357,17 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-this-folder">What’s in this folder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-view-present-and-edit">How to view, present, and edit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#view-the-slides">View the slides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#present-live-from-the-notebook">Present live from the notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-interactive-code-cells">Run interactive code cells</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edit-and-rebuild">Edit and rebuild</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-citations-and-hallucination-flags">Verification, citations, and hallucination flags</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#offline-air-gapped-use">Offline / air-gapped use</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites-check-tier-0">Prerequisites check (Tier 0)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-helpers">Setup helpers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-1-required-for-rebuilding-the-lecture">Tier 1 — required for rebuilding the lecture</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-2-optional-for-live-rise-presentation">Tier 2 — optional, for live RISE presentation</a></li>
@@ -374,8 +386,107 @@
                   
   <p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/lectures/01_intro_ai_imaging/00_lecture_prereqs_check.ipynb" rel="noreferer noopener" target="_blank"><img alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <p><em>Click the badge to open this prerequisites-check notebook in Google Colab and run all cells.</em></p>
-<section class="tex2jax_ignore mathjax_ignore" id="lecture-1-prerequisites-check-tier-0">
-<h1>Lecture 1 — Prerequisites check (Tier 0)<a class="headerlink" href="#lecture-1-prerequisites-check-tier-0" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="lecture-1-overview-setup">
+<h1>Lecture 1 — Overview &amp; Setup<a class="headerlink" href="#lecture-1-overview-setup" title="Link to this heading">#</a></h1>
+<p>This page is the Lecture 1 landing page. It covers what’s in the folder, how to view / present / edit the lecture, and an environment self-check you can run before delivering.</p>
+<p>The lecture is split across two artifacts:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code></strong> — the static slide deck. Open in any browser; no install needed. This is the file most attendees see.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code></strong> — the source notebook. Open in Jupyter / Colab to edit or to run the four interactive demo cells. Click the <strong>Open in Colab</strong> badge above to launch.</p></li>
+</ul>
+<section id="what-s-in-this-folder">
+<h2>What’s in this folder<a class="headerlink" href="#what-s-in-this-folder" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code></p></td>
+<td><p>Source notebook with reveal.js slideshow metadata. Open in Jupyter / Colab.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code></p></td>
+<td><p>Self-contained HTML slide deck. Open in any browser.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_lecture_notebook.py</span></code></p></td>
+<td><p>Build script that generates <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code> from Python.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_figures.py</span></code></p></td>
+<td><p>Generates all PNG figures embedded in the deck (23 generator functions).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">references.bib</span></code></p></td>
+<td><p>BibTeX bibliography for all cited works.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">00_lecture_prereqs_check.ipynb</span></code></p></td>
+<td><p>This file — the environment self-check (Tier 0).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">speaker_cues.md</span></code></p></td>
+<td><p>Audience signals + drill-down cues + time-pressure cues for live delivery.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verification_log.md</span></code></p></td>
+<td><p>Per-reference verification audit trail.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="how-to-view-present-and-edit">
+<h2>How to view, present, and edit<a class="headerlink" href="#how-to-view-present-and-edit" title="Link to this heading">#</a></h2>
+<section id="view-the-slides">
+<h3>View the slides<a class="headerlink" href="#view-the-slides" title="Link to this heading">#</a></h3>
+<p>Open <code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code> in any modern browser (Chrome, Firefox, Safari, Edge). Slides advance with arrow keys (right / down for next, left / up for previous). Press <code class="docutils literal notranslate"><span class="pre">f</span></code> for fullscreen, <code class="docutils literal notranslate"><span class="pre">s</span></code> for speaker notes view.</p>
+<p>The HTML is fully self-contained except for one CDN dependency (reveal.js itself, loaded from <code class="docutils literal notranslate"><span class="pre">unpkg.com</span></code>).</p>
+</section>
+<section id="present-live-from-the-notebook">
+<h3>Present live from the notebook<a class="headerlink" href="#present-live-from-the-notebook" title="Link to this heading">#</a></h3>
+<p>Two options:</p>
+<ol class="arabic simple">
+<li><p><strong>From the exported HTML.</strong> Open <code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code> in a browser. Simplest path, works everywhere.</p></li>
+<li><p><strong>From the notebook with RISE.</strong> In JupyterLab or Notebook 7 with the <code class="docutils literal notranslate"><span class="pre">jupyterlab-rise</span></code> extension installed, open <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code> and click the slideshow toggle. Live code cells become runnable during the presentation. RISE does <strong>not</strong> currently work in Google Colab — for live presentation use a local Jupyter install.</p></li>
+</ol>
+</section>
+<section id="run-interactive-code-cells">
+<h3>Run interactive code cells<a class="headerlink" href="#run-interactive-code-cells" title="Link to this heading">#</a></h3>
+<p>Click the <strong>Open in Colab</strong> badge at the top of this page (or open <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code> in JupyterLab) and run cells normally. The lecture has four runnable demonstration cells (setup check, train / val / test split, Cellpose-style result viewer, metrics-vs-biology scatter). The slideshow does <strong>not</strong> paginate in Colab — for the slide experience, view <code class="docutils literal notranslate"><span class="pre">lecture_slides.html</span></code> instead.</p>
+</section>
+<section id="edit-and-rebuild">
+<h3>Edit and rebuild<a class="headerlink" href="#edit-and-rebuild" title="Link to this heading">#</a></h3>
+<p>The lecture is authored in Python via <code class="docutils literal notranslate"><span class="pre">build_lecture_notebook.py</span></code>. Edit the script, then re-run it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>build_lecture_notebook.py
+</pre></div>
+</div>
+<p>This regenerates <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code>. To re-export the HTML slides:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>nbconvert<span class="w"> </span>--to<span class="w"> </span>slides<span class="w"> </span>lecture.ipynb<span class="w"> </span>--SlidesExporter.reveal_theme<span class="o">=</span>white<span class="w"> </span>--output<span class="w"> </span>lecture_slides
+</pre></div>
+</div>
+<p>You can edit <code class="docutils literal notranslate"><span class="pre">lecture.ipynb</span></code> directly if you prefer; the build script and the notebook produce equivalent output, but the script is easier to diff and review.</p>
+</section>
+</section>
+<section id="verification-citations-and-hallucination-flags">
+<h2>Verification, citations, and hallucination flags<a class="headerlink" href="#verification-citations-and-hallucination-flags" title="Link to this heading">#</a></h2>
+<p>Every cited work in the lecture carries an inline verification flag:</p>
+<ul class="simple">
+<li><p><strong>✓</strong> verified via web search this session</p></li>
+<li><p><strong>✏</strong> corrected — initial training-knowledge claim was wrong; entry reflects correction</p></li>
+<li><p><strong>⚠</strong> uncertain — drawn from training, not directly verified; sanity-check before publication</p></li>
+<li><p><strong>❓</strong> synthesis — interpretation or framing, not a specific citation</p></li>
+</ul>
+<p>Flags appear inline next to citation chips on each slide and in the bibliography slide at the end. Full audit trail is in <code class="docutils literal notranslate"><span class="pre">verification_log.md</span></code> (linked under <strong>Extras</strong> in the sidebar).</p>
+<p><strong>Caveat.</strong> Verification used web-search metadata, not full-text PDFs. All references should be cross-checked against published source articles before any external delivery — search-result metadata can lag, mislabel, or contain errors.</p>
+</section>
+<section id="offline-air-gapped-use">
+<h2>Offline / air-gapped use<a class="headerlink" href="#offline-air-gapped-use" title="Link to this heading">#</a></h2>
+<p>The exported HTML loads reveal.js from <code class="docutils literal notranslate"><span class="pre">unpkg.com</span></code>. For a strictly air-gapped deck:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>nbconvert<span class="w"> </span>--to<span class="w"> </span>slides<span class="w"> </span>lecture.ipynb<span class="w"> </span>--SlidesExporter.reveal_theme<span class="o">=</span>white<span class="w"> </span><span class="se">\</span>
+<span class="w">                  </span>--output<span class="w"> </span>lecture_slides_offline<span class="w"> </span>--reveal-prefix<span class="o">=</span>reveal.js
+</pre></div>
+</div>
+<p>Then download reveal.js into a local <code class="docutils literal notranslate"><span class="pre">reveal.js/</span></code> folder next to the HTML.</p>
+</section>
+<hr class="docutils" />
+<section id="prerequisites-check-tier-0">
+<h2>Prerequisites check (Tier 0)<a class="headerlink" href="#prerequisites-check-tier-0" title="Link to this heading">#</a></h2>
 <p>Run this notebook once before delivering Lecture 1 to verify your environment has everything needed.</p>
 <p><strong>Two ways to do the same check:</strong></p>
 <ul class="simple">
@@ -386,9 +497,10 @@
 <ul class="simple">
 <li><p><strong>Tier 0</strong> — <em>view</em> the pre-built static slide deck. Needs only a browser. This notebook is for confirming Tier 1+ but the static deck works regardless.</p></li>
 <li><p><strong>Tier 1</strong> — <em>rebuild</em> the deck from source via <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">build_lecture_notebook.py</span></code>. Needs <code class="docutils literal notranslate"><span class="pre">jupyter</span></code>, <code class="docutils literal notranslate"><span class="pre">nbconvert&gt;=7</span></code>, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>.</p></li>
-<li><p><strong>Tier 2</strong> — <em>present live</em> with executable code cells. Needs RISE (<code class="docutils literal notranslate"><span class="pre">rise</span></code> for classic Notebook 6.x) or <code class="docutils literal notranslate"><span class="pre">jupyterlab_rise</span></code> for JupyterLab 4.x / Notebook 7.</p></li>
+<li><p><strong>Tier 2</strong> — <em>present live</em> with executable code cells. Needs <code class="docutils literal notranslate"><span class="pre">jupyterlab_rise</span></code> for JupyterLab 4.x / Notebook 7, or <code class="docutils literal notranslate"><span class="pre">rise</span></code> for classic Notebook 6.x.</p></li>
 </ul>
 <p>This check covers Tier 1 and Tier 2 dependencies. Lab notebook deps (Cellpose, Noise2Void, Segment Anything, etc.) are checked separately by <code class="docutils literal notranslate"><span class="pre">notebooks/00_setup_self_check.ipynb</span></code>.</p>
+</section>
 <section id="setup-helpers">
 <h2>Setup helpers<a class="headerlink" href="#setup-helpers" title="Link to this heading">#</a></h2>
 <p>Run this cell first. It defines the helper functions every check below uses.</p>
@@ -575,6 +687,8 @@
 <hr class="docutils" />
 <p><strong>Reminder.</strong> This check covers lecture-presentation dependencies only. The lab notebook environment (Cellpose, Noise2Void, Segment Anything, etc.) is verified separately by <a class="reference internal" href="../../notebooks/00_setup_self_check.html"><span class="std std-doc">Notebook 00 — Setup Self-Check</span></a>.</p>
 </section>
+<div class="toctree-wrapper compound">
+</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -608,12 +722,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="README.html"
+       href="../../ramp-up/notebooks/image_basics.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Lecture 1 — Interactive Notebook and HTML Slides</p>
+        <p class="prev-next-title">Ramp-up — Image data fundamentals</p>
       </div>
     </a>
     <a class="right-next"
@@ -643,6 +757,17 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-this-folder">What’s in this folder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-view-present-and-edit">How to view, present, and edit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#view-the-slides">View the slides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#present-live-from-the-notebook">Present live from the notebook</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-interactive-code-cells">Run interactive code cells</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edit-and-rebuild">Edit and rebuild</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verification-citations-and-hallucination-flags">Verification, citations, and hallucination flags</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#offline-air-gapped-use">Offline / air-gapped use</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites-check-tier-0">Prerequisites check (Tier 0)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-helpers">Setup helpers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-1-required-for-rebuilding-the-lecture">Tier 1 — required for rebuilding the lecture</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tier-2-optional-for-live-rise-presentation">Tier 2 — optional, for live RISE presentation</a></li>
