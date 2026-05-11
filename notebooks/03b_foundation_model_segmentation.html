@@ -401,8 +401,22 @@
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># SAM and helpers. micro-sam is large; we install it optionally.</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet &quot;git+https://github.com/facebookresearch/segment-anything.git&quot; matplotlib scikit-image numpy
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+
+<span class="c1"># SAM and helpers. micro-sam is large; we install it optionally.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">segment_anything</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Install: pip install &#39;git+https://github.com/facebookresearch/segment-anything.git&#39;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing Segment Anything. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+        <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;install --quiet --upgrade &#39;git+https://github.com/facebookresearch/segment-anything.git&#39; &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>   <span class="c1"># SIGKILL — Colab auto-restarts the runtime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>

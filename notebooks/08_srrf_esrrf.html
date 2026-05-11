@@ -410,8 +410,19 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Try to install nanopyx; if it fails, we&#39;ll use the educational fallback</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet nanopyx scikit-image matplotlib numpy scipy
+<span class="c1"># Try to install nanopyx; if it fails on the second run we still have an</span>
+<span class="c1"># educational fallback (the try/except for &quot;import nanopyx&quot; below).</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">nanopyx</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing nanopyx. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+        <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;install --quiet --upgrade nanopyx &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 

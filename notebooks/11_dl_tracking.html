@@ -411,13 +411,22 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Core libraries</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet trackpy scikit-image matplotlib numpy scipy pandas
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">trackpy</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing trackpy. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+        <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;install --quiet --upgrade trackpy &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>
 
 <span class="c1"># Try btrack; if it fails, we&#39;ll use a fallback Kalman linker</span>
 <span class="n">BTRACK_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="o">%</span><span class="k">pip</span> install --quiet btrack
+    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install --quiet btrack&quot;</span><span class="p">)</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">btrack</span>
     <span class="n">BTRACK_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ btrack installed successfully&quot;</span><span class="p">)</span>

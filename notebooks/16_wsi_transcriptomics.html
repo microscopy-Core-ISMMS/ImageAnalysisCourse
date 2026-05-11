@@ -420,14 +420,20 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Core scientific stack</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet numpy matplotlib scikit-image scikit-learn scipy
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">transformers</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Install: pip install &#39;transformers&gt;=4.40&#39; &#39;huggingface_hub&gt;=0.23&#39; &#39;timm&gt;=0.9&#39; &#39;umap-learn&gt;=0.5&#39;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing transformers + huggingface_hub + timm + umap-learn. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+        <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;install --quiet --upgrade &#39;transformers&gt;=4.40&#39; &#39;huggingface_hub&gt;=0.23&#39; &#39;timm&gt;=0.9&#39; &#39;umap-learn&gt;=0.5&#39; &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>   <span class="c1"># SIGKILL — Colab auto-restarts the runtime</span>
 
-<span class="c1"># Vision foundation models. transformers + huggingface_hub for both UNI and DINOv2.</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet &quot;transformers&gt;=4.40&quot; &quot;huggingface_hub&gt;=0.23&quot; &quot;timm&gt;=0.9&quot;
 
-<span class="c1"># UMAP for embedding visualization</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet &quot;umap-learn&gt;=0.5&quot;
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">math</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
