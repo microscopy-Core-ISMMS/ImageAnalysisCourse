@@ -113,58 +113,80 @@ def fig_segmentation():
 
 
 def fig_restoration():
-    img, _ = synth_cells(size=180, n=8, seed=5)
+    """Noisy → restored, 16:9-sized for projector readability. Higher photon-count
+    contrast so the difference between panels is dramatic."""
+    img, _ = synth_cells(size=240, n=10, seed=5)
     rng = np.random.default_rng(5)
-    noisy = img * 20  # simulate low photon count
-    noisy = rng.poisson(np.clip(noisy, 0, None)).astype(float) / 20
-    noisy = noisy + rng.normal(0, 0.08, noisy.shape)
+    photons = 8  # lower photon count → more visible noise
+    noisy = img * photons
+    noisy = rng.poisson(np.clip(noisy, 0, None)).astype(float) / photons
+    noisy = noisy + rng.normal(0, 0.15, noisy.shape)
     noisy = np.clip(noisy, 0, 1)
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3.8))
-    axes[0].imshow(noisy, cmap="gray"); axes[0].set_title("Noisy input (low light)", color=NAVY, fontweight="bold")
-    axes[1].imshow(img, cmap="gray"); axes[1].set_title("Restored output (model prediction)", color=NAVY, fontweight="bold")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
+    axes[0].imshow(noisy, cmap="gray", vmin=0, vmax=1)
+    axes[0].set_title("Noisy input (low light)", color=NAVY, fontweight="bold", fontsize=14)
+    axes[1].imshow(img, cmap="gray", vmin=0, vmax=1)
+    axes[1].set_title("Restored output (model prediction)", color=NAVY, fontweight="bold", fontsize=14)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
         for s in ax.spines.values(): s.set_visible(False)
-    fig.suptitle("Restoration → image-to-image: denoising, deconvolution, super-resolution", color=NAVY, fontsize=13, fontweight="bold", y=0.04)
+    fig.suptitle("Restoration → image-to-image: denoising, deconvolution, super-resolution",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
     save(fig, "task_restoration")
 
 
 def fig_generation():
-    img, _ = synth_cells(size=180, n=10, seed=6)
-    # 'Brightfield-like' input: low contrast, no fluorescence pattern
-    bf = 0.5 + (img - img.mean()) * 0.3
-    bf = np.clip(bf, 0, 1)
-    # Generated output: predicted fluorescence
+    """Brightfield → predicted fluorescence, 16:9-sized with a phase-contrast-style
+    transform on the BF panel so cells are visibly dim with bright halos."""
+    img, _ = synth_cells(size=240, n=12, seed=6)
+    # Phase-contrast-like 'brightfield': dim cells with bright halos
+    smooth = gaussian_filter(img, sigma=2.2)
+    edge = img - smooth                       # band-pass = halo
+    bf = 0.7 - 0.4 * img + 0.6 * edge
+    bf = np.clip(gaussian_filter(bf, sigma=0.5), 0, 1)
+    # Generated output: predicted fluorescence (use viridis-like colormap)
     gen = img.copy()
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3.8))
-    axes[0].imshow(bf, cmap="gray"); axes[0].set_title("Brightfield input (no labels)", color=NAVY, fontweight="bold")
-    axes[1].imshow(gen, cmap="viridis"); axes[1].set_title("Predicted fluorescence (generated)", color=NAVY, fontweight="bold")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
+    axes[0].imshow(bf, cmap="gray", vmin=0, vmax=1)
+    axes[0].set_title("Brightfield input (no labels)", color=NAVY, fontweight="bold", fontsize=14)
+    axes[1].imshow(gen, cmap="viridis")
+    axes[1].set_title("Predicted fluorescence (generated)", color=NAVY, fontweight="bold", fontsize=14)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
         for s in ax.spines.values(): s.set_visible(False)
-    fig.suptitle("Generation → in silico labeling, virtual staining, synthetic data", color=NAVY, fontsize=13, fontweight="bold", y=0.04)
+    fig.suptitle("Generation → in silico labeling, virtual staining, synthetic data",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
     save(fig, "task_generation")
 
 
 def fig_registration():
-    img1, _ = synth_cells(size=180, n=8, seed=7)
-    # Shifted version
-    shift = 12
-    img2 = np.roll(img1, shift, axis=0)
-    img2 = np.roll(img2, shift, axis=1)
-    fig, axes = plt.subplots(1, 3, figsize=(11, 3.8))
-    axes[0].imshow(img1, cmap="Reds_r"); axes[0].set_title("Image A", color=NAVY, fontweight="bold")
-    axes[1].imshow(img2, cmap="Blues_r"); axes[1].set_title("Image B (shifted)", color=NAVY, fontweight="bold")
-    # Composite overlay
-    overlay = np.zeros((*img1.shape, 3))
-    overlay[..., 0] = img1
-    overlay[..., 2] = img2
-    axes[2].imshow(overlay)
-    axes[2].set_title("Overlay before alignment", color=NAVY, fontweight="bold")
+    """4-panel: Image A | Image B (shifted) | overlay before | overlay after alignment.
+    16:9-sized so the before-vs-after contrast is visible from the back of the room."""
+    img1, _ = synth_cells(size=200, n=8, seed=7)
+    shift_y, shift_x = 14, 10
+    img2 = np.roll(img1, shift_y, axis=0)
+    img2 = np.roll(img2, shift_x, axis=1)
+    # Overlay before alignment: A in red channel, B (shifted) in blue channel
+    overlay_before = np.zeros((*img1.shape, 3))
+    overlay_before[..., 0] = img1
+    overlay_before[..., 2] = img2
+    # Overlay after alignment: undo the shift on B → both channels co-located → white
+    img2_aligned = np.roll(img2, -shift_y, axis=0)
+    img2_aligned = np.roll(img2_aligned, -shift_x, axis=1)
+    overlay_after = np.zeros((*img1.shape, 3))
+    overlay_after[..., 0] = img1
+    overlay_after[..., 2] = img2_aligned
+
+    fig, axes = plt.subplots(1, 4, figsize=(16, 4.5))
+    axes[0].imshow(img1, cmap="Reds_r"); axes[0].set_title("Image A", color=NAVY, fontweight="bold", fontsize=13)
+    axes[1].imshow(img2, cmap="Blues_r"); axes[1].set_title("Image B (shifted)", color=NAVY, fontweight="bold", fontsize=13)
+    axes[2].imshow(overlay_before); axes[2].set_title("Overlay BEFORE alignment\n(red/blue split visible)", color=BAD, fontweight="bold", fontsize=13)
+    axes[3].imshow(overlay_after); axes[3].set_title("Overlay AFTER alignment\n(red/blue overlap → magenta)", color=GOOD, fontweight="bold", fontsize=13)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
         for s in ax.spines.values(): s.set_visible(False)
-    fig.suptitle("Registration → align images to a common spatial reference", color=NAVY, fontsize=13, fontweight="bold", y=0.04)
+    fig.suptitle("Registration → align images to a common spatial reference",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
     save(fig, "task_registration")
 
 
@@ -255,32 +277,36 @@ def fig_failure_hallucination():
 
 
 def fig_failure_misregistration():
-    img1, _ = synth_cells(size=160, n=8, seed=15)
-    # "Bad" registration: alignment is off in non-uniform way
+    """16:9-sized, sharper local-distortion artifact so the failure mode is
+    obvious at slide scale."""
+    img1, _ = synth_cells(size=220, n=8, seed=15)
     Y, X = np.indices(img1.shape, dtype=float)
-    cy, cx = 80, 80
-    # Local rotation + shift
-    theta = (np.sqrt((Y-cy)**2 + (X-cx)**2) / 80) * 0.15
-    Y2 = cy + (Y-cy) * np.cos(theta) - (X-cx) * np.sin(theta) + 8
-    X2 = cx + (Y-cy) * np.sin(theta) + (X-cx) * np.cos(theta) + 4
+    cy, cx = img1.shape[0] / 2, img1.shape[1] / 2
+    # Stronger local rotation + shift to make the failure more visible
+    theta = (np.sqrt((Y-cy)**2 + (X-cx)**2) / (img1.shape[0] / 2)) * 0.25
+    Y2 = cy + (Y-cy) * np.cos(theta) - (X-cx) * np.sin(theta) + 12
+    X2 = cx + (Y-cy) * np.sin(theta) + (X-cx) * np.cos(theta) + 8
     Y2 = np.clip(Y2, 0, img1.shape[0]-1).astype(int)
     X2 = np.clip(X2, 0, img1.shape[1]-1).astype(int)
     img2_misreg = img1[Y2, X2]
-    # Composite overlay
-    overlay = np.zeros((*img1.shape, 3))
-    overlay[..., 0] = img1
-    overlay[..., 2] = img2_misreg
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3.8))
-    # Good registration: just shifted (still close)
+
     overlay_good = np.zeros((*img1.shape, 3))
     overlay_good[..., 0] = img1
-    overlay_good[..., 2] = img1  # perfect alignment
-    axes[0].imshow(overlay_good); axes[0].set_title("Successful registration\n(structures align)", color=GOOD, fontweight="bold")
-    axes[1].imshow(overlay); axes[1].set_title("Failed registration\n(local distortion, structures drift)", color=BAD, fontweight="bold")
+    overlay_good[..., 2] = img1
+    overlay_bad = np.zeros((*img1.shape, 3))
+    overlay_bad[..., 0] = img1
+    overlay_bad[..., 2] = img2_misreg
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    axes[0].imshow(overlay_good)
+    axes[0].set_title("Successful registration\n(structures align → magenta)", color=GOOD, fontweight="bold", fontsize=14)
+    axes[1].imshow(overlay_bad)
+    axes[1].set_title("Failed registration\n(local distortion → red/blue ghosting)", color=BAD, fontweight="bold", fontsize=14)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
         for s in ax.spines.values(): s.set_visible(False)
-    fig.suptitle("Misregistration: alignment looks reasonable globally but distorts locally", color=NAVY, fontsize=13, fontweight="bold", y=0.02)
+    fig.suptitle("Misregistration: alignment looks reasonable globally but distorts locally",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
     save(fig, "failure_misregistration")
 
 
@@ -596,6 +622,950 @@ def fig_viz_s5_patterns():
 
 
 # --------------------------------------------------------------------------
+# viz_* figures — Phase 3 Group B regenerations (resize for 16:9 canvas)
+# --------------------------------------------------------------------------
+
+def fig_viz_s2_seg_works():
+    """Cellpose-SAM success case: clean fluorescence → instance segmentation."""
+    img, masks = synth_cells(size=220, n=24, seed=21, irregular=False)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    axes[0].imshow(img, cmap="gray")
+    axes[0].set_title("Synthetic clean fluorescence\n(separated nuclei)",
+                      color=NAVY, fontweight="bold", fontsize=14)
+    axes[1].imshow(img, cmap="gray")
+    axes[1].imshow(np.where(masks > 0, masks, np.nan), cmap=INSTANCE_CMAP,
+                   vmin=0, vmax=25, alpha=0.55)
+    n_pred = int(masks.max())
+    axes[1].set_title(f"Cellpose-SAM-style segmentation\n({n_pred} nuclei recovered, true: {n_pred})",
+                      color=GOOD, fontweight="bold", fontsize=14)
+    for ax in axes:
+        ax.set_xticks([]); ax.set_yticks([])
+        for s in ax.spines.values(): s.set_visible(False)
+    fig.suptitle("Where Cellpose-SAM works: clean fluorescence with separated nuclei",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
+    save(fig, "viz_s2_seg_works")
+
+
+def fig_viz_s2_seg_fails():
+    """Cellpose-SAM failure: dense OOD tissue → silent under-counting + merges."""
+    img, masks_true = synth_cells(size=220, n=58, seed=22, irregular=True)
+    # Bad model: only finds ~15 of the 58 nuclei, and several are merged
+    _, masks_bad = synth_cells(size=220, n=15, seed=23, irregular=True)
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    axes[0].imshow(img, cmap="gray")
+    axes[0].set_title("Tissue-like dense overlap\n(synthetic OOD sample)",
+                      color=NAVY, fontweight="bold", fontsize=14)
+    axes[1].imshow(img, cmap="gray")
+    axes[1].imshow(np.where(masks_bad > 0, masks_bad, np.nan), cmap=INSTANCE_CMAP,
+                   vmin=0, vmax=20, alpha=0.55)
+    n_detected = int(masks_bad.max())
+    n_true = int(masks_true.max())
+    axes[1].set_title(f"Pretrained segmenter on OOD: {n_detected} 'cells' detected\n(true = {n_true} — silent under-counting)",
+                      color=BAD, fontweight="bold", fontsize=14)
+    # Annotate two merge regions
+    for cy, cx in [(60, 50), (140, 130)]:
+        axes[1].annotate("merge", xy=(cx, cy), xytext=(cx + 25, cy - 25),
+                         fontsize=11, color=BAD, fontweight="bold",
+                         arrowprops=dict(arrowstyle="->", color=BAD, lw=1.5))
+    for ax in axes:
+        ax.set_xticks([]); ax.set_yticks([])
+        for s in ax.spines.values(): s.set_visible(False)
+    fig.suptitle("Where it fails: dense, irregular OOD samples",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
+    save(fig, "viz_s2_seg_fails")
+
+
+def fig_viz_s4_generalization():
+    """Underfit / just-right / overfit — 2 rows × 3 columns at 16:9 size."""
+    rng = np.random.default_rng(40)
+    x_data = np.linspace(0, 2 * np.pi, 30)
+    y_true = np.sin(x_data)
+    y_data = y_true + rng.normal(0, 0.18, x_data.shape)
+    x_fine = np.linspace(0, 2 * np.pi, 200)
+
+    # Three fits: linear (underfit), polynomial degree 4 (just right), degree 18 (overfit)
+    y_under = np.poly1d(np.polyfit(x_data, y_data, 1))(x_fine)
+    y_right = np.poly1d(np.polyfit(x_data, y_data, 4))(x_fine)
+    y_over = np.poly1d(np.polyfit(x_data, y_data, 18))(x_fine)
+
+    # Loss curves: train loss drops in all 3; val loss diverges only in overfit
+    epochs = np.arange(1, 51)
+    under_train = 0.85 - 0.05 * np.log1p(epochs); under_val = under_train + 0.02
+    right_train = 0.55 * np.exp(-epochs / 18) + 0.05; right_val = right_train + 0.03
+    over_train = 0.55 * np.exp(-epochs / 8) + 0.02
+    over_val = 0.45 * np.exp(-epochs / 12) + 0.05 + 0.01 * np.maximum(0, epochs - 18)
+
+    fig, axes = plt.subplots(2, 3, figsize=(16, 8))
+    panels = [
+        (axes[0, 0], y_under, "Underfit (too simple)", "High train loss\nHigh val loss", "#222"),
+        (axes[0, 1], y_right, "Just right", "Low train loss\nLow val loss", VIZ_FOUNDATIONS),
+        (axes[0, 2], y_over, "Overfit (too flexible)", "Low train loss\nHIGH val loss", VIZ_JUDGMENT),
+    ]
+    for ax, y_pred, title, label, color in panels:
+        ax.plot(x_fine, np.sin(x_fine), "--", color="gray", lw=1.2, label="true function")
+        ax.plot(x_data, y_data, "o", color="#444", markersize=4, label="train data")
+        ax.plot(x_fine, y_pred, "-", color=color, lw=2.2, label="model fit")
+        ax.set_title(title, color=color, fontweight="bold", fontsize=14)
+        ax.set_xticks([]); ax.set_yticks([])
+        ax.set_ylim(-1.8, 1.8)
+        # Inline status box
+        bbox_props = dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor=color, linewidth=1.5)
+        ax.text(0.04, 0.04, label, transform=ax.transAxes, fontsize=10, color=color,
+                fontweight="bold", verticalalignment="bottom", bbox=bbox_props)
+        ax.legend(loc="upper right", fontsize=8, framealpha=0.9)
+        for s in ax.spines.values(): s.set_color(NAVY)
+
+    loss_panels = [
+        (axes[1, 0], under_train, under_val, "#222"),
+        (axes[1, 1], right_train, right_val, VIZ_FOUNDATIONS),
+        (axes[1, 2], over_train, over_val, VIZ_JUDGMENT),
+    ]
+    for ax, tr, va, color in loss_panels:
+        ax.plot(epochs, tr, "-", color=color, lw=2, label="train loss")
+        ax.plot(epochs, va, "--", color=color, lw=2, label="val loss")
+        ax.fill_between(epochs, tr, va, color=color, alpha=0.12)
+        ax.set_xlabel("epoch", fontsize=10); ax.set_ylabel("loss", fontsize=10)
+        ax.set_xlim(0, 50); ax.set_ylim(0, 1.0)
+        ax.legend(loc="upper right", fontsize=9, framealpha=0.9)
+        ax.grid(True, alpha=0.25)
+
+    fig.suptitle("Underfit · just-right · overfit — recognize the regime from the loss curves",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
+    plt.tight_layout()
+    save(fig, "viz_s4_generalization")
+
+
+def fig_viz_s4_modes():
+    """Three modes of using AI today — pretrained, fine-tune, zero-shot.
+    Uses the FULL 16-unit width with generous internal padding so text never
+    spills outside its panel."""
+    fig, ax = plt.subplots(figsize=(16, 6.5))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 6.5); ax.axis("off")
+
+    # Title
+    ax.text(8, 6.2, "Three modes of using AI today",
+            ha="center", va="center", fontsize=16, fontweight="bold", color=NAVY)
+
+    # Three panels at x=[0.4-5.4], [5.6-10.4], [10.6-15.6]
+    from matplotlib.patches import FancyBboxPatch
+    panels = [
+        (0.4, 5.4, "Pretrained inference", VIZ_FOUNDATIONS, "#F4FBFF",
+         ["image", "model (frozen)", "output"],
+         "Your data looks like the model's\ntraining data. No gradients,\nno labels — just run.",
+         "Lab 1 (Cellpose-SAM out of the box)"),
+        (5.6, 10.4, "Fine-tuning", VIZ_WRAP, "#EBE6F2",
+         ["pretrained\nbackbone", "+ your\nlabels (~100)", "fine-\ntuned"],
+         "Domain-specific data +\nhundreds of labels available.\nCustomize a backbone for your modality.",
+         "Notebook 04 (model-zoo recipes)"),
+        (10.6, 15.6, "Zero-shot prompting", VIZ_JUDGMENT, "#FCE8F2",
+         ["★\nclick", "foundation\nmodel", "mask"],
+         "No labels, no training.\nClick / box / text-prompt.\nBest for SAM-style foundation models.",
+         "Lab 3b (μSAM)"),
+    ]
+    for x0, x1, title, color, fill, boxes, descr, lab in panels:
+        w = x1 - x0
+        # Panel container
+        ax.add_patch(FancyBboxPatch((x0, 0.3), w, 5.6,
+                                     boxstyle="round,pad=0.05,rounding_size=0.15",
+                                     facecolor=fill, edgecolor=color, linewidth=2.5))
+        # Panel title
+        ax.text(x0 + w/2, 5.2, title, ha="center", va="center",
+                fontsize=14, fontweight="bold", color=color)
+        # 3 small boxes in a row showing pipeline
+        bw = (w - 0.6) / 3 - 0.1
+        for i, btxt in enumerate(boxes):
+            bx = x0 + 0.3 + i * (bw + 0.15)
+            ax.add_patch(FancyBboxPatch((bx, 3.0), bw, 1.2,
+                                         boxstyle="round,pad=0.02,rounding_size=0.08",
+                                         facecolor="white", edgecolor=color, linewidth=1.4))
+            ax.text(bx + bw/2, 3.6, btxt, ha="center", va="center",
+                    fontsize=10, color=color, fontweight="bold", linespacing=1.0)
+            # Arrow between boxes
+            if i < 2:
+                ax.annotate("", xy=(bx + bw + 0.13, 3.6), xytext=(bx + bw + 0.02, 3.6),
+                            arrowprops=dict(arrowstyle="->", color=color, lw=1.5))
+        # Description text
+        ax.text(x0 + w/2, 2.0, descr, ha="center", va="center",
+                fontsize=10.5, color="#222", linespacing=1.3)
+        # Lab tag at bottom (italic, muted)
+        ax.text(x0 + w/2, 0.7, lab, ha="center", va="center",
+                fontsize=9.5, color="#666", style="italic")
+
+    save(fig, "viz_s4_modes")
+
+
+def fig_viz_s5_overview():
+    """Works vs fails — 10-panel grid (5 works + 5 fails)."""
+    fig = plt.figure(figsize=(16, 7.5))
+    fig.suptitle("Works vs fails — concrete examples",
+                 color=NAVY, fontsize=15, fontweight="bold", y=0.99)
+
+    works = [
+        ("Segmentation",  synth_cells(seed=51, n=8)),
+        ("Restoration",   synth_cells(seed=52, n=6)),
+        ("Classify",      synth_cells(seed=53, n=5)),
+        ("Stitch",        synth_cells(seed=54, n=4)),
+        ("μSAM click",    synth_cells(seed=55, n=6)),
+    ]
+    fails = [
+        ("OOD undercount", synth_cells(seed=61, n=10, irregular=True)),
+        ("Rare miss",      synth_cells(seed=62, n=6, irregular=True)),
+        ("Sample drift",   synth_cells(seed=63, n=4)),
+        ("Edge effects",   synth_cells(seed=64, n=8)),
+        ("Hallucinated",   synth_cells(seed=65, n=5)),
+    ]
+    gs = fig.add_gridspec(2, 6, width_ratios=[0.5, 1, 1, 1, 1, 1],
+                          hspace=0.18, wspace=0.1, top=0.92, bottom=0.04,
+                          left=0.02, right=0.98)
+    # Left labels
+    ax_lw = fig.add_subplot(gs[0, 0]); ax_lw.axis("off")
+    ax_lw.text(0.5, 0.5, "WORKS", ha="center", va="center", rotation=90,
+               fontsize=18, fontweight="bold", color=VIZ_FOUNDATIONS)
+    ax_lf = fig.add_subplot(gs[1, 0]); ax_lf.axis("off")
+    ax_lf.text(0.5, 0.5, "FAILS", ha="center", va="center", rotation=90,
+               fontsize=18, fontweight="bold", color=VIZ_JUDGMENT)
+    # Panels
+    for i, (label, (img, masks)) in enumerate(works):
+        ax = fig.add_subplot(gs[0, 1 + i])
+        ax.imshow(img, cmap="gray")
+        ax.imshow(np.where(masks > 0, masks, np.nan), cmap=INSTANCE_CMAP,
+                  vmin=0, vmax=20, alpha=0.5)
+        ax.set_title(label, fontsize=12, color=VIZ_FOUNDATIONS, fontweight="bold")
+        ax.set_xticks([]); ax.set_yticks([])
+    for i, (label, (img, masks)) in enumerate(fails):
+        ax = fig.add_subplot(gs[1, 1 + i])
+        ax.imshow(img, cmap="gray")
+        # Overlay sparse / wrong markers for failure illustration
+        ax.imshow(np.where(masks > 0, masks, np.nan), cmap=INSTANCE_CMAP,
+                  vmin=0, vmax=20, alpha=0.4)
+        ax.set_title(label, fontsize=12, color=VIZ_JUDGMENT, fontweight="bold")
+        ax.set_xticks([]); ax.set_yticks([])
+
+    save(fig, "viz_s5_overview")
+
+
+def fig_viz_s5_fails():
+    """Five failure patterns: 5-panel row, paired with viz_s5_works in the deck."""
+    fig, axes = plt.subplots(1, 5, figsize=(16, 4.5))
+    fig.suptitle("Where AI fails — five patterns to recognize",
+                 color=NAVY, fontsize=15, fontweight="bold", y=1.0)
+
+    cases = [
+        ("OOD undercount",      synth_cells(seed=71, n=30, irregular=True), "30 cells → 'detected' 8"),
+        ("Rare-category miss",  synth_cells(seed=72, n=6, irregular=True),  "(2 cells → 0 detected)"),
+        ("Sample-prep drift",   synth_cells(seed=73, n=4, irregular=False), "(low contrast → silent fail)"),
+        ("Edge effects",        synth_cells(seed=74, n=8, irregular=False), "(border cells dropped)"),
+        ("Hallucinated feature",synth_cells(seed=75, n=4, irregular=False), "(circled spot is invented)"),
+    ]
+    for i, (title, (img, masks), caption) in enumerate(cases):
+        ax = axes[i]
+        ax.imshow(img, cmap="gray")
+        # For hallucination, draw a red circle on the rightmost panel
+        if "Halluc" in title:
+            from matplotlib.patches import Circle
+            c = Circle((img.shape[1] // 2, img.shape[0] // 2), 22,
+                       fill=False, edgecolor=VIZ_JUDGMENT, linewidth=2.5)
+            ax.add_patch(c)
+            ax.text(img.shape[1] // 2, img.shape[0] // 2, "invented",
+                    ha="center", va="center", fontsize=8, color=VIZ_JUDGMENT,
+                    fontweight="bold", style="italic")
+        else:
+            # Overlay sparse correct/missed detections (e.g., for OOD undercount)
+            ax.imshow(np.where(masks > 0, masks, np.nan), cmap=INSTANCE_CMAP,
+                      vmin=0, vmax=20, alpha=0.45)
+        ax.set_title(title, fontsize=12, color=VIZ_JUDGMENT, fontweight="bold")
+        ax.text(0.5, -0.05, caption, ha="center", va="top",
+                transform=ax.transAxes, fontsize=9, style="italic", color="#444")
+        ax.set_xticks([]); ax.set_yticks([])
+
+    plt.tight_layout()
+    save(fig, "viz_s5_fails")
+
+
+# --------------------------------------------------------------------------
+# viz_* figures — Phase 3 Group C regenerations (architecture diagrams + flows)
+# --------------------------------------------------------------------------
+
+def fig_viz_s2_overview():
+    """Seven task categories. Registration + Tracking panels rebuilt so the
+    SAME objects are visibly tracked across frames (was abstract before)."""
+    fig = plt.figure(figsize=(16, 8.5))
+    fig.suptitle("Seven task categories at a glance",
+                 color=NAVY, fontsize=15, fontweight="bold", y=0.99)
+    gs = fig.add_gridspec(2, 4, hspace=0.32, wspace=0.18,
+                          top=0.92, bottom=0.04, left=0.03, right=0.97)
+
+    # Row 1: Segmentation, Detection, Classification, Restoration
+    rng = np.random.default_rng(80)
+    # Segmentation
+    img_s, masks_s = synth_cells(seed=80, n=8)
+    ax = fig.add_subplot(gs[0, 0]); ax.imshow(img_s, cmap="gray")
+    ax.imshow(np.where(masks_s > 0, masks_s, np.nan), cmap=INSTANCE_CMAP, vmin=0, vmax=15, alpha=0.5)
+    ax.set_title("Segmentation", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    # Detection
+    img_d, _ = synth_cells(seed=81, n=8)
+    ax = fig.add_subplot(gs[0, 1]); ax.imshow(img_d, cmap="gray")
+    centroids = [(rng.uniform(15, img_d.shape[0]-15), rng.uniform(15, img_d.shape[1]-15)) for _ in range(8)]
+    for cy, cx in centroids:
+        from matplotlib.patches import Rectangle as Rect
+        ax.add_patch(Rect((cx-12, cy-12), 24, 24, fill=False, edgecolor=VIZ_FOUNDATIONS, lw=1.5))
+    ax.set_title("Detection", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    # Classification
+    img_c, _ = synth_cells(seed=82, n=6)
+    ax = fig.add_subplot(gs[0, 2]); ax.imshow(img_c, cmap="gray")
+    centroids_c = [(rng.uniform(20, img_c.shape[0]-20), rng.uniform(20, img_c.shape[1]-20), c)
+                   for c in [VIZ_FOUNDATIONS, VIZ_JUDGMENT]*3]
+    for cy, cx, col in centroids_c:
+        from matplotlib.patches import Circle as Circ
+        ax.add_patch(Circ((cx, cy), 14, fill=False, edgecolor=col, lw=2))
+    ax.set_title("Classification", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    # Restoration
+    img_r, _ = synth_cells(seed=83, n=6)
+    noisy = np.clip(img_r + rng.normal(0, 0.25, img_r.shape), 0, 1)
+    h, w = img_r.shape
+    combined = np.hstack([noisy[:, :w//2], img_r[:, w//2:]])
+    ax = fig.add_subplot(gs[0, 3]); ax.imshow(combined, cmap="gray")
+    ax.axvline(w//2, color=VIZ_JUDGMENT, lw=2)
+    ax.set_title("Restoration", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+
+    # Row 2: Registration, Tracking, Generation, (+ many more)
+    # Registration: SAME objects in two frames, with a clear correspondence line
+    img_reg, _ = synth_cells(seed=84, n=4)
+    shift_y, shift_x = 18, 12
+    img_reg_shifted = np.roll(img_reg, (shift_y, shift_x), axis=(0, 1))
+    h, w = img_reg.shape
+    composite = np.zeros((h, w*2 + 8))
+    composite[:, :w] = img_reg
+    composite[:, w+8:] = img_reg_shifted
+    ax = fig.add_subplot(gs[1, 0]); ax.imshow(composite, cmap="gray")
+    # Draw 3 correspondence arrows linking the same nucleus across the two panels
+    # Pick 3 bright nucleus centroids using simple thresholding
+    from scipy.ndimage import label as ndi_label, center_of_mass
+    lbls, n_lbl = ndi_label(img_reg > 0.45)
+    if n_lbl >= 3:
+        centroids_l = center_of_mass(img_reg > 0.45, lbls, range(1, min(n_lbl, 3) + 1))
+        for cy, cx in centroids_l:
+            ax.annotate("", xy=(cx + w + 8 + shift_x, cy + shift_y),
+                        xytext=(cx, cy),
+                        arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.5))
+    ax.text(w/2, h+8, "moving", ha="center", va="top", fontsize=10, color=VIZ_JUDGMENT, fontweight="bold")
+    ax.text(w + 8 + w/2, h+8, "fixed", ha="center", va="top", fontsize=10, color=VIZ_FOUNDATIONS, fontweight="bold")
+    ax.set_title("Registration", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.set_ylim(h+22, -3)
+
+    # Tracking: same objects across t=0 → t=T with consistent IDs (colors)
+    ax = fig.add_subplot(gs[1, 1])
+    rng_t = np.random.default_rng(85)
+    n_obj = 4
+    colors_t = [VIZ_FOUNDATIONS, VIZ_JUDGMENT, VIZ_WRAP, "#E89A00"]
+    for i in range(n_obj):
+        x_start, y_start = rng_t.uniform(0.15, 0.85, 2)
+        xs = [x_start]; ys = [y_start]
+        for _ in range(15):
+            xs.append(xs[-1] + rng_t.normal(0, 0.025))
+            ys.append(ys[-1] + rng_t.normal(0, 0.025))
+        # Trajectory line + endpoints labelled with object ID
+        ax.plot(xs, ys, "-", color=colors_t[i], lw=1.6, alpha=0.7)
+        ax.plot(xs[0], ys[0], "o", color=colors_t[i], ms=12, markeredgecolor="black", mew=1.2)
+        ax.plot(xs[-1], ys[-1], "s", color=colors_t[i], ms=12, markeredgecolor="black", mew=1.2)
+        ax.text(xs[0], ys[0] + 0.04, f"ID {i+1}", color=colors_t[i], fontsize=8, ha="center", fontweight="bold")
+    ax.text(0.05, 0.95, "● t=0  ■ t=T", transform=ax.transAxes, fontsize=9, va="top",
+            color=NAVY, fontweight="bold")
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.set_aspect("equal")
+    ax.set_title("Tracking", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    # Generation
+    img_g, _ = synth_cells(seed=86, n=6)
+    smooth_g = gaussian_filter(img_g, sigma=2)
+    bf_g = np.clip(0.7 - 0.4 * img_g + 0.6 * (img_g - smooth_g), 0, 1)
+    combined_g = np.hstack([bf_g[:, :w//2], img_g[:, w//2:]])
+    ax = fig.add_subplot(gs[1, 2]); ax.imshow(combined_g, cmap="gray")
+    ax.axvline(w//2, color=VIZ_JUDGMENT, lw=2)
+    ax.text(w//4, 15, "BF", color="white", fontsize=12, fontweight="bold", ha="center",
+            bbox=dict(boxstyle="round,pad=0.2", facecolor=NAVY))
+    ax.text(3*w//4, 15, "G(z)", color="white", fontsize=12, fontweight="bold", ha="center",
+            bbox=dict(boxstyle="round,pad=0.2", facecolor=VIZ_JUDGMENT))
+    ax.set_title("Generation", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
+    ax.set_xticks([]); ax.set_yticks([])
+    # + many more placeholder
+    ax = fig.add_subplot(gs[1, 3]); ax.axis("off")
+    ax.text(0.5, 0.5, "+ many\nmore", ha="center", va="center",
+            fontsize=18, color="#888", style="italic")
+
+    save(fig, "viz_s2_overview")
+
+
+def fig_viz_s3_overview():
+    """Four model families with redrawn 'Other' quadrant: dual AE/Diffusion icon."""
+    from matplotlib.patches import FancyBboxPatch, Rectangle as Rect, Polygon, Circle as Circ
+    fig, ax = plt.subplots(figsize=(16, 8.5))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 8.5); ax.axis("off")
+    ax.text(8, 8.2, "Common model families behind bioimage AI",
+            ha="center", va="center", fontsize=16, fontweight="bold", color=NAVY)
+
+    # 2x2 grid quadrants
+    quads = [
+        (0.4, 4.2, "CNNs", VIZ_FOUNDATIONS, "#F4FBFF",
+         "Best for: dense prediction (segmentation, restoration)", "Lab 1 backbone"),
+        (8.2, 4.2, "Transformers", VIZ_WRAP, "#EBE6F2",
+         "Best for: long-range context, prompted segmentation", "Lab 3b (SAM)"),
+        (0.4, 0.3, "GANs", VIZ_JUDGMENT, "#FCE8F2",
+         "Best for: image-to-image translation, stylization", "Notebook 04 demo"),
+        (8.2, 0.3, "Other (AE / Diffusion)", "#333", "#F2F2F2",
+         "Best for: self-supervised denoising, generative priors", "Lab 3a (N2V)"),
+    ]
+    for x0, y0, title, color, fill, best_for, lab in quads:
+        ax.add_patch(FancyBboxPatch((x0, y0), 7.4, 3.6,
+                                     boxstyle="round,pad=0.05,rounding_size=0.15",
+                                     facecolor=fill, edgecolor=color, linewidth=2.5))
+        ax.text(x0 + 0.3, y0 + 3.15, title, fontsize=14, fontweight="bold", color=color)
+        ax.text(x0 + 0.3, y0 + 0.6, best_for, fontsize=10.5, color="#222", style="italic")
+        ax.text(x0 + 7.1, y0 + 0.2, lab, fontsize=9.5, color="#666", style="italic", ha="right")
+
+    # CNN: stacked pyramidal blocks → arrow
+    cnn_x = 1.0; cnn_y = 1.5
+    for i, (w, h) in enumerate([(0.6, 1.5), (0.5, 1.2), (0.4, 0.9), (0.3, 0.6)]):
+        ax.add_patch(Rect((cnn_x + i * 0.65, cnn_y + (1.5 - h)/2), w, h,
+                          facecolor=VIZ_FOUNDATIONS, alpha=0.85))
+    ax.annotate("", xy=(5.5, cnn_y + 0.75), xytext=(cnn_x + 4 * 0.65 + 0.3, cnn_y + 0.75),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.5))
+
+    # Transformer: 4x4 patch grid with attention arrows from one patch
+    tx, ty = 9.6, 1.4
+    for i in range(4):
+        for j in range(4):
+            color_p = VIZ_WRAP if (i, j) == (1, 1) else "#C9BDD9"
+            ax.add_patch(Rect((tx + j * 0.32, ty + i * 0.32), 0.30, 0.30,
+                              facecolor=color_p, edgecolor="white", linewidth=1.5))
+    # Two attention arrows from highlighted patch
+    src_x, src_y = tx + 1 * 0.32 + 0.15, ty + 1 * 0.32 + 0.15
+    for dx, dy in [(0.96, 0.96), (-0.32, 0.64)]:
+        ax.annotate("", xy=(src_x + dx, src_y + dy), xytext=(src_x, src_y),
+                    arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.3))
+
+    # GAN: G box ↔ D box
+    gx, gy = 1.5, 1.5
+    ax.add_patch(FancyBboxPatch((gx, gy), 1.4, 0.9, boxstyle="round,pad=0.05",
+                                 facecolor="white", edgecolor=VIZ_JUDGMENT, linewidth=2))
+    ax.text(gx + 0.7, gy + 0.45, "G", ha="center", va="center", fontsize=18,
+            color=VIZ_JUDGMENT, fontweight="bold")
+    ax.add_patch(FancyBboxPatch((gx + 3.3, gy), 1.4, 0.9, boxstyle="round,pad=0.05",
+                                 facecolor=VIZ_JUDGMENT, edgecolor=VIZ_JUDGMENT, linewidth=2))
+    ax.text(gx + 3.3 + 0.7, gy + 0.45, "D", ha="center", va="center", fontsize=18,
+            color="white", fontweight="bold")
+    ax.annotate("", xy=(gx + 3.3 - 0.05, gy + 0.55), xytext=(gx + 1.4 + 0.05, gy + 0.55),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=1.8))
+    ax.annotate("", xy=(gx + 1.4 + 0.05, gy + 0.35), xytext=(gx + 3.3 - 0.05, gy + 0.35),
+                arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.8, linestyle="--"))
+
+    # Other: DUAL ICON — autoencoder (bottleneck shape) on left + diffusion (noise→clean) on right
+    ox, oy = 9.0, 1.5
+    # Autoencoder bow-tie shape
+    pts_ae = np.array([[ox, oy + 1.0], [ox + 1.4, oy + 0.5], [ox + 1.4, oy + 0.5],
+                       [ox, oy], [ox, oy + 1.0], [ox + 1.4, oy + 0.5],
+                       [ox + 2.8, oy + 1.0], [ox + 2.8, oy + 0], [ox + 1.4, oy + 0.5]])
+    # Left triangle (encoder)
+    ax.add_patch(Polygon([[ox, oy + 1.0], [ox + 1.4, oy + 0.5], [ox, oy]],
+                          facecolor=VIZ_FOUNDATIONS, alpha=0.75))
+    # Right triangle (decoder)
+    ax.add_patch(Polygon([[ox + 2.8, oy + 1.0], [ox + 1.4, oy + 0.5], [ox + 2.8, oy]],
+                          facecolor=VIZ_FOUNDATIONS, alpha=0.75))
+    # Bottleneck dot
+    ax.add_patch(Circ((ox + 1.4, oy + 0.5), 0.1, facecolor=VIZ_WRAP))
+    ax.text(ox + 1.4, oy - 0.3, "AE", ha="center", fontsize=9, color="#333", fontweight="bold")
+
+    # Diffusion: noise → clean (3 stages)
+    dx0 = ox + 3.5
+    stages = [0.9, 0.5, 0.1]  # noise level decreasing
+    for i, noise in enumerate(stages):
+        # Render a square with progressively less salt-pepper noise
+        sub_x = dx0 + i * 0.8
+        ax.add_patch(Rect((sub_x, oy), 0.6, 0.95, facecolor="#222"))
+        # White speckles
+        n_spk = int(50 * noise)
+        rng_s = np.random.default_rng(90 + i)
+        xs_spk = sub_x + 0.05 + rng_s.uniform(0, 0.5, n_spk)
+        ys_spk = oy + 0.05 + rng_s.uniform(0, 0.85, n_spk)
+        ax.scatter(xs_spk, ys_spk, s=2, c="white")
+        if i < len(stages) - 1:
+            ax.annotate("", xy=(sub_x + 0.78, oy + 0.45), xytext=(sub_x + 0.62, oy + 0.45),
+                        arrowprops=dict(arrowstyle="->", color="#333", lw=1.2))
+    ax.text(dx0 + 1.05, oy - 0.3, "Diffusion", ha="center", fontsize=9, color="#333", fontweight="bold")
+
+    save(fig, "viz_s3_overview")
+
+
+def fig_viz_s3_cnn():
+    """U-Net architecture diagram. Tighter layout so labels stay inside the draw
+    area at every column. Includes a Ronneberger 2015 Fig 1 reference inset URL
+    in the figure caption (the lecture markdown handles the inset slide)."""
+    from matplotlib.patches import Rectangle as Rect
+    fig, ax = plt.subplots(figsize=(16, 7))
+    # Leave 0.5 unit margin on every side
+    ax.set_xlim(-0.5, 16.5); ax.set_ylim(-1, 8); ax.axis("off")
+    ax.text(8, 7.7, "U-Net — encoder · bottleneck · decoder · skip connections",
+            ha="center", va="center", fontsize=15, fontweight="bold", color=NAVY)
+
+    # Encoder blocks (decreasing height, increasing depth/color)
+    enc_blocks = [(0.5, 4.5, 1, 64, "572²", "568²"),
+                  (1.8, 3.6, 1, 128, "280²", "136²"),
+                  (3.1, 2.7, 1, 256, "136²", "64²"),
+                  (4.4, 1.8, 1, 512, "64²", "32²")]
+    for x, h, w_block, ch, lbl_below, lbl_in in enc_blocks:
+        y = 3.0 - h / 2
+        ax.add_patch(Rect((x, y), w_block, h, facecolor=VIZ_FOUNDATIONS,
+                          edgecolor="white", linewidth=1.5))
+        ax.text(x + w_block/2, y + h + 0.15, str(ch), ha="center", va="bottom",
+                fontsize=10, color=VIZ_FOUNDATIONS, fontweight="bold")
+        ax.text(x + w_block/2, y - 0.2, lbl_below, ha="center", va="top",
+                fontsize=8, color="#666", style="italic")
+
+    # Bottleneck
+    bn_x = 5.9
+    ax.add_patch(Rect((bn_x, 2.4), 0.9, 1.2, facecolor=VIZ_WRAP, edgecolor="white", linewidth=1.5))
+    ax.text(bn_x + 0.45, 2.4 + 1.2 + 0.15, "1024", ha="center", va="bottom",
+            fontsize=10, color=VIZ_WRAP, fontweight="bold")
+    ax.text(bn_x + 0.45, 2.4 - 0.2, "32²", ha="center", va="top",
+            fontsize=8, color="#666", style="italic")
+    ax.text(bn_x + 0.45, 1.8, "bottleneck", ha="center", va="top",
+            fontsize=9, color=VIZ_WRAP, fontweight="bold")
+
+    # Decoder blocks (mirroring encoder)
+    dec_blocks = [(7.4, 1.8, 1, 512, "56²"),
+                  (8.7, 2.7, 1, 256, "104²"),
+                  (10.0, 3.6, 1, 128, "200²"),
+                  (11.3, 4.5, 1, 64, "388²")]
+    for x, h, w_block, ch, lbl_below in dec_blocks:
+        y = 3.0 - h / 2
+        ax.add_patch(Rect((x, y), w_block, h, facecolor=VIZ_JUDGMENT,
+                          edgecolor="white", linewidth=1.5))
+        ax.text(x + w_block/2, y + h + 0.15, str(ch), ha="center", va="bottom",
+                fontsize=10, color=VIZ_JUDGMENT, fontweight="bold")
+        ax.text(x + w_block/2, y - 0.2, lbl_below, ha="center", va="top",
+                fontsize=8, color="#666", style="italic")
+
+    # Output block
+    ax.add_patch(Rect((12.7, 2.2), 0.7, 1.6, facecolor="#444",
+                      edgecolor="white", linewidth=1.5))
+    ax.text(13.05, 2.2 + 1.6 + 0.15, "2", ha="center", va="bottom",
+            fontsize=10, color="#444", fontweight="bold")
+    ax.text(13.05, 2.2 - 0.2, "388²", ha="center", va="top",
+            fontsize=8, color="#666", style="italic")
+    ax.text(13.05, 1.6, "mask\n(output)", ha="center", va="top", fontsize=9, color="#444", fontweight="bold")
+
+    # Input
+    ax.add_patch(Rect((-0.1, 1.8), 0.4, 2.4, facecolor="#444", edgecolor="white", linewidth=1.5))
+    ax.text(0.1, 4.2 + 0.15, "1", ha="center", va="bottom", fontsize=10, color="#444", fontweight="bold")
+    ax.text(0.1, 1.6, "image\n(input)", ha="center", va="top", fontsize=9, color="#444", fontweight="bold")
+    ax.text(0.1, 1.0, "572²", ha="center", va="top", fontsize=8, color="#666", style="italic")
+
+    # Skip connections (arcs from encoder to decoder)
+    skip_pairs = [(enc_blocks[0], dec_blocks[3]),
+                  (enc_blocks[1], dec_blocks[2]),
+                  (enc_blocks[2], dec_blocks[1]),
+                  (enc_blocks[3], dec_blocks[0])]
+    for (xe, he, _, _, _, _), (xd, hd, _, _, _) in skip_pairs:
+        from matplotlib.patches import FancyArrowPatch
+        arc = FancyArrowPatch((xe + 0.5, 3.0 + he/2 + 0.1),
+                              (xd + 0.5, 3.0 + hd/2 + 0.1),
+                              connectionstyle="arc3,rad=-0.32",
+                              arrowstyle="-", color="#666", lw=1.2)
+        ax.add_patch(arc)
+
+    # Inter-block arrows (encoder direction)
+    for i in range(len(enc_blocks) - 1):
+        x0 = enc_blocks[i][0] + 1.0
+        x1 = enc_blocks[i+1][0] - 0.02
+        ax.annotate("", xy=(x1, 3.0), xytext=(x0, 3.0),
+                    arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=1.5))
+    # Encoder → bottleneck
+    ax.annotate("", xy=(bn_x - 0.02, 3.0), xytext=(enc_blocks[-1][0] + 1.0, 3.0),
+                arrowprops=dict(arrowstyle="->", color=VIZ_WRAP, lw=1.7))
+    # Bottleneck → decoder
+    ax.annotate("", xy=(dec_blocks[0][0] - 0.02, 3.0), xytext=(bn_x + 0.9, 3.0),
+                arrowprops=dict(arrowstyle="->", color=VIZ_WRAP, lw=1.7))
+    # Inter-decoder arrows
+    for i in range(len(dec_blocks) - 1):
+        x0 = dec_blocks[i][0] + 1.0
+        x1 = dec_blocks[i+1][0] - 0.02
+        ax.annotate("", xy=(x1, 3.0), xytext=(x0, 3.0),
+                    arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.5))
+    # Decoder → output
+    ax.annotate("", xy=(12.7 - 0.02, 3.0), xytext=(dec_blocks[-1][0] + 1.0, 3.0),
+                arrowprops=dict(arrowstyle="->", color="#444", lw=1.5))
+
+    # Axis labels
+    ax.text(2.7, 0.2, "encoder (downsample)", ha="center", color=VIZ_FOUNDATIONS, fontsize=11, fontweight="bold")
+    ax.text(10, 0.2, "decoder (upsample)", ha="center", color=VIZ_JUDGMENT, fontsize=11, fontweight="bold")
+
+    # Legend at the bottom
+    ax.text(8, -0.5, "Channels above each box · spatial size at lower-left",
+            ha="center", fontsize=9.5, color="#666", style="italic")
+    legend_y = -0.85
+    lx = 1.5
+    ax.annotate("", xy=(lx + 0.4, legend_y), xytext=(lx, legend_y),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2))
+    ax.text(lx + 0.6, legend_y, "3×3 conv + ReLU (×2), then 2×2 max-pool", va="center", fontsize=9, color="#333")
+    lx = 8.5
+    ax.annotate("", xy=(lx + 0.4, legend_y), xytext=(lx, legend_y),
+                arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=2))
+    ax.text(lx + 0.6, legend_y, "2×2 up-conv, then 3×3 conv + ReLU (×2)", va="center", fontsize=9, color="#333")
+    legend_y2 = -1.3
+    lx = 1.5
+    from matplotlib.patches import FancyArrowPatch
+    arc_leg = FancyArrowPatch((lx, legend_y2 + 0.05), (lx + 0.4, legend_y2 + 0.05),
+                               connectionstyle="arc3,rad=-0.5", arrowstyle="-", color="#666", lw=1.2)
+    ax.add_patch(arc_leg)
+    ax.text(lx + 0.6, legend_y2, "copy + concat (skip connection)", va="center", fontsize=9, color="#333")
+    lx = 8.5
+    ax.annotate("", xy=(lx + 0.4, legend_y2), xytext=(lx, legend_y2),
+                arrowprops=dict(arrowstyle="->", color="#444", lw=2))
+    ax.text(lx + 0.6, legend_y2, "1×1 conv → output classes", va="center", fontsize=9, color="#333")
+    ax.set_ylim(-1.5, 8)
+
+    save(fig, "viz_s3_cnn")
+
+
+def fig_viz_s3_gan():
+    """GAN Generator/Discriminator loop with arrows that clearly land on box edges."""
+    from matplotlib.patches import FancyBboxPatch, Rectangle as Rect
+    fig, ax = plt.subplots(figsize=(16, 7))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 7); ax.axis("off")
+    ax.text(8, 6.7, "GAN — Generator vs Discriminator adversarial loop",
+            ha="center", va="center", fontsize=15, fontweight="bold", color=NAVY)
+
+    # Boxes (positions chosen so arrows have clean horizontal/vertical paths)
+    # Real images box (top-left)
+    real_x, real_y, real_w, real_h = 0.5, 4.2, 3.2, 1.6
+    ax.add_patch(FancyBboxPatch((real_x, real_y), real_w, real_h,
+                                 boxstyle="round,pad=0.05,rounding_size=0.1",
+                                 facecolor="#E0F4FF", edgecolor=VIZ_FOUNDATIONS, linewidth=2))
+    ax.text(real_x + 0.15, real_y + real_h - 0.3, "Real images",
+            fontsize=11, color=VIZ_FOUNDATIONS, fontweight="bold")
+    # mini imgs
+    for i in range(3):
+        ax.add_patch(Rect((real_x + 0.3 + i * 0.9, real_y + 0.3), 0.7, 0.7,
+                          facecolor="#333"))
+
+    # Discriminator box (top-right)
+    disc_x, disc_y, disc_w, disc_h = 9.0, 4.0, 3.2, 1.8
+    ax.add_patch(FancyBboxPatch((disc_x, disc_y), disc_w, disc_h,
+                                 boxstyle="round,pad=0.05,rounding_size=0.1",
+                                 facecolor="white", edgecolor=VIZ_JUDGMENT, linewidth=2))
+    ax.text(disc_x + disc_w/2, disc_y + disc_h - 0.35, "Discriminator D",
+            ha="center", fontsize=12, color=VIZ_JUDGMENT, fontweight="bold")
+    ax.text(disc_x + disc_w/2, disc_y + disc_h/2 - 0.05, "real or fake?",
+            ha="center", fontsize=10, color="#333", style="italic")
+
+    # Discriminator output bubble (far right)
+    out_x = 13.4
+    ax.add_patch(FancyBboxPatch((out_x, 4.5), 2.0, 1.0,
+                                 boxstyle="round,pad=0.05,rounding_size=0.1",
+                                 facecolor="#F8F8F8", edgecolor="#333", linewidth=1.5))
+    ax.text(out_x + 1.0, 5.15, "D(x) → [0, 1]", ha="center", fontsize=10,
+            color="#333", fontweight="bold")
+    ax.text(out_x + 1.0, 4.75, "1 = real\n0 = fake", ha="center", fontsize=8.5,
+            color="#666", style="italic", linespacing=1.0)
+
+    # Generator box (bottom-left)
+    gen_x, gen_y, gen_w, gen_h = 0.5, 1.0, 3.2, 1.6
+    ax.add_patch(FancyBboxPatch((gen_x, gen_y), gen_w, gen_h,
+                                 boxstyle="round,pad=0.05,rounding_size=0.1",
+                                 facecolor="white", edgecolor="#333", linewidth=2))
+    ax.text(gen_x + gen_w/2, gen_y + gen_h - 0.3, "Generator G",
+            ha="center", fontsize=12, color="#333", fontweight="bold")
+    ax.text(gen_x + gen_w/2, gen_y + 0.3, "noise z → image",
+            ha="center", fontsize=10, color="#666", style="italic")
+
+    # noise z input (far left)
+    ax.text(gen_x - 0.4, gen_y + gen_h/2, "noise z →", ha="right", va="center",
+            fontsize=10, color="#666", fontweight="bold")
+
+    # Fake images box (bottom-middle)
+    fake_x, fake_y, fake_w, fake_h = 4.6, 1.0, 3.2, 1.6
+    ax.add_patch(FancyBboxPatch((fake_x, fake_y), fake_w, fake_h,
+                                 boxstyle="round,pad=0.05,rounding_size=0.1",
+                                 facecolor="#FCE8F2", edgecolor=VIZ_JUDGMENT, linewidth=2))
+    ax.text(fake_x + 0.15, fake_y + fake_h - 0.3, "Fake images G(z)",
+            fontsize=11, color=VIZ_JUDGMENT, fontweight="bold")
+    for i in range(3):
+        ax.add_patch(Rect((fake_x + 0.3 + i * 0.9, fake_y + 0.3), 0.7, 0.7,
+                          facecolor="#666"))
+
+    # ARROWS — data flow (solid cyan) — landing exactly on box edges
+    # Real → D
+    ax.annotate("", xy=(disc_x - 0.02, disc_y + disc_h - 0.4),
+                xytext=(real_x + real_w + 0.02, real_y + real_h/2),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.2))
+    # Generator → Fake
+    ax.annotate("", xy=(fake_x - 0.02, fake_y + fake_h/2),
+                xytext=(gen_x + gen_w + 0.02, gen_y + gen_h/2),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.2))
+    # Fake → D
+    ax.annotate("", xy=(disc_x - 0.02, disc_y + 0.4),
+                xytext=(fake_x + fake_w + 0.02, fake_y + fake_h/2),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.2))
+    # D → output
+    ax.annotate("", xy=(out_x - 0.02, out_y_mid := 5.0),
+                xytext=(disc_x + disc_w + 0.02, disc_y + disc_h/2),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.2))
+
+    # GRADIENT FLOW (dashed magenta) — training signal back to G and D
+    # G-step: gradient from D back to G (arc curves below the boxes, not through them)
+    from matplotlib.patches import FancyArrowPatch
+    g_arrow = FancyArrowPatch((disc_x + 0.6, disc_y - 0.02),
+                               (gen_x + gen_w - 0.4, gen_y + gen_h + 0.02),
+                               connectionstyle="arc3,rad=0.45",
+                               arrowstyle="->", color=VIZ_JUDGMENT, lw=1.8, linestyle="--")
+    ax.add_patch(g_arrow)
+    ax.text(5.5, 3.3, "G-step: improve generator\n(move predictions toward 'real')",
+            ha="center", fontsize=8.5, color=VIZ_JUDGMENT, style="italic", fontweight="bold")
+    # D-step: gradient from D output back to D itself (small loop on the right side)
+    d_arrow = FancyArrowPatch((out_x + 0.2, 4.5),
+                               (disc_x + disc_w - 0.3, disc_y + 0.2),
+                               connectionstyle="arc3,rad=0.35",
+                               arrowstyle="->", color=VIZ_JUDGMENT, lw=1.8, linestyle="--")
+    ax.add_patch(d_arrow)
+    ax.text(14.3, 3.95, "D-step:\nimprove discriminator", ha="center", va="top",
+            fontsize=8.5, color=VIZ_JUDGMENT, style="italic", fontweight="bold")
+
+    # Legend
+    ax.plot([13.4, 14.0], [3.5, 3.5], color=VIZ_FOUNDATIONS, lw=2.2)
+    ax.text(14.1, 3.5, "data flow", va="center", fontsize=9, color="#333")
+    ax.plot([13.4, 14.0], [3.05, 3.05], color=VIZ_JUDGMENT, lw=1.8, linestyle="--")
+    ax.text(14.1, 3.05, "gradient flow (training signal)", va="center", fontsize=9, color="#333")
+
+    save(fig, "viz_s3_gan")
+
+
+def fig_viz_s3_other():
+    """Encoder-decoder family — 4 panels with VISIBLY distinct schematics so
+    U-Net, Autoencoder, pix2pix, fnet 3D each have an identifying feature.
+    Arrows land on block edges, not floating in space."""
+    from matplotlib.patches import Rectangle as Rect, FancyArrowPatch, Polygon, FancyBboxPatch, Circle as Circ
+    fig, ax = plt.subplots(figsize=(16, 8.5))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 8.5); ax.axis("off")
+    ax.text(8, 8.2, "Recognize the encoder-decoder pattern in any new bioimage paper",
+            ha="center", va="center", fontsize=15, fontweight="bold", color=NAVY)
+
+    # Helper: draw an encoder-decoder block sequence
+    def draw_encoder_decoder(x_origin, y_origin, encoder_heights=(1.6, 1.3, 1.0, 0.7),
+                             decoder_heights=(0.7, 1.0, 1.3, 1.6), block_w=0.4, gap=0.1,
+                             skip=True, bottleneck=True, color_enc=VIZ_FOUNDATIONS,
+                             color_dec=VIZ_JUDGMENT, label_below=None):
+        """Returns the x-range used."""
+        x = x_origin
+        enc_xs = []
+        for h in encoder_heights:
+            y = y_origin - h / 2
+            ax.add_patch(Rect((x, y), block_w, h, facecolor=color_enc, alpha=0.8,
+                              edgecolor="white", lw=1.2))
+            enc_xs.append((x, h))
+            x += block_w + gap
+        if bottleneck:
+            ax.add_patch(Rect((x, y_origin - 0.25), 0.4, 0.5, facecolor=VIZ_WRAP,
+                              edgecolor="white", lw=1.2))
+            x += 0.4 + gap
+        dec_xs = []
+        for h in decoder_heights:
+            y = y_origin - h / 2
+            ax.add_patch(Rect((x, y), block_w, h, facecolor=color_dec, alpha=0.8,
+                              edgecolor="white", lw=1.2))
+            dec_xs.append((x, h))
+            x += block_w + gap
+        # Skip connections
+        if skip:
+            for (xe, he), (xd, hd) in zip(enc_xs, reversed(dec_xs)):
+                arc = FancyArrowPatch((xe + block_w/2, y_origin + he/2 + 0.05),
+                                      (xd + block_w/2, y_origin + hd/2 + 0.05),
+                                      connectionstyle="arc3,rad=-0.35",
+                                      arrowstyle="-", color="#666", lw=1.0)
+                ax.add_patch(arc)
+        # Bottleneck label
+        if bottleneck:
+            bn_idx = len(encoder_heights)
+            bn_x = x_origin + bn_idx * (block_w + gap)
+            ax.text(bn_x + 0.2, y_origin - 0.5, "z", ha="center", va="top",
+                    fontsize=9, style="italic", color=VIZ_WRAP)
+        return x_origin, x, dec_xs
+
+    # ----- Panel 1 (top-left): U-Net (encoder + skips + decoder)
+    ax.text(2.0, 7.3, "U-Net", fontsize=14, fontweight="bold", color=VIZ_FOUNDATIONS)
+    draw_encoder_decoder(0.6, 6.0, skip=True, bottleneck=True, label_below="U-Net")
+    ax.text(2.0, 4.7, "encoder-decoder + skip connections",
+            ha="center", fontsize=10, color="#444", style="italic")
+
+    # ----- Panel 2 (top-right): Autoencoder (no skips, visible latent dot)
+    ax.text(10.0, 7.3, "Autoencoder", fontsize=14, fontweight="bold", color=VIZ_FOUNDATIONS)
+    # Draw without skip arcs
+    _, end_ae, _ = draw_encoder_decoder(8.6, 6.0, skip=False, bottleneck=True)
+    # Bigger latent dot for emphasis
+    ax.add_patch(Circ((8.6 + 4 * 0.5 + 0.2, 6.0), 0.18, facecolor=VIZ_WRAP, edgecolor="white", lw=1.5))
+    ax.text(8.6 + 4 * 0.5 + 0.2, 5.55, "z (latent)", ha="center", va="top",
+            fontsize=9, color=VIZ_WRAP, fontweight="bold", style="italic")
+    ax.text(10.0, 4.7, "no skips — bottleneck forces compression",
+            ha="center", fontsize=10, color="#444", style="italic")
+
+    # ----- Panel 3 (bottom-left): pix2pix (U-Net generator + adversarial D box)
+    ax.text(2.0, 3.5, "pix2pix", fontsize=14, fontweight="bold", color=VIZ_JUDGMENT)
+    _, end_p2p, dec_xs_p2p = draw_encoder_decoder(0.6, 2.2, skip=True, bottleneck=True,
+                                                   color_dec=VIZ_JUDGMENT)
+    # Adversarial D box appended on the right
+    d_box_x = end_p2p + 0.1
+    ax.add_patch(FancyBboxPatch((d_box_x, 1.5), 0.9, 1.4,
+                                 boxstyle="round,pad=0.05,rounding_size=0.08",
+                                 facecolor="#FCE8F2", edgecolor=VIZ_JUDGMENT, lw=1.8))
+    ax.text(d_box_x + 0.45, 2.2, "D\n(adv.)", ha="center", va="center",
+            fontsize=10, color=VIZ_JUDGMENT, fontweight="bold")
+    # Arrow from decoder output to D
+    last_x, last_h = dec_xs_p2p[-1]
+    ax.annotate("", xy=(d_box_x - 0.02, 2.2), xytext=(last_x + 0.42, 2.2),
+                arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.5))
+    ax.text(2.0, 0.9, "U-Net generator + adversarial discriminator",
+            ha="center", fontsize=10, color="#444", style="italic")
+
+    # ----- Panel 4 (bottom-right): fnet 3D (stacked planes per block to suggest depth)
+    ax.text(10.0, 3.5, "fnet (3D)", fontsize=14, fontweight="bold", color=VIZ_FOUNDATIONS)
+    # Draw 4 encoder + bottleneck + 4 decoder, each as a STACK of 3 offset rectangles
+    bx0 = 8.0
+    enc_heights = [1.5, 1.2, 0.9, 0.6]
+    dec_heights = [0.6, 0.9, 1.2, 1.5]
+    block_w = 0.4; gap = 0.13
+    x = bx0
+    enc_xs_fnet = []
+    for h in enc_heights:
+        y = 2.2 - h / 2
+        for offset in range(3):
+            ax.add_patch(Rect((x + offset*0.07, y + offset*0.05), block_w, h,
+                              facecolor=VIZ_FOUNDATIONS, alpha=0.45 + offset*0.15,
+                              edgecolor="white", lw=0.8))
+        enc_xs_fnet.append((x, h))
+        x += block_w + gap + 0.15  # extra gap for the depth offset
+    # Bottleneck stack
+    for offset in range(3):
+        ax.add_patch(Rect((x + offset*0.07, 2.2 - 0.25 + offset*0.05), 0.4, 0.5,
+                          facecolor=VIZ_WRAP, alpha=0.5 + offset*0.15,
+                          edgecolor="white", lw=0.8))
+    x += 0.4 + gap + 0.15
+    dec_xs_fnet = []
+    for h in dec_heights:
+        y = 2.2 - h / 2
+        for offset in range(3):
+            ax.add_patch(Rect((x + offset*0.07, y + offset*0.05), block_w, h,
+                              facecolor=VIZ_JUDGMENT, alpha=0.45 + offset*0.15,
+                              edgecolor="white", lw=0.8))
+        dec_xs_fnet.append((x, h))
+        x += block_w + gap + 0.15
+    ax.text(10.0, 0.9, "encoder-decoder over volumetric data",
+            ha="center", fontsize=10, color="#444", style="italic")
+    ax.text(11.6, 1.1, "Z-stacks → 3D convolutions",
+            ha="center", fontsize=9, color=VIZ_WRAP, style="italic")
+
+    save(fig, "viz_s3_other")
+
+
+def fig_viz_s4_overview():
+    """Forward pass + backprop flow. Bigger element sizing; full picture
+    visible without crowding."""
+    from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+    fig, ax = plt.subplots(figsize=(16, 7))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 7); ax.axis("off")
+    ax.text(8, 6.7, "How models learn: forward pass + gradient feedback loop",
+            ha="center", va="center", fontsize=15, fontweight="bold", color=NAVY)
+
+    # "Repeat for thousands of batches" loop indicator
+    ax.text(1.2, 5.7, "↻ repeat for thousands of batches",
+            ha="left", va="center", fontsize=10.5, color="#666", style="italic")
+
+    # 4 large boxes in a horizontal row at y=3.2..4.8
+    boxes = [
+        (1.0, "Data",        "labeled examples",       "#E0F4FF", VIZ_FOUNDATIONS),
+        (4.5, "Model",       "neural network θ",        "#EBE6F2", VIZ_WRAP),
+        (8.0, "Predictions", "ŷ = f(x; θ)",             "#E0F4FF", VIZ_FOUNDATIONS),
+        (11.5,"Loss",        "L(ŷ, y)",                 "#FCE8F2", VIZ_JUDGMENT),
+    ]
+    box_w, box_h = 3.0, 1.8
+    box_y = 3.4
+    for x, title, sub, fill, color in boxes:
+        ax.add_patch(FancyBboxPatch((x, box_y), box_w, box_h,
+                                     boxstyle="round,pad=0.05,rounding_size=0.12",
+                                     facecolor=fill, edgecolor=color, linewidth=2.5))
+        ax.text(x + box_w/2, box_y + box_h - 0.45, title,
+                ha="center", fontsize=15, fontweight="bold", color=color)
+        ax.text(x + box_w/2, box_y + 0.5, sub,
+                ha="center", fontsize=11, color="#333", style="italic")
+
+    # Forward arrows between boxes (cyan, thick)
+    forward_color = VIZ_FOUNDATIONS
+    for i in range(len(boxes) - 1):
+        x_from = boxes[i][0] + box_w + 0.02
+        x_to = boxes[i+1][0] - 0.02
+        ax.annotate("", xy=(x_to, box_y + box_h/2), xytext=(x_from, box_y + box_h/2),
+                    arrowprops=dict(arrowstyle="->", color=forward_color, lw=3))
+    # "forward pass →" label above the arrows
+    ax.text(8, box_y + box_h + 0.5, "forward pass →",
+            ha="center", fontsize=13, color=forward_color, fontweight="bold")
+
+    # Backprop arc: starts from Loss (right), curves DOWN below the boxes,
+    # lands on Model (second from left). Arrow points to Model.
+    # rad < 0 → arc curves to the right of the from→to direction = below when going right→left.
+    backprop = FancyArrowPatch((boxes[3][0] + box_w/2, box_y - 0.05),
+                                (boxes[1][0] + box_w/2, box_y - 0.05),
+                                connectionstyle="arc3,rad=-0.45",
+                                arrowstyle="->", color=VIZ_JUDGMENT, lw=2.8, linestyle="--",
+                                mutation_scale=22)
+    ax.add_patch(backprop)
+    ax.text(8, 1.2, "← backpropagation: ∂L/∂θ updates the weights",
+            ha="center", fontsize=12, color=VIZ_JUDGMENT, fontweight="bold", style="italic")
+    # Push ymin down so the arc has clearance below the boxes
+    ax.set_ylim(0.3, 7)
+
+    save(fig, "viz_s4_overview")
+
+
+def fig_viz_s7_habits():
+    """Three reproducibility habits, densified with 'what to log' bullets per Nikos's note."""
+    from matplotlib.patches import FancyBboxPatch
+    fig, ax = plt.subplots(figsize=(16, 6.5))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 6.5); ax.axis("off")
+    ax.text(8, 6.2, "Three reproducibility habits",
+            ha="center", va="center", fontsize=16, fontweight="bold", color=NAVY)
+
+    habits = [
+        (0.4, 5.4, "Version everything", VIZ_FOUNDATIONS, "#F4FBFF",
+         "Model · training data · parameters",
+         ["• git SHA for code", "• checksum for weights", "• DOI for data", "• random seeds"]),
+        (5.6, 10.4, "Document decisions", VIZ_WRAP, "#EBE6F2",
+         "Why this model · why this threshold",
+         ["• which models tried", "• why this one shipped", "• threshold rationale", "• hyperparameter notes"]),
+        (10.6, 15.6, "Reporting standards", VIZ_JUDGMENT, "#FCE8F2",
+         "CLAIM · CONSORT-AI · MI-CLAIM",
+         ["• CLAIM (medical imaging)", "• CONSORT-AI (trials)", "• STARD-AI (diagnostic)", "• MI-CLAIM (min-info)"]),
+    ]
+    for x0, x1, title, color, fill, subtitle, bullets in habits:
+        w = x1 - x0
+        ax.add_patch(FancyBboxPatch((x0, 0.4), w, 5.1,
+                                     boxstyle="round,pad=0.05,rounding_size=0.15",
+                                     facecolor=fill, edgecolor=color, linewidth=2.5))
+        ax.text(x0 + w/2, 4.85, title, ha="center", va="center",
+                fontsize=15, fontweight="bold", color=color)
+        ax.text(x0 + w/2, 4.25, subtitle, ha="center", va="center",
+                fontsize=10.5, color="#555", style="italic")
+        # Bullets list
+        for i, bullet in enumerate(bullets):
+            ax.text(x0 + 0.4, 3.4 - i * 0.55, bullet, ha="left", va="center",
+                    fontsize=10.5, color="#222")
+
+    save(fig, "viz_s7_habits")
+
+
+# --------------------------------------------------------------------------
 if __name__ == "__main__":
     print("Generating figures...")
     # Section 2 task taxonomy
@@ -621,4 +1591,19 @@ if __name__ == "__main__":
     # viz_* figures (Phase 3 Group A regenerations)
     fig_viz_roadmap()
     fig_viz_s5_patterns()
+    # viz_* figures (Phase 3 Group B regenerations — resize for 16:9)
+    fig_viz_s2_seg_works()
+    fig_viz_s2_seg_fails()
+    fig_viz_s4_generalization()
+    fig_viz_s4_modes()
+    fig_viz_s5_overview()
+    fig_viz_s5_fails()
+    # viz_* figures (Phase 3 Group C regenerations — architecture + flow redraws)
+    fig_viz_s2_overview()
+    fig_viz_s3_overview()
+    fig_viz_s3_cnn()
+    fig_viz_s3_gan()
+    fig_viz_s3_other()
+    fig_viz_s4_overview()
+    fig_viz_s7_habits()
     print("Done.")
