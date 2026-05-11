@@ -897,30 +897,53 @@ def fig_viz_s2_overview():
                           top=0.92, bottom=0.04, left=0.03, right=0.97)
 
     # Row 1: Segmentation, Detection, Classification, Restoration
+    from scipy.ndimage import label as ndi_label, center_of_mass, find_objects
+    from matplotlib.patches import Rectangle as Rect, Circle as Circ
     rng = np.random.default_rng(80)
+
+    def nucleus_centroids_and_radii(img, threshold=0.4):
+        """Find each bright nucleus in a synth_cells image. Returns list of (cy, cx, r) tuples."""
+        lbls, n_lbl = ndi_label(img > threshold)
+        if n_lbl == 0:
+            return []
+        coms = center_of_mass(img > threshold, lbls, range(1, n_lbl + 1))
+        slices = find_objects(lbls)
+        out = []
+        for (cy, cx), sl in zip(coms, slices):
+            # Radius estimate: half the larger of the bounding-box dims
+            r = max(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start) / 2
+            out.append((cy, cx, r))
+        return out
+
     # Segmentation
     img_s, masks_s = synth_cells(seed=80, n=8)
     ax = fig.add_subplot(gs[0, 0]); ax.imshow(img_s, cmap="gray")
     ax.imshow(np.where(masks_s > 0, masks_s, np.nan), cmap=INSTANCE_CMAP, vmin=0, vmax=15, alpha=0.5)
     ax.set_title("Segmentation", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
     ax.set_xticks([]); ax.set_yticks([])
-    # Detection
+
+    # Detection — bounding boxes around ACTUAL nuclei
     img_d, _ = synth_cells(seed=81, n=8)
     ax = fig.add_subplot(gs[0, 1]); ax.imshow(img_d, cmap="gray")
-    centroids = [(rng.uniform(15, img_d.shape[0]-15), rng.uniform(15, img_d.shape[1]-15)) for _ in range(8)]
-    for cy, cx in centroids:
-        from matplotlib.patches import Rectangle as Rect
-        ax.add_patch(Rect((cx-12, cy-12), 24, 24, fill=False, edgecolor=VIZ_FOUNDATIONS, lw=1.5))
+    for cy, cx, r in nucleus_centroids_and_radii(img_d):
+        pad = r + 4
+        ax.add_patch(Rect((cx - pad, cy - pad), 2 * pad, 2 * pad,
+                          fill=False, edgecolor=VIZ_FOUNDATIONS, lw=1.8))
     ax.set_title("Detection", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
     ax.set_xticks([]); ax.set_yticks([])
-    # Classification
-    img_c, _ = synth_cells(seed=82, n=6)
+
+    # Classification — colored circles on ACTUAL nuclei, alternating classes
+    img_c, _ = synth_cells(seed=82, n=7)
     ax = fig.add_subplot(gs[0, 2]); ax.imshow(img_c, cmap="gray")
-    centroids_c = [(rng.uniform(20, img_c.shape[0]-20), rng.uniform(20, img_c.shape[1]-20), c)
-                   for c in [VIZ_FOUNDATIONS, VIZ_JUDGMENT]*3]
-    for cy, cx, col in centroids_c:
-        from matplotlib.patches import Circle as Circ
-        ax.add_patch(Circ((cx, cy), 14, fill=False, edgecolor=col, lw=2))
+    nuclei_c = nucleus_centroids_and_radii(img_c)
+    class_colors = [VIZ_FOUNDATIONS, VIZ_JUDGMENT]
+    for i, (cy, cx, r) in enumerate(nuclei_c):
+        col = class_colors[i % 2]
+        ax.add_patch(Circ((cx, cy), r + 3, fill=False, edgecolor=col, lw=2.2))
+    # Add small legend inside the panel
+    ax.text(0.03, 0.97, "● class A   ● class B", transform=ax.transAxes,
+            va="top", ha="left", fontsize=8, color="#222",
+            bbox=dict(boxstyle="round,pad=0.2", facecolor="white", alpha=0.85, edgecolor="none"))
     ax.set_title("Classification", color=VIZ_FOUNDATIONS, fontweight="bold", fontsize=13)
     ax.set_xticks([]); ax.set_yticks([])
     # Restoration
@@ -1002,101 +1025,143 @@ def fig_viz_s2_overview():
 
 
 def fig_viz_s3_overview():
-    """Four model families with redrawn 'Other' quadrant: dual AE/Diffusion icon."""
+    """Four model families. Each visual is positioned INSIDE its own quadrant
+    via a helper that maps a 0-1 unit-cell coord to absolute coords. The 'Other'
+    quadrant is simplified to a single AE bow-tie + small Diffusion-progression
+    icon next to it (not two full-size diagrams side by side)."""
     from matplotlib.patches import FancyBboxPatch, Rectangle as Rect, Polygon, Circle as Circ
     fig, ax = plt.subplots(figsize=(16, 8.5))
     ax.set_xlim(0, 16); ax.set_ylim(0, 8.5); ax.axis("off")
-    ax.text(8, 8.2, "Common model families behind bioimage AI",
+    ax.text(8, 8.25, "Common model families behind bioimage AI",
             ha="center", va="center", fontsize=16, fontweight="bold", color=NAVY)
 
-    # 2x2 grid quadrants
+    # Quadrant geometry: each quad is at (x0, y0) with width=7.4, height=3.6.
+    QUAD_W, QUAD_H = 7.4, 3.6
     quads = [
-        (0.4, 4.2, "CNNs", VIZ_FOUNDATIONS, "#F4FBFF",
+        ("CNNs",                     0.4, 4.2, VIZ_FOUNDATIONS, "#F4FBFF",
          "Best for: dense prediction (segmentation, restoration)", "Lab 1 backbone"),
-        (8.2, 4.2, "Transformers", VIZ_WRAP, "#EBE6F2",
+        ("Transformers",             8.2, 4.2, VIZ_WRAP,         "#EBE6F2",
          "Best for: long-range context, prompted segmentation", "Lab 3b (SAM)"),
-        (0.4, 0.3, "GANs", VIZ_JUDGMENT, "#FCE8F2",
+        ("GANs",                     0.4, 0.3, VIZ_JUDGMENT,     "#FCE8F2",
          "Best for: image-to-image translation, stylization", "Notebook 04 demo"),
-        (8.2, 0.3, "Other (AE / Diffusion)", "#333", "#F2F2F2",
+        ("Other (AE / Diffusion)",   8.2, 0.3, "#333",           "#F2F2F2",
          "Best for: self-supervised denoising, generative priors", "Lab 3a (N2V)"),
     ]
-    for x0, y0, title, color, fill, best_for, lab in quads:
-        ax.add_patch(FancyBboxPatch((x0, y0), 7.4, 3.6,
+    for title, x0, y0, color, fill, best_for, lab in quads:
+        ax.add_patch(FancyBboxPatch((x0, y0), QUAD_W, QUAD_H,
                                      boxstyle="round,pad=0.05,rounding_size=0.15",
                                      facecolor=fill, edgecolor=color, linewidth=2.5))
-        ax.text(x0 + 0.3, y0 + 3.15, title, fontsize=14, fontweight="bold", color=color)
-        ax.text(x0 + 0.3, y0 + 0.6, best_for, fontsize=10.5, color="#222", style="italic")
-        ax.text(x0 + 7.1, y0 + 0.2, lab, fontsize=9.5, color="#666", style="italic", ha="right")
+        # Title at top of quadrant
+        ax.text(x0 + 0.3, y0 + QUAD_H - 0.35, title, fontsize=14, fontweight="bold", color=color)
+        # "Best for: ..." line at bottom, just above the lab tag
+        ax.text(x0 + 0.3, y0 + 0.55, best_for, fontsize=10, color="#222", style="italic")
+        # Lab tag at bottom-right
+        ax.text(x0 + QUAD_W - 0.2, y0 + 0.2, lab, fontsize=9.5, color="#666", style="italic", ha="right")
 
-    # CNN: stacked pyramidal blocks → arrow
-    cnn_x = 1.0; cnn_y = 1.5
-    for i, (w, h) in enumerate([(0.6, 1.5), (0.5, 1.2), (0.4, 0.9), (0.3, 0.6)]):
-        ax.add_patch(Rect((cnn_x + i * 0.65, cnn_y + (1.5 - h)/2), w, h,
-                          facecolor=VIZ_FOUNDATIONS, alpha=0.85))
-    ax.annotate("", xy=(5.5, cnn_y + 0.75), xytext=(cnn_x + 4 * 0.65 + 0.3, cnn_y + 0.75),
+    # --- CNN visual (top-left quadrant, y0=4.2) ---
+    # 4 pyramidal blocks → arrow, centered in the available drawing area
+    cnn_x0, cnn_y0 = 0.4, 4.2  # quadrant origin
+    blk_y_center = cnn_y0 + 2.0  # mid-height of quadrant draw area
+    blk_x_start = cnn_x0 + 0.9
+    for i, (bw, bh) in enumerate([(0.55, 1.5), (0.50, 1.2), (0.45, 0.9), (0.40, 0.6)]):
+        bx = blk_x_start + i * 0.65
+        by = blk_y_center - bh / 2
+        ax.add_patch(Rect((bx, by), bw, bh, facecolor=VIZ_FOUNDATIONS, alpha=0.85))
+    # Arrow from last block to right side of quadrant
+    arrow_x_start = blk_x_start + 4 * 0.65 + 0.05
+    ax.annotate("", xy=(cnn_x0 + QUAD_W - 0.4, blk_y_center),
+                xytext=(arrow_x_start, blk_y_center),
                 arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2.5))
 
-    # Transformer: 4x4 patch grid with attention arrows from one patch
-    tx, ty = 9.6, 1.4
+    # --- Transformer visual (top-right quadrant, y0=4.2) ---
+    tx_q, ty_q = 8.2, 4.2  # quadrant origin
+    # 4×4 patch grid centered in upper-middle of the quadrant
+    grid_x_start = tx_q + 1.5
+    grid_y_start = ty_q + 1.2
+    cell_size = 0.34
     for i in range(4):
         for j in range(4):
-            color_p = VIZ_WRAP if (i, j) == (1, 1) else "#C9BDD9"
-            ax.add_patch(Rect((tx + j * 0.32, ty + i * 0.32), 0.30, 0.30,
-                              facecolor=color_p, edgecolor="white", linewidth=1.5))
-    # Two attention arrows from highlighted patch
-    src_x, src_y = tx + 1 * 0.32 + 0.15, ty + 1 * 0.32 + 0.15
-    for dx, dy in [(0.96, 0.96), (-0.32, 0.64)]:
+            color_p = VIZ_WRAP if (i, j) == (2, 1) else "#C9BDD9"
+            ax.add_patch(Rect((grid_x_start + j * cell_size, grid_y_start + i * cell_size),
+                              cell_size - 0.02, cell_size - 0.02,
+                              facecolor=color_p, edgecolor="white", linewidth=1.2))
+    # Two attention arrows from the highlighted patch (row 2, col 1) to other patches
+    src_x = grid_x_start + 1 * cell_size + cell_size / 2
+    src_y = grid_y_start + 2 * cell_size + cell_size / 2
+    for dx, dy in [(2 * cell_size, -1 * cell_size), (-1 * cell_size, 1 * cell_size)]:
         ax.annotate("", xy=(src_x + dx, src_y + dy), xytext=(src_x, src_y),
                     arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.3))
-
-    # GAN: G box ↔ D box
-    gx, gy = 1.5, 1.5
-    ax.add_patch(FancyBboxPatch((gx, gy), 1.4, 0.9, boxstyle="round,pad=0.05",
-                                 facecolor="white", edgecolor=VIZ_JUDGMENT, linewidth=2))
-    ax.text(gx + 0.7, gy + 0.45, "G", ha="center", va="center", fontsize=18,
+    ax.text(src_x, src_y - 0.04, "Q", ha="center", va="center", fontsize=10,
             color=VIZ_JUDGMENT, fontweight="bold")
-    ax.add_patch(FancyBboxPatch((gx + 3.3, gy), 1.4, 0.9, boxstyle="round,pad=0.05",
+
+    # --- GAN visual (bottom-left quadrant, y0=0.3) ---
+    gx_q, gy_q = 0.4, 0.3
+    g_box_y = gy_q + 1.5
+    box_w, box_h = 1.3, 0.85
+    g_x = gx_q + 1.0
+    d_x = gx_q + 4.5
+    # Generator G (white fill, magenta outline)
+    ax.add_patch(FancyBboxPatch((g_x, g_box_y), box_w, box_h, boxstyle="round,pad=0.05",
+                                 facecolor="white", edgecolor=VIZ_JUDGMENT, linewidth=2))
+    ax.text(g_x + box_w / 2, g_box_y + box_h / 2, "G",
+            ha="center", va="center", fontsize=20, color=VIZ_JUDGMENT, fontweight="bold")
+    # Discriminator D (filled magenta)
+    ax.add_patch(FancyBboxPatch((d_x, g_box_y), box_w, box_h, boxstyle="round,pad=0.05",
                                  facecolor=VIZ_JUDGMENT, edgecolor=VIZ_JUDGMENT, linewidth=2))
-    ax.text(gx + 3.3 + 0.7, gy + 0.45, "D", ha="center", va="center", fontsize=18,
-            color="white", fontweight="bold")
-    ax.annotate("", xy=(gx + 3.3 - 0.05, gy + 0.55), xytext=(gx + 1.4 + 0.05, gy + 0.55),
-                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=1.8))
-    ax.annotate("", xy=(gx + 1.4 + 0.05, gy + 0.35), xytext=(gx + 3.3 - 0.05, gy + 0.35),
-                arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=1.8, linestyle="--"))
+    ax.text(d_x + box_w / 2, g_box_y + box_h / 2, "D",
+            ha="center", va="center", fontsize=20, color="white", fontweight="bold")
+    # Data flow G → D (solid cyan)
+    ax.annotate("", xy=(d_x - 0.02, g_box_y + box_h * 0.65),
+                xytext=(g_x + box_w + 0.02, g_box_y + box_h * 0.65),
+                arrowprops=dict(arrowstyle="->", color=VIZ_FOUNDATIONS, lw=2))
+    # Gradient flow D → G (dashed magenta)
+    ax.annotate("", xy=(g_x + box_w + 0.02, g_box_y + box_h * 0.25),
+                xytext=(d_x - 0.02, g_box_y + box_h * 0.25),
+                arrowprops=dict(arrowstyle="->", color=VIZ_JUDGMENT, lw=2, linestyle="--"))
 
-    # Other: DUAL ICON — autoencoder (bottleneck shape) on left + diffusion (noise→clean) on right
-    ox, oy = 9.0, 1.5
-    # Autoencoder bow-tie shape
-    pts_ae = np.array([[ox, oy + 1.0], [ox + 1.4, oy + 0.5], [ox + 1.4, oy + 0.5],
-                       [ox, oy], [ox, oy + 1.0], [ox + 1.4, oy + 0.5],
-                       [ox + 2.8, oy + 1.0], [ox + 2.8, oy + 0], [ox + 1.4, oy + 0.5]])
-    # Left triangle (encoder)
-    ax.add_patch(Polygon([[ox, oy + 1.0], [ox + 1.4, oy + 0.5], [ox, oy]],
-                          facecolor=VIZ_FOUNDATIONS, alpha=0.75))
-    # Right triangle (decoder)
-    ax.add_patch(Polygon([[ox + 2.8, oy + 1.0], [ox + 1.4, oy + 0.5], [ox + 2.8, oy]],
-                          facecolor=VIZ_FOUNDATIONS, alpha=0.75))
+    # --- Other visual (bottom-right quadrant, y0=0.3) ---
+    # Simplified: AE bow-tie shape on the LEFT half + small 3-stage diffusion on the RIGHT half,
+    # both positioned at the same y so the quadrant reads as "two examples of this family".
+    ox_q, oy_q = 8.2, 0.3
+    # AE bow-tie: two triangles meeting at a small bottleneck dot
+    ae_cx = ox_q + 1.4
+    ae_cy = oy_q + 1.95
+    ae_half_w = 0.85
+    ae_half_h = 0.7
+    # Encoder triangle (left)
+    ax.add_patch(Polygon([[ae_cx - ae_half_w, ae_cy + ae_half_h],
+                          [ae_cx, ae_cy],
+                          [ae_cx - ae_half_w, ae_cy - ae_half_h]],
+                         facecolor=VIZ_FOUNDATIONS, alpha=0.78))
+    # Decoder triangle (right)
+    ax.add_patch(Polygon([[ae_cx + ae_half_w, ae_cy + ae_half_h],
+                          [ae_cx, ae_cy],
+                          [ae_cx + ae_half_w, ae_cy - ae_half_h]],
+                         facecolor=VIZ_FOUNDATIONS, alpha=0.78))
     # Bottleneck dot
-    ax.add_patch(Circ((ox + 1.4, oy + 0.5), 0.1, facecolor=VIZ_WRAP))
-    ax.text(ox + 1.4, oy - 0.3, "AE", ha="center", fontsize=9, color="#333", fontweight="bold")
+    ax.add_patch(Circ((ae_cx, ae_cy), 0.12, facecolor=VIZ_WRAP, edgecolor="white", linewidth=1.2))
+    ax.text(ae_cx, ae_cy - ae_half_h - 0.25, "AE",
+            ha="center", fontsize=11, color="#333", fontweight="bold")
 
-    # Diffusion: noise → clean (3 stages)
-    dx0 = ox + 3.5
-    stages = [0.9, 0.5, 0.1]  # noise level decreasing
-    for i, noise in enumerate(stages):
-        # Render a square with progressively less salt-pepper noise
-        sub_x = dx0 + i * 0.8
-        ax.add_patch(Rect((sub_x, oy), 0.6, 0.95, facecolor="#222"))
-        # White speckles
-        n_spk = int(50 * noise)
+    # Diffusion: 3 stages on the right side of the quadrant
+    df_x0 = ox_q + 3.6
+    df_y = oy_q + 1.55
+    df_w, df_h = 0.55, 0.85
+    df_stages_noise = [0.9, 0.5, 0.12]
+    for i, noise_level in enumerate(df_stages_noise):
+        sub_x = df_x0 + i * 0.75
+        ax.add_patch(Rect((sub_x, df_y), df_w, df_h, facecolor="#222"))
+        n_spk = int(45 * noise_level)
         rng_s = np.random.default_rng(90 + i)
-        xs_spk = sub_x + 0.05 + rng_s.uniform(0, 0.5, n_spk)
-        ys_spk = oy + 0.05 + rng_s.uniform(0, 0.85, n_spk)
-        ax.scatter(xs_spk, ys_spk, s=2, c="white")
-        if i < len(stages) - 1:
-            ax.annotate("", xy=(sub_x + 0.78, oy + 0.45), xytext=(sub_x + 0.62, oy + 0.45),
+        xs_spk = sub_x + 0.03 + rng_s.uniform(0, df_w - 0.06, n_spk)
+        ys_spk = df_y + 0.03 + rng_s.uniform(0, df_h - 0.06, n_spk)
+        ax.scatter(xs_spk, ys_spk, s=1.8, c="white")
+        if i < len(df_stages_noise) - 1:
+            ax.annotate("", xy=(sub_x + df_w + 0.18, df_y + df_h / 2),
+                        xytext=(sub_x + df_w + 0.03, df_y + df_h / 2),
                         arrowprops=dict(arrowstyle="->", color="#333", lw=1.2))
-    ax.text(dx0 + 1.05, oy - 0.3, "Diffusion", ha="center", fontsize=9, color="#333", fontweight="bold")
+    ax.text(df_x0 + (3 * 0.75) / 2, df_y - 0.25, "Diffusion",
+            ha="center", fontsize=11, color="#333", fontweight="bold")
 
     save(fig, "viz_s3_overview")
 
