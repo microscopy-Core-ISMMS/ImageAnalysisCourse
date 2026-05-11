@@ -22,14 +22,17 @@ parts:
 
   - caption: Lectures
     chapters:
-      - file: lectures/01_intro_ai_imaging/00_lecture_prereqs_check
+      - file: lectures/01_intro_ai_imaging/lecture
+        title: "Lecture 1: AI for Scientific Image Analysis"
         sections:
-          - file: lectures/01_intro_ai_imaging/lecture
+          - file: lectures/01_intro_ai_imaging/00_lecture_prereqs_check
+            title: "Overview & Setup"
           - file: lectures/01_intro_ai_imaging/extras
             sections:
               - file: lectures/01_intro_ai_imaging/speaker_cues
               - file: lectures/01_intro_ai_imaging/verification_log
       - file: lectures/02_walking_the_day/lecture
+        title: "Lecture 2: Walking the Day"
 
   - caption: Lab notebooks (core)
     chapters:
