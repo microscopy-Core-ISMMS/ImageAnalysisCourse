@@ -355,8 +355,10 @@ def fig_metrics_vs_biology():
 # Section 1 — ecosystem visual
 # --------------------------------------------------------------------------
 def fig_ecosystem():
-    fig, ax = plt.subplots(figsize=(11, 5.5))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 6); ax.axis("off")
+    # 16:9-friendly canvas; reserve a left gutter for the "stack matures bottom-up"
+    # arrow + label so it never collides with the rectangles.
+    fig, ax = plt.subplots(figsize=(14, 6))
+    ax.set_xlim(0, 14); ax.set_ylim(0, 6); ax.axis("off")
 
     layers = [
         ("Hardware: GPUs, cloud compute, HPC clusters", 5.0, "#E8E8E8"),
@@ -364,18 +366,19 @@ def fig_ecosystem():
         ("Models: pretrained Cellpose-SAM · μSAM · CARE · VoxelMorph · ...", 2.4, "#A6CEE3"),
         ("Platforms: ZeroCostDL4Mic · DL4MicEverywhere · BioImage Model Zoo", 1.1, "#1F78B4"),
     ]
+    # Layout: left gutter 0.0–1.6 reserved for arrow + label; rectangles span 1.8–13.5
     for label, y, color in layers:
-        rect = Rectangle((0.5, y-0.45), 9, 0.9, facecolor=color, edgecolor=NAVY, linewidth=1.2)
+        rect = Rectangle((1.8, y-0.45), 11.7, 0.9, facecolor=color, edgecolor=NAVY, linewidth=1.2)
         ax.add_patch(rect)
         text_color = "white" if color == "#1F78B4" else NAVY
-        ax.text(5, y, label, ha="center", va="center", fontsize=11.5, color=text_color, fontweight="bold")
-    # Top label
-    ax.text(5, 5.85, "Layered ecosystem that made AI-in-microscopy a routine tool",
-            ha="center", color=NAVY, fontsize=13, fontweight="bold")
-    # Up arrow on the left
-    ax.annotate("", xy=(0.2, 5.3), xytext=(0.2, 0.7),
+        ax.text(7.65, y, label, ha="center", va="center", fontsize=12, color=text_color, fontweight="bold")
+    # Top title
+    ax.text(7.65, 5.85, "Layered ecosystem that made AI-in-microscopy a routine tool",
+            ha="center", color=NAVY, fontsize=13.5, fontweight="bold")
+    # Up arrow in the left gutter (separated from rectangles)
+    ax.annotate("", xy=(1.0, 5.3), xytext=(1.0, 0.7),
                 arrowprops=dict(arrowstyle="->", color=NAVY, lw=2))
-    ax.text(0.05, 3, "stack matures\nbottom-up", rotation=90, ha="center", va="center",
+    ax.text(0.5, 3, "stack matures\nbottom-up", rotation=90, ha="center", va="center",
             color=NAVY, fontsize=10, fontweight="bold")
     save(fig, "ecosystem_layers")
 
@@ -384,24 +387,28 @@ def fig_ecosystem():
 # Section 3 — train/val/test diagram
 # --------------------------------------------------------------------------
 def fig_train_val_test():
-    fig, ax = plt.subplots(figsize=(10, 2.8))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 3); ax.axis("off")
-    # Three blocks
+    # 16:9-friendly canvas. VAL/TEST captions wrap to two lines so the narrow blocks
+    # contain their captions without crossing into each other.
+    fig, ax = plt.subplots(figsize=(14, 4.5))
+    ax.set_xlim(0, 14); ax.set_ylim(0, 4.5); ax.axis("off")
+    # Three blocks: 70 / 15 / 15.
     blocks = [
-        ("TRAIN (70%)", 0, 7, "#4C72B0", "model fits to this data"),
-        ("VAL (15%)", 7, 1.5, "#DD8452", "tune hyperparameters here"),
-        ("TEST (15%)", 8.5, 1.5, "#55A868", "report once, at the end"),
+        ("TRAIN (70%)", 0.5, 9.1, "#4C72B0", "model fits\nto this data"),
+        ("VAL (15%)",   9.7, 1.95, "#DD8452", "tune\nhyperparameters"),
+        ("TEST (15%)", 11.7, 1.95, "#55A868", "report once,\nat the end"),
     ]
     for label, x, w, color, sub in blocks:
-        rect = Rectangle((x, 1), w, 1.2, facecolor=color, edgecolor="white", linewidth=2)
+        rect = Rectangle((x, 2.0), w, 1.5, facecolor=color, edgecolor="white", linewidth=2)
         ax.add_patch(rect)
-        ax.text(x + w/2, 1.6, label, ha="center", va="center",
-                color="white", fontsize=12, fontweight="bold")
-        ax.text(x + w/2, 0.6, sub, ha="center", va="center",
-                color=NAVY, fontsize=9, style="italic")
-    # Arrow showing time/separation
-    ax.text(5, 2.6, "The three subsets are disjoint. Touch the test set once.",
-            ha="center", color=NAVY, fontsize=11, fontweight="bold")
+        ax.text(x + w/2, 2.75, label, ha="center", va="center",
+                color="white", fontsize=13, fontweight="bold")
+        # Caption directly below each block, two lines so VAL/TEST captions fit inside
+        # their narrow column without spilling sideways into the neighbor.
+        ax.text(x + w/2, 1.75, sub, ha="center", va="top",
+                color=NAVY, fontsize=10, style="italic")
+    # Top title
+    ax.text(7, 4.1, "The three subsets are disjoint. Touch the test set once.",
+            ha="center", color=NAVY, fontsize=13, fontweight="bold")
     save(fig, "train_val_test")
 
 
@@ -409,36 +416,183 @@ def fig_train_val_test():
 # Section 5 — validation gradient
 # --------------------------------------------------------------------------
 def fig_validation_gradient():
-    fig, ax = plt.subplots(figsize=(11, 3.5))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 3); ax.axis("off")
-    # Gradient bar
-    n_segments = 100
+    # 16:9-friendly canvas. Tick labels pushed clearly below the gradient bar
+    # with extra y-room so multi-line labels never touch the bar at any width.
+    fig, ax = plt.subplots(figsize=(14, 4.5))
+    ax.set_xlim(0, 14); ax.set_ylim(0, 4); ax.axis("off")
+    # Gradient bar spans 1.0 to 13.0
+    n_segments = 120
     cmap = plt.cm.RdYlGn
+    bar_x0, bar_x1, bar_y, bar_h = 1.0, 13.0, 2.0, 0.55
+    bar_w_total = bar_x1 - bar_x0
     for i in range(n_segments):
-        rect = Rectangle((0.5 + i*9/n_segments, 1.2), 9/n_segments, 0.5,
+        rect = Rectangle((bar_x0 + i*bar_w_total/n_segments, bar_y), bar_w_total/n_segments, bar_h,
                          facecolor=cmap(i/n_segments), edgecolor="none")
         ax.add_patch(rect)
-    rect = Rectangle((0.5, 1.2), 9, 0.5, fill=False, edgecolor=NAVY, linewidth=1.5)
+    rect = Rectangle((bar_x0, bar_y), bar_w_total, bar_h, fill=False, edgecolor=NAVY, linewidth=1.5)
     ax.add_patch(rect)
-    # Labels at intervals
+    # Tick positions distributed along the bar
     points = [
-        (0.5, "Internal\n(single dataset)"),
-        (3.0, "Multi-condition\nor cross-validation"),
-        (5.5, "External\n(other lab/scanner)"),
-        (7.5, "Multi-site\nprospective"),
-        (9.5, "Regulatory\nclearance"),
+        (1.0,  "Internal\n(single dataset)"),
+        (4.0,  "Multi-condition\nor cross-validation"),
+        (7.0,  "External\n(other lab/scanner)"),
+        (10.0, "Multi-site\nprospective"),
+        (13.0, "Regulatory\nclearance"),
     ]
     for x, label in points:
-        ax.plot([x, x], [1.05, 1.85], color=NAVY, linewidth=1.2)
-        ax.text(x, 0.85, label, ha="center", va="top", fontsize=9.5, color=NAVY, fontweight="bold")
-    # Top label
-    ax.text(0.5, 2.3, "Research-grade", ha="left", color=NAVY, fontsize=11, fontweight="bold")
-    ax.text(9.5, 2.3, "Clinical-grade", ha="right", color=NAVY, fontsize=11, fontweight="bold")
-    ax.annotate("", xy=(9.5, 2.3), xytext=(2.0, 2.3),
+        ax.plot([x, x], [bar_y - 0.15, bar_y + bar_h + 0.15], color=NAVY, linewidth=1.2)
+        # Labels below the bar with generous spacing
+        ax.text(x, 1.1, label, ha="center", va="top", fontsize=10, color=NAVY, fontweight="bold")
+    # Top label + Research → Clinical arrow above the bar
+    ax.text(1.0, 3.2, "Research-grade", ha="left", color=NAVY, fontsize=11.5, fontweight="bold")
+    ax.text(13.0, 3.2, "Clinical-grade", ha="right", color=NAVY, fontsize=11.5, fontweight="bold")
+    ax.annotate("", xy=(13.0, 3.2), xytext=(2.6, 3.2),
                 arrowprops=dict(arrowstyle="->", color=NAVY, lw=2))
-    ax.text(5, 2.7, "Validation gradient: the rigor required scales with the stakes",
-            ha="center", color=NAVY, fontsize=12, fontweight="bold")
+    ax.text(7, 3.7, "Validation gradient: the rigor required scales with the stakes",
+            ha="center", color=NAVY, fontsize=13, fontweight="bold")
     save(fig, "validation_gradient")
+
+
+# --------------------------------------------------------------------------
+# viz_* figures — added 2026-05-11 (Phase 3 Group A). The original 24 viz_*
+# PNGs in figures/figures/ have no preserved source code; these regenerate
+# only the figures that need fixes (text overflow, etc.) per the audit.
+# --------------------------------------------------------------------------
+
+# Brand palette for the viz_* figures (matches the previous renderings)
+VIZ_FOUNDATIONS = "#1FB8E5"   # cyan
+VIZ_MECHANICS = "#6E6E6E"     # gray
+VIZ_JUDGMENT = "#E03A8C"      # magenta
+VIZ_WRAP = "#3A1F5C"          # deep purple
+
+
+def fig_viz_roadmap():
+    """Eight-section lecture roadmap. 8 rounded-rectangle nodes in one row with
+    grouping labels beneath. Text must stay INSIDE each node (the original
+    rendering had several boxes where 'How they learn' and 'Reproducibility'
+    spilled past the box edge)."""
+    fig, ax = plt.subplots(figsize=(16, 3.2))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 3.2); ax.axis("off")
+
+    nodes = [
+        (1,  "Why now?",        VIZ_FOUNDATIONS, "foundations"),
+        (2,  "Tasks",            VIZ_FOUNDATIONS, "foundations"),
+        (3,  "Models",           VIZ_FOUNDATIONS, "foundations"),
+        (4,  "How they\nlearn",  VIZ_MECHANICS,   "mechanics"),
+        (5,  "Works/\nfails",    VIZ_JUDGMENT,    "judgment"),
+        (6,  "Validation",       VIZ_JUDGMENT,    "judgment"),
+        (7,  "Reprod-\nucibility", VIZ_JUDGMENT,  "judgment"),
+        (8,  "Closing",          VIZ_WRAP,        "wrap"),
+    ]
+    # Layout: 8 boxes across 16 units. Each box width = 1.65 units; gap = 0.13 units.
+    n = len(nodes)
+    box_w = 1.65
+    gap = 0.13
+    total_w = n * box_w + (n - 1) * gap
+    margin = (16 - total_w) / 2
+    box_h = 1.6
+    box_y = 1.0
+
+    for i, (num, label, color, _grp) in enumerate(nodes):
+        x = margin + i * (box_w + gap)
+        # Rounded rectangle (fill)
+        from matplotlib.patches import FancyBboxPatch
+        bbox = FancyBboxPatch((x, box_y), box_w, box_h,
+                              boxstyle="round,pad=0.02,rounding_size=0.15",
+                              facecolor="#F4FBFF" if color == VIZ_FOUNDATIONS else
+                                       "#F2F2F2" if color == VIZ_MECHANICS else
+                                       "#FCE8F2" if color == VIZ_JUDGMENT else
+                                       "#EBE6F2",
+                              edgecolor=color, linewidth=2.5)
+        ax.add_patch(bbox)
+        # Big number in the top-left of each box
+        ax.text(x + box_w*0.22, box_y + box_h*0.72, str(num),
+                ha="center", va="center", fontsize=22, fontweight="bold", color=color)
+        # Label centered in lower portion; fontsize sized to fit comfortably
+        ax.text(x + box_w*0.55, box_y + box_h*0.32, label,
+                ha="center", va="center", fontsize=11, color="#222", fontweight="bold",
+                linespacing=1.0)
+        # Arrow to the next node
+        if i < n - 1:
+            arrow_x0 = x + box_w + 0.005
+            arrow_x1 = x + box_w + gap - 0.005
+            ax.annotate("", xy=(arrow_x1, box_y + box_h/2), xytext=(arrow_x0, box_y + box_h/2),
+                        arrowprops=dict(arrowstyle="->", color="#888", lw=1.5))
+
+    # Group labels below
+    grp_centers = {}
+    for i, (_n, _l, color, grp) in enumerate(nodes):
+        cx = margin + i * (box_w + gap) + box_w/2
+        grp_centers.setdefault(grp, []).append((cx, color))
+    for grp, entries in grp_centers.items():
+        xs = [e[0] for e in entries]
+        color = entries[0][1]
+        ax.text(sum(xs)/len(xs), 0.45, grp, ha="center", va="center",
+                fontsize=12, style="italic", color=color)
+
+    save(fig, "viz_roadmap")
+
+
+def fig_viz_s5_patterns():
+    """Failure-mode taxonomy. 5 numbered rows with title/description on the left and
+    a 'Check: ...' actionable prompt on the right. Original rendering had text
+    overflowing the right-column boxes."""
+    fig, ax = plt.subplots(figsize=(16, 7.5))
+    ax.set_xlim(0, 16); ax.set_ylim(0, 8); ax.axis("off")
+
+    rows = [
+        ("1", "Out-of-distribution",
+         "Test images differ from training (modality, sample type, magnification).",
+         "Inspect predictions on a\nheld-out OOD strip."),
+        ("2", "Rare-category miss",
+         "Long-tail classes silently dropped — reviewer never sees them.",
+         "Stratified per-class accuracy\n+ confusion matrix."),
+        ("3", "Sample-prep drift",
+         "Stain, illumination, or fixation shift over time invalidates the model.",
+         "Track sample QC metrics\n+ dates."),
+        ("4", "Edge effects",
+         "Border tiles or border cells lose context → systematic bias.",
+         "Compare interior vs\nborder statistics."),
+        ("5", "Hallucinated features",
+         "Restoration / generative models invent biology that isn't there.",
+         "Disclose method in caption;\nreviewer checks raw."),
+    ]
+
+    # Title
+    ax.text(8, 7.6, "Failure-mode taxonomy — five patterns to recognize",
+            ha="center", va="center", fontsize=15, fontweight="bold", color=NAVY)
+
+    # Each row
+    row_h = 1.25
+    row_top = 6.9
+    for i, (num, title, body, check) in enumerate(rows):
+        y_top = row_top - i * row_h
+        y_mid = y_top - row_h/2
+
+        # Number bubble (left)
+        bubble = Circle((0.7, y_mid), 0.32, facecolor=ACCENT, edgecolor=ACCENT)
+        ax.add_patch(bubble)
+        ax.text(0.7, y_mid, num, ha="center", va="center",
+                fontsize=16, color="white", fontweight="bold")
+
+        # Title + body on a 7-unit-wide column (1.2 to 8.5)
+        ax.text(1.2, y_mid + 0.28, title, ha="left", va="center",
+                fontsize=13, color=NAVY, fontweight="bold")
+        ax.text(1.2, y_mid - 0.22, body, ha="left", va="center",
+                fontsize=10.5, color="#333", wrap=True)
+
+        # 'Check' box on the right (9.0 to 15.5 = 6.5 units wide)
+        from matplotlib.patches import FancyBboxPatch
+        box = FancyBboxPatch((9.0, y_mid - 0.45), 6.5, 0.9,
+                             boxstyle="round,pad=0.02,rounding_size=0.1",
+                             facecolor="#EAF6FF", edgecolor=NAVY_LIGHT, linewidth=1.2)
+        ax.add_patch(box)
+        ax.text(9.2, y_mid + 0.1, "Check:", ha="left", va="center",
+                fontsize=10, color=NAVY_LIGHT, fontweight="bold", style="italic")
+        ax.text(9.2, y_mid - 0.18, check, ha="left", va="center",
+                fontsize=10, color="#222", linespacing=1.15)
+
+    save(fig, "viz_s5_patterns")
 
 
 # --------------------------------------------------------------------------
@@ -464,4 +618,7 @@ if __name__ == "__main__":
     fig_train_val_test()
     # Section 5 validation gradient
     fig_validation_gradient()
+    # viz_* figures (Phase 3 Group A regenerations)
+    fig_viz_roadmap()
+    fig_viz_s5_patterns()
     print("Done.")

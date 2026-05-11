@@ -30,6 +30,9 @@ HTML_OUT = HERE / "lecture_slides.html"
 FIG_DIR = HERE / "figures"
 
 
+
+# AUTO-INJECTED viz embed sync (build script synced with all 38 lecture.ipynb figures)
+
 def embed_img(name: str, alt: str = "", width: str = "85%") -> str:
     """Read a PNG figure and return an HTML <img> tag with a base64 data URL.
 
@@ -86,8 +89,11 @@ CELLS = []
 # =============================================================================
 # Title slide
 # =============================================================================
-CELLS.append(md("slide", """
+CELLS.append(md("slide", f"""
 # AI for Scientific Image Analysis
+
+{embed_img("brand_core_logo", alt="Microscopy and Advanced Bioimaging Core, Icahn School of Medicine at Mount Sinai", width="60%")}
+
 
 ### *What works, what doesn't, and why*
 
@@ -114,8 +120,11 @@ are the most important for responsible-use takeaways.
 # =============================================================================
 # Roadmap
 # =============================================================================
-CELLS.append(md("slide", """
+CELLS.append(md("slide", f"""
 ## Roadmap for the next 90 minutes
+
+{embed_img("viz_roadmap", alt="Eight-section lecture roadmap", width="82%")}
+
 
 1. **Why now?** — what changed
 2. **Tasks AI addresses** — the seven major categories
@@ -132,8 +141,11 @@ After the break, we walk through the afternoon labs.
 # =============================================================================
 # Section 1 — Why now?
 # =============================================================================
-CELLS.append(md("slide", """
+CELLS.append(md("slide", f"""
 ## Section 1 — Why now?
+
+{embed_img("viz_s1_overview", alt="Three converging trends made AI in microscopy routine", width="78%")}
+
 
 Why has AI become a routine tool in scientific imaging in the past decade,
 when image analysis has been a discipline for fifty years?
@@ -182,8 +194,11 @@ move quickly and don't dwell.
 # =============================================================================
 # Section 2 — Tasks AI addresses
 # =============================================================================
-CELLS.append(md("slide", """
+CELLS.append(md("slide", f"""
 ## Section 2 — The image-analysis tasks AI addresses
+
+{embed_img("viz_s2_overview", alt="Seven task categories at a glance", width="92%")}
+
 
 Seven major task categories. Most AI-imaging problems map to one or more.
 """))
@@ -191,29 +206,27 @@ Seven major task categories. Most AI-imaging problems map to one or more.
 CELLS.append(md("subslide", f"""
 ### Task 1: Classification
 
-{embed_img("task_classification", alt="Classification example", width="60%")}
+{embed_img("pub_cascio2019_hep2", alt="Six HEp-2 staining patterns side by side (Cascio 2019)", width="82%")}
 
 **What:** assign a label to an image or patch.
 
-**Microscopy examples:** cell-cycle phase, phenotype call, mitosis-or-not.
+**Microscopy examples:** cell-cycle phase, phenotype call, mitosis-or-not. *Shown above:* the six classic HEp-2 anti-nuclear antibody staining patterns — input one image, output one category.
 
-**Why it shows up:** the simplest learning problem; mature methods.
-
-❓ *General framing.*
+*Figure from Cascio, Taormina & Raso (2019), Applied Sciences 9(8):1618, [doi:10.3390/app9081618](https://doi.org/10.3390/app9081618). CC BY 3.0.*
 """))
 
 CELLS.append(md("subslide", f"""
 ### Task 2: Detection
 
-{embed_img("task_detection", alt="Detection with bounding boxes", width="60%")}
+{embed_img("pub_kulikov2019_dognet", alt="DoGNet synapse detection across 3 datasets (Kulikov 2019)", width="92%")}
 
 **What:** find objects and return bounding boxes or points.
 
-**Microscopy examples:** spot detection (FISH spots, vesicles), particle picking.
+**Microscopy examples:** spot detection (FISH spots, vesicles, **synapses** — shown above), particle picking. Yellow arrows mark detections across three multiplexed-fluorescence datasets.
 
 **Method families:** classical (Laplacian-of-Gaussian) and learned (region proposals, transformers).
 
-❓ *General framing.*
+*Figure from Kulikov et al. (2019), PLOS Comput Biol 15(5):e1007012, [doi:10.1371/journal.pcbi.1007012](https://doi.org/10.1371/journal.pcbi.1007012). CC BY 4.0.*
 """))
 
 CELLS.append(md("subslide", f"""
@@ -231,11 +244,16 @@ CELLS.append(md("subslide", f"""
 - **[μSAM (micro-sam)](https://github.com/computational-cell-analytics/micro-sam)** — microscopy-tuned SAM {cite('microsam2025')}
 
 This is where most attendees first encounter AI in their work.
+
+*Illustration synthesized for clarity; for a benchmark tissue panel see Greenwald et al. (2022) Mesmer, [Nat Biotechnol 40:555](https://doi.org/10.1038/s41587-021-01094-0).*
 """))
 
 # Drill-down 1: when segmentation works
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 #### Drill-down — when Cellpose-SAM works
+
+{embed_img("viz_s2_seg_works", alt="Cellpose-SAM-style success on canonical fluorescence", width="82%")}
+
 
 *(Open this if the room is curious about the methods.)*
 
@@ -250,8 +268,11 @@ We'll do this hands-on in **Lab 1** this afternoon.
 """))
 
 # Drill-down 2: when segmentation fails
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 #### Drill-down — when Cellpose-SAM fails
+
+{embed_img("viz_s2_seg_fails", alt="Cellpose-SAM failure on dense / OOD content", width="82%")}
+
 
 *(Open this for the cautionary half of the segmentation story.)*
 
@@ -294,7 +315,7 @@ CELLS.append(md("subslide", f"""
 - The **Cellpose ecosystem** now integrates restoration with segmentation: Cellpose 3 {cite('cellpose3_2025', '⚠')} added one-click restoration; current Cellpose-SAM {cite('cellpose_sam_2025', '⚠')} carries the ecosystem forward
 - All major restoration methods are available as Colab notebooks via **[ZeroCostDL4Mic](https://github.com/HenriquesLab/ZeroCostDL4Mic)** and **[DL4MicEverywhere](https://github.com/HenriquesLab/DL4MicEverywhere)**
 
-⚠ *Restoration overlaps with generation. The line matters for image-integrity reporting — see Section 6.*
+⚠ *Restoration overlaps with generation. The line matters for image-integrity reporting — see Section 7.*
 """))
 
 CELLS.append(md("subslide", """
@@ -317,9 +338,9 @@ risky in equal measure.
 
 CELLS.append(notes("""
 Speaker cue:
-The hallucination drill-down is a natural transition into Section 6
+The hallucination drill-down is a natural transition into Section 7
 (reproducibility and responsible use). If you're running long, you can
-fold this drill-down's content into Section 6 and skip it here.
+fold this drill-down's content into Section 7 and skip it here.
 
 If you're running short, the drill-down stands on its own as a 60-second
 addition to this slide.
@@ -334,7 +355,7 @@ CELLS.append(md("subslide", f"""
 
 **Representative work:** in silico labeling {cite('christiansen2018')}, label-free 3D prediction {cite('ounkomol2018')}.
 
-❓ *Generation outputs are not measurements. The image-integrity considerations matter and we revisit them in Section 6.*
+❓ *Generation outputs are not measurements. The image-integrity considerations matter and we revisit them in Section 7.*
 """))
 
 CELLS.append(md("subslide", f"""
@@ -362,15 +383,107 @@ CELLS.append(md("subslide", f"""
 
 **Method families:** classical (Kalman, linear assignment) and learned (transformers, deep tracking).
 
-❓ *Closely related to detection plus registration; often treated as a composite task.*
+*Illustration synthesized for clarity; for benchmark trajectories see Ershov et al. (2022) TrackMate 7, [Nat Methods 19:829](https://doi.org/10.1038/s41592-022-01507-1).*
 """))
 
 
 # =============================================================================
-# Section 3 — How models learn
+# Section 3 — Common model families  [ADDED 2026-05-11 sync — was previously
+# only present in lecture.ipynb but missing from this build script.]
 # =============================================================================
-CELLS.append(md("slide", """
-## Section 3 — How models actually learn
+CELLS.append(md("slide", f"""
+## Section 3 — Common model families behind these tasks
+
+{embed_img("viz_s3_overview", alt="Four common model families: CNN, Transformer, GAN, Other", width="82%")}
+
+Most bioimage AI lives on three architecture families: **CNNs**, **Transformers**, and **GANs**. A fourth umbrella covers everything else worth recognizing — autoencoders, diffusion models, and the general encoder-decoder pattern.
+
+You almost never pick the architecture directly. You pick a task and a tool; the tool's authors picked the architecture. Knowing the family tells you *why* a method has the strengths and weaknesses it does — and which lab in this workshop runs which.
+"""))
+
+CELLS.append(notes("""
+Speaker note (~3 minutes for the overview, ~1.5 minutes per drill-down).
+
+Most attendees will not have seen these grouped before. The point is recognition,
+not architectural depth. If you are running short, stay on the overview slide and
+skip the drill-downs entirely.
+
+Hardest sell: "you don't pick the architecture." Some attendees with a CS background
+will resist this. The reply is: at the workshop's level of practice, the tool you
+pick (Cellpose, SAM, CARE) carries the architecture choice with it. You are picking
+*tools and tasks*, and the tool authors picked the architecture for the task.
+"""))
+
+CELLS.append(md("subslide", f"""
+### CNNs — Convolutional Neural Networks
+
+{embed_img("viz_s3_cnn", alt="U-Net architecture: encoder + bottleneck + decoder + skip connections", width="85%")}
+
+**Idea.** Stack of convolutions; each layer learns a small filter that slides over its input. Early layers pick up edges; deeper layers compose them. Translation-invariant by construction.
+
+**Workhorses.** *U-Net* {cite('unet2015')} for image-to-image (segmentation, restoration). *ResNet* {cite('resnet2016')} for classification backbones. Encoder-downsample → decoder-upsample with skip connections is the dominant bioimage pattern.
+
+**In this workshop.** Cellpose-SAM (CNN backbone + SAM transformer in v4); CARE, N2V, StarDist all U-Net-shaped.
+
+| Strengths | Weaknesses |
+|---|---|
+| Mature ecosystem, vast pretrained weights, efficient inference, well-understood failure modes | Limited *global* context — single convolution sees a small neighborhood; stacked CNNs grow the field but never as cleanly as attention does |
+"""))
+
+CELLS.append(md("subslide", f"""
+### Transformers — global context via self-attention
+
+{embed_img("viz_s3_transformer", alt="Self-attention: each token attends to every other token", width="82%")}
+
+**Idea.** A *Vision Transformer* (ViT) {cite('vit2021', '⚠')} chops the image into patches, embeds each patch as a token, runs self-attention across all tokens. Captures long-range relationships natively, no convolution stack required.
+
+**Foundation models.** Trained on huge unlabeled/weakly-labeled data, then *prompted* per task: SAM {cite('sam2023')}, μSAM (microscopy), BiomedCLIP (pathology), DINOv2 (general features). Largely a transformer paradigm.
+
+**In this workshop.** Lab 3b: SAM/μSAM with point/box prompts. Cellpose-SAM is a hybrid (CNN backbone + SAM attention).
+
+| Strengths | Weaknesses |
+|---|---|
+| Scales with data; strong few-shot; *prompting* — new task without retraining | Data-hungry from scratch; expensive at inference for large images; *prompt sensitivity* — the central pedagogy of Lab 3b |
+"""))
+
+CELLS.append(md("subslide", f"""
+### GANs — adversarial generation
+
+{embed_img("viz_s3_gan", alt="GAN: Generator vs Discriminator adversarial loop", width="82%")}
+
+**Idea.** Two networks trained against each other. *Generator* tries to fool the *discriminator*; discriminator tries to tell real from generated. The game pushes the generator toward photorealistic output. Goodfellow et al. {cite('gan2014')}.
+
+**Bioimage uses.** *pix2pix* {cite('pix2pix2017')} for paired image-to-image (brightfield → fluorescence; IHC → mIF; modality A → B). *CycleGAN* for *unpaired* translation. *StyleGAN* for unconditional generation (rare in bioimage; more common in medical-imaging data augmentation).
+
+**In this workshop.** Notebook 04: pix2pix mini-workflow + CycleGAN catalog pointer.
+
+| Strengths | Weaknesses |
+|---|---|
+| Photorealistic output; compact at inference; established literature | Training instability + *mode collapse*; **hallucination risk** — outputs that look correct but invent features. Disclose generation in figure captions. |
+"""))
+
+CELLS.append(md("subslide", f"""
+### Other architectures worth recognizing
+
+{embed_img("viz_s3_other", alt="Encoder-decoder pattern across U-Net, autoencoder, pix2pix, fnet", width="85%")}
+
+| Family | What it is | Bioimage relevance |
+|---|---|---|
+| **Autoencoders** | Encoder → bottleneck → decoder; trained with reconstruction loss | *Noise2Void* {cite('noise2void2019')} (Notebook 03a); DINO, MAE for self-supervised features |
+| **Diffusion models** | Generate by gradually denoising pure noise | *DDPM* {cite('ddpm2020', '⚠')}; **replacing GANs**; growing fast in bioimage. Curated [awesome-list for medical imaging](https://github.com/amirhossein-kz/Awesome-Diffusion-Models-in-Medical-Imaging). |
+| **Encoder-decoder pattern** | The shared backbone | U-Net (with skips), autoencoders, pix2pix gen, fnet — recognize this in *every* new bioimage paper |
+
+**Takeaway.** New architectures appear every year. The conceptual scaffold — *what does it predict, what's the loss, what data does it need* — is more durable than any architecture name.
+"""))
+
+
+# =============================================================================
+# Section 4 — How models learn  [renumbered 2026-05-11: was Section 3]
+# =============================================================================
+CELLS.append(md("slide", f"""
+## Section 4 — How models actually learn
+
+{embed_img("viz_s4_overview", alt="How models learn: forward pass + gradient feedback", width="78%")}
 
 Conceptual scaffolding, not architecture details. We will not teach you what
 a U-Net is. We will teach you what it does and where it fails.
@@ -404,8 +517,11 @@ A model is a parametric function — millions or billions of numbers (weights) t
 This is the mental model. We do not need the math today, but the intuition matters: the model has done exactly one thing — it has reduced loss on training data. Whether that translates to your data is a separate question. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Generalization
+
+{embed_img("viz_s4_generalization", alt="Underfit / just-right / overfit regimes", width="92%")}
+
 
 A model that does well on training data may do poorly on yours. This is *the* central problem in applied ML.
 
@@ -417,11 +533,14 @@ A model that does well on training data may do poorly on yours. This is *the* ce
 
 **The single most important variable:** the *diversity* of training data relative to the diversity of your data. A Cellpose model trained on 70,000 cells across many image types generalizes well across cell biology because the diversity is broad. The same model fails on a histology section because that diversity didn't include tissue.
 
-Generalization is what every AI-imaging failure mode in Section 4 is, at root, an instance of. ❓
+Generalization is what every AI-imaging failure mode in Section 5 is, at root, an instance of. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Three modes of use today
+
+{embed_img("viz_s4_modes", alt="Three modes of using AI today", width="82%")}
+
 
 - **Pretrained inference** — use someone else's model on your data. Lab 1.
 - **Fine-tuning** — adjust a pretrained model with your own labels.
@@ -435,17 +554,22 @@ self-supervised denoising (Lab 3a) or prompt-based foundation models (Lab 3b).
 
 
 # =============================================================================
-# Section 4 — When AI works and when it doesn't
+# Section 5 — When AI works and when it doesn't  [renumbered 2026-05-11: was Section 4]
 # =============================================================================
-CELLS.append(md("slide", """
-## Section 4 — When AI works, and when it doesn't
+CELLS.append(md("slide", f"""
+## Section 5 — When AI works, and when it doesn't
+
+{embed_img("viz_s5_overview", alt="Works vs fails - concrete examples", width="92%")}
 
 The section attendees will remember most. Concrete examples of where current
 AI in scientific imaging delivers, and where it fails — often confidently.
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Where it currently works well
+
+{embed_img("viz_s5_works", alt="Five success cases for AI in microscopy", width="92%")}
+
 
 Concrete examples of well-validated successes:
 
@@ -458,8 +582,11 @@ Concrete examples of well-validated successes:
 The pattern: AI works well when training data covers the use case, and when validation has been done on data similar to yours. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Where it fails
+
+{embed_img("viz_s5_fails", alt="Five failure patterns for AI in microscopy", width="92%")}
+
 
 Concrete failure patterns:
 
@@ -472,8 +599,11 @@ Concrete failure patterns:
 We'll see the segmentation failure mode directly in Lab 1, and (if option A) the restoration hallucination directly in Lab 3a. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Failure-mode patterns to recognize
+
+{embed_img("viz_s5_patterns", alt="Failure-mode taxonomy", width="82%")}
+
 
 - **Domain shift.** Tools trained on one organism, modality, or stain often degrade on another.
 - **Sample-preparation effects.** Fixation, mounting, staining drive failures the model has never seen.
@@ -490,6 +620,8 @@ CELLS.append(md("subslide", f"""
 {embed_img("failure_domain_shift", alt="Same model, in-distribution success vs OOD undercount", width="80%")}
 
 Same Cellpose model, different sample type. Round isolated cells: works. Irregular dense cells: silent under-counting. Failure looks plausible — that's the dangerous part.
+
+*Illustration synthesized for clarity; for quantitative cross-dataset generalization benchmarks see Pachitariu, Rariden & Stringer (2025) Cellpose-SAM, [bioRxiv 2025.04.28.651001](https://doi.org/10.1101/2025.04.28.651001) and Stringer et al. (2021) Cellpose, [Nat Methods 18:100](https://doi.org/10.1038/s41592-020-01018-x).*
 """))
 
 CELLS.append(md("subslide", f"""
@@ -510,10 +642,10 @@ A registration that looks aligned globally but distorts locally — corrupting d
 
 
 # =============================================================================
-# Section 5 — Validation
+# Section 6 — Validation  [renumbered 2026-05-11: was Section 5]
 # =============================================================================
 CELLS.append(md("slide", """
-## Section 5 — Validation: how to know your output is right
+## Section 6 — Validation: how to know your output is right
 """))
 
 CELLS.append(md("subslide", f"""
@@ -555,6 +687,9 @@ We will demonstrate the segmentation case (IoU is high but the cell count is wro
 CELLS.append(md("subslide", f"""
 ### Reading the literature critically
 
+{embed_img("viz_s6_lit", alt="Red flags vs reporting standards when reading the literature", width="92%")}
+
+
 Red flags when reading a paper or vendor claim:
 
 - Reported metrics on a single dataset, no external validation
@@ -570,14 +705,17 @@ These exist; learn them when you publish.
 
 
 # =============================================================================
-# Section 6 — Reproducibility and responsible use
+# Section 7 — Reproducibility and responsible use  [renumbered 2026-05-11: was Section 6]
 # =============================================================================
 CELLS.append(md("slide", """
-## Section 6 — Reproducibility and responsible use
+## Section 7 — Reproducibility and responsible use
 """))
 
 CELLS.append(md("subslide", f"""
 ### Three habits that make AI-assisted analyses reproducible
+
+{embed_img("viz_s7_habits", alt="Three reproducibility habits", width="80%")}
+
 
 - **Version everything.** Model identity (e.g., "Cellpose-SAM v4.0.1"), training data version, parameters (diameter, threshold, flow). Without this, your figures cannot be regenerated.
 - **Document decisions.** Why this model, why this threshold, why this preprocessing. The reviewer will ask; have the answer ready in your methods section.
@@ -586,8 +724,11 @@ CELLS.append(md("subslide", f"""
 The methods section is where AI-assisted analyses live or die under review. Make it complete enough that another lab could rerun your pipeline, including the model version. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Image integrity: a class of risk worth knowing
+
+{embed_img("viz_s7_integ", alt="AI restoration with hallucinated feature - disclose in caption", width="85%")}
+
 
 **AI restoration and AI generation methods change pixels.** When you display a restored or generated image without disclosure, you can violate journal image-integrity policies — even unintentionally. Some journals now flag and retract AI-altered figures.
 
@@ -602,8 +743,11 @@ This applies to:
 A simple disclosure pattern: "Image displayed has been restored with [Method, vX]; quantitative analysis was performed on the original raw data." This satisfies most journal policies and protects you from later questions. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Bias, fairness, and population effects
+
+{embed_img("viz_s7_bias", alt="Three sources of bias: data, label, deployment", width="92%")}
+
 
 - *Data bias.* Training data underrepresents your sample type.
 - *Label bias.* Annotators disagreed; the model learned the disagreement.
@@ -617,14 +761,17 @@ microscopy, but the principle generalizes.
 
 
 # =============================================================================
-# Section 7 — Closing and Q&A
+# Section 8 — Closing and Q&A  [renumbered 2026-05-11: was Section 7]
 # =============================================================================
 CELLS.append(md("slide", """
-## Section 7 — Closing
+## Section 8 — Closing
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### What to take from this lecture
+
+{embed_img("viz_s8_take", alt="Five takeaways for tomorrow", width="75%")}
+
 
 AI is a tool, not a magic wand.
 
@@ -1086,6 +1233,122 @@ def _build_html() -> None:
             return
 
         print(f"Wrote {HTML_OUT.name} ({HTML_OUT.stat().st_size} bytes)")
+        _post_process_html(HTML_OUT)
+
+
+# Sentinel marking that post-processing was applied. Re-runs are idempotent —
+# the post-process function checks for this sentinel and skips if present.
+POST_PROCESS_SENTINEL = "<!-- LECTURE-HTML-POST-PROCESS-APPLIED -->"
+
+
+def _post_process_html(path: Path) -> None:
+    """Fix clipping issues in the nbconvert-generated Reveal.js HTML:
+
+    1. Bump hardcoded canvas dimensions 960x700 -> 1280x720 (modern 16:9).
+    2. Add margin/minScale/maxScale so Reveal adapts to any display resolution.
+    3. Flip the disabled scroll fallback so over-tall slides scroll instead of clipping.
+    4. Inject custom CSS that constrains images, code blocks, and base font.
+
+    Idempotent via POST_PROCESS_SENTINEL.
+    """
+    try:
+        html = path.read_text(encoding="utf-8")
+    except OSError as e:
+        print(f"WARNING: could not read {path.name} for post-process: {e}")
+        return
+
+    if POST_PROCESS_SENTINEL in html:
+        print(f"  post-process: sentinel present, skipping {path.name}")
+        return
+
+    n_replaced = 0
+
+    # 1+2. Reveal.initialize config — bump dimensions, add adaptive scaling.
+    old_cfg = "width: 960,\n\t\t\t      height: 700,\n\n        });"
+    new_cfg = (
+        "width: 1280,\n\t\t\t      height: 720,\n"
+        "            margin: 0.04,\n"
+        "            minScale: 0.2,\n"
+        "            maxScale: 1.5,\n"
+        "\n        });"
+    )
+    if old_cfg in html:
+        html = html.replace(old_cfg, new_cfg)
+        n_replaced += 1
+    else:
+        # Fallback: try a looser pattern in case nbconvert formatting drifts.
+        import re
+        pattern = re.compile(
+            r"width:\s*960,\s*\n\s*height:\s*700,\s*\n(\s*\n\s*\}\);)",
+            re.MULTILINE,
+        )
+        if pattern.search(html):
+            html = pattern.sub(
+                "width: 1280,\n            height: 720,\n"
+                "            margin: 0.04,\n"
+                "            minScale: 0.2,\n"
+                "            maxScale: 1.5,\n\\1",
+                html,
+            )
+            n_replaced += 1
+        else:
+            print("  post-process: could not find Reveal width/height config — leaving HTML alone.")
+
+    # 3. Enable scroll fallback for over-tall slides.
+    old_scroll = "var scroll = false"
+    new_scroll = "var scroll = true"
+    if old_scroll in html:
+        html = html.replace(old_scroll, new_scroll)
+        n_replaced += 1
+
+    # 4. Custom CSS block — appended right before </head>.
+    custom_css = """<style type=\"text/css\">
+/* Lecture slides — post-process clipping fixes. */
+.reveal .slides section {
+    font-size: 0.85em;          /* tighter base font; gives ~15% more vertical headroom */
+}
+.reveal .slides section img {
+    max-width: 100%;
+    max-height: 60vh;           /* image never blows past 60% of viewport height */
+    height: auto;
+    width: auto;
+    object-fit: contain;
+}
+.reveal pre {
+    max-height: 70vh;
+    overflow: auto;             /* long code blocks scroll instead of clipping */
+    font-size: 0.7em;
+}
+.reveal table {
+    font-size: 0.75em;          /* tables can otherwise blow past slide height */
+}
+.reveal h1, .reveal h2, .reveal h3 {
+    margin-top: 0.2em;
+    margin-bottom: 0.4em;
+}
+.reveal ul, .reveal ol {
+    margin-left: 1em;
+}
+/* Reveal sometimes leaves stray bottom padding when content fits — trim it. */
+.reveal .slides > section, .reveal .slides > section > section {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+</style>
+""" + POST_PROCESS_SENTINEL + "\n"
+
+    if "</head>" in html:
+        html = html.replace("</head>", custom_css + "</head>", 1)
+        n_replaced += 1
+
+    try:
+        path.write_text(html, encoding="utf-8")
+    except OSError as e:
+        print(f"WARNING: could not write post-processed {path.name}: {e}")
+        return
+
+    print(f"  post-process: applied {n_replaced} edits to {path.name} "
+          f"(new size {path.stat().st_size} bytes)")
 
 
 if __name__ == "__main__":
