@@ -416,19 +416,25 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Cellpose isn&#39;t in Colab&#39;s default environment, and installing it upgrades</span>
-<span class="c1"># numpy as a transitive dep. Because Python has already loaded the old</span>
-<span class="c1"># numpy, the upgrade leaves the kernel in an inconsistent state</span>
-<span class="c1"># (&quot;cannot import name &#39;_center&#39; from &#39;numpy._core.umath&#39;&quot;). Solution:</span>
-<span class="c1"># install + force-restart the kernel; Colab auto-reconnects, and the cell</span>
-<span class="c1"># re-runs cleanly on the second pass.</span>
+<span class="c1"># Cellpose isn&#39;t in Colab&#39;s default environment. Installing it pulls a newer</span>
+<span class="c1"># numpy as a transitive dep, but Colab&#39;s preinstalled scikit-image was built</span>
+<span class="c1"># against the OLD numpy ABI — leaving Python&#39;s loaded modules in a mid-upgrade</span>
+<span class="c1"># state (&quot;cannot import name &#39;_center&#39; from &#39;numpy._core.umath&#39;&quot;). Two-part fix:</span>
+<span class="c1">#   (1) reinstall scikit-image (and the other usual suspects) alongside cellpose</span>
+<span class="c1">#       so they all agree on the new numpy ABI;</span>
+<span class="c1">#   (2) force-restart the kernel so the freshly-installed versions actually load.</span>
+<span class="c1"># Colab auto-reconnects; click &#39;Run all&#39; once more after the restart and the</span>
+<span class="c1"># cell falls through to the standard imports.</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cellpose</span>  <span class="c1"># noqa: F401</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">IN_COLAB</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;cellpose not installed. Run: pip install &#39;cellpose&gt;=3.0&#39;&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing cellpose. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
-    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install --quiet &#39;cellpose&gt;=3.0&#39;&quot;</span><span class="p">)</span>
+    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+        <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;install --quiet --upgrade &#39;cellpose&gt;=3.0&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>   <span class="c1"># SIGKILL — Colab auto-restarts the runtime</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
