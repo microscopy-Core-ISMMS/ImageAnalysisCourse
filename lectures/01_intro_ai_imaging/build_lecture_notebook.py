@@ -255,8 +255,6 @@ CELLS.append(md("subslide", f"""
 {embed_img("viz_s2_seg_works", alt="Cellpose-SAM-style success on canonical fluorescence", width="82%")}
 
 
-*(Open this if the room is curious about the methods.)*
-
 - **Strong cases:** cultured cells with clear morphology, nuclei in 2D, a sample type
   similar to Cellpose's training distribution.
 - **Why:** the model was trained on 70,000+ segmented cells across many image types;
@@ -273,8 +271,6 @@ CELLS.append(md("subslide", f"""
 
 {embed_img("viz_s2_seg_fails", alt="Cellpose-SAM failure on dense / OOD content", width="82%")}
 
-
-*(Open this for the cautionary half of the segmentation story.)*
 
 - **Weak cases:** unusual sample types (tissue when trained on cells), unusual
   staining patterns, dense overlapping objects, 3D when the third dimension is
@@ -320,8 +316,6 @@ CELLS.append(md("subslide", f"""
 
 CELLS.append(md("subslide", """
 #### Drill-down — restoration's hallucination problem
-
-*(Open this when discussing image integrity, or in response to a question.)*
 
 - **The risk:** AI restoration changes pixel values. A denoised image isn't a
   measurement; it's a model's *prediction* of what the clean image looks like.
@@ -505,8 +499,10 @@ The biggest beginner mistake: tuning on the test set. The second biggest: lettin
 This split is the single most important pattern in supervised ML. Every method we discuss assumes it. ❓
 """))
 
-CELLS.append(md("subslide", """
+CELLS.append(md("subslide", f"""
 ### Loss and learning, conceptually
+
+{embed_img("viz_s4_loss_landscape", alt="Gradient descent walks downhill on the loss surface", width="88%")}
 
 A model is a parametric function — millions or billions of numbers (weights) that together compute "given this input image, predict this output."
 
@@ -552,6 +548,22 @@ self-supervised denoising (Lab 3a) or prompt-based foundation models (Lab 3b).
 ❓ *Workshop-specific framing.*
 """))
 
+CELLS.append(md("subslide", """
+### Go deeper — learn the mechanics
+
+Two outstanding free resources that build the same intuition we just sketched, with much more depth:
+
+- **3blue1brown — "Neural Networks" series** (visual, low-math, ~1 hour total).
+  Four short videos covering what a neural network is, gradient descent, and backpropagation — the same forward-and-backward loop we walked through above.
+  [3blue1brown.com/topic/neural-networks](https://www.3blue1brown.com/?topic=neural-networks)
+
+- **TensorFlow Playground** — a tiny neural network you can train *in your browser*.
+  Pick a 2-D dataset, watch the loss curve drop in real time, see hidden-unit activations evolve. Zero install, instant feedback.
+  [playground.tensorflow.org](https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.80670&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)
+
+If gradient descent still feels abstract after this lecture, an evening with these two is worth more than reading another paper.
+"""))
+
 
 # =============================================================================
 # Section 5 — When AI works and when it doesn't  [renumbered 2026-05-11: was Section 4]
@@ -560,9 +572,6 @@ CELLS.append(md("slide", f"""
 ## Section 5 — When AI works, and when it doesn't
 
 {embed_img("viz_s5_overview", alt="Works vs fails - concrete examples", width="92%")}
-
-The section attendees will remember most. Concrete examples of where current
-AI in scientific imaging delivers, and where it fails — often confidently.
 """))
 
 CELLS.append(md("subslide", f"""
@@ -666,6 +675,20 @@ The validation gradient runs from "research-grade" (internal validation, single 
 """))
 
 CELLS.append(md("subslide", f"""
+### Three error patterns the next scatter is built from
+
+{embed_img("metrics_error_examples", alt="Boundary errors, mask merges, mixed — visual examples", width="92%")}
+
+Before the scatter, the visual vocabulary. The same 4-cell scene is shown three ways. The **dashed white outline** is the ground truth. The **filled overlay** is the AI's prediction (one color per detected instance).
+
+- **Boundary errors only** (blue): edges are wrong but every cell is still detected as a separate object. Pixel overlap (IoU) drops; the count of objects is unchanged.
+- **Mask merges only** (red): edges are pixel-perfect, but two adjacent cells get fused into a single instance. IoU stays close to 1; the count is wrong.
+- **Mixed errors** (gray): both at once.
+
+The next slide plots dozens of these cases on one axis. ❓
+"""))
+
+CELLS.append(md("subslide", f"""
 ### Metrics versus biological correctness, and metrics versus the right metric
 
 {embed_img("metrics_vs_biology", alt="High IoU does not guarantee correct count", width="78%")}
@@ -680,6 +703,23 @@ Different tasks require different metrics:
 - **Registration** — landmark distance for sparse correspondence; structural-similarity preservation; jacobian determinants for non-collapse
 - **Tracking** — ID consistency, MOTA, ID switches
 - **Classification** — accuracy, AUC, calibration; per-class breakdown for imbalanced data
+
+**Metric glossary (one-liners):**
+
+| Metric | What it measures | Range / units |
+|---|---|---|
+| **IoU** (Jaccard) | pixel overlap: intersection ÷ union | 0–1, higher better |
+| **Dice** | 2 × intersection ÷ (pred + GT pixels); more forgiving than IoU for small objects | 0–1, higher better |
+| **Precision / Recall** | of predicted (or true) objects, fraction matched at a chosen IoU threshold | 0–1, higher better |
+| **mAP** | mean Average Precision: precision–recall area averaged across IoU thresholds | 0–1, higher better |
+| **PSNR** | peak signal-to-noise ratio between restored and clean image | dB, higher better |
+| **SSIM** | structural similarity — luminance × contrast × structure | 0–1, higher better |
+| **Landmark distance** | mean distance between matched registration landmarks | pixels / μm, lower better |
+| **Jacobian determinant** | local volume change of the deformation field; flags collapsed or folded warps | dimensionless, ≈1 means no distortion |
+| **MOTA** | Multi-Object Tracking Accuracy: combines false positives, misses, and ID switches | ≤ 1, higher better |
+| **ID switches** | how often a track's identity flips to a different object | count, lower better |
+| **AUC** | area under the ROC curve — ranking quality of a classifier | 0.5 = chance, 1.0 = perfect |
+| **Calibration** | agreement between predicted probabilities and observed frequencies | usually a reliability-curve plot |
 
 We will demonstrate the segmentation case (IoU is high but the cell count is wrong) directly in Lab 2. The principle generalizes to every task in Section 2: pick the metric that matches the biological question, not the metric the paper happens to report. ❓
 """))
@@ -1238,7 +1278,8 @@ def _build_html() -> None:
 
 # Sentinel marking that post-processing was applied. Re-runs are idempotent —
 # the post-process function checks for this sentinel and skips if present.
-POST_PROCESS_SENTINEL = "<!-- LECTURE-HTML-POST-PROCESS-APPLIED -->"
+POST_PROCESS_SENTINEL = "<!-- LECTURE-HTML-POST-PROCESS-APPLIED-v2 -->"
+POST_PROCESS_SENTINEL_V1 = "<!-- LECTURE-HTML-POST-PROCESS-APPLIED -->"
 
 
 def _post_process_html(path: Path) -> None:
@@ -1258,8 +1299,29 @@ def _post_process_html(path: Path) -> None:
         return
 
     if POST_PROCESS_SENTINEL in html:
-        print(f"  post-process: sentinel present, skipping {path.name}")
+        print(f"  post-process: v2 sentinel present, skipping {path.name}")
         return
+
+    # If a v1 sentinel is present, strip the old CSS block (everything between
+    # the previous <style> opening and the v1 sentinel) so the new v2 CSS replaces
+    # it cleanly. The Reveal config edits and scroll fallback from v1 are kept.
+    if POST_PROCESS_SENTINEL_V1 in html:
+        import re as _re
+        # Match the previous CSS block we injected (any <style>...</style> immediately
+        # followed by the v1 sentinel). Non-greedy match on the style block.
+        old_pattern = _re.compile(
+            r'<style type=\"text/css\">[^<]*?(?:<(?!/style>)[^<]*?)*?</style>\s*' +
+            _re.escape(POST_PROCESS_SENTINEL_V1) + r'\s*',
+            _re.DOTALL,
+        )
+        html_new, n_sub = old_pattern.subn("", html, count=1)
+        if n_sub:
+            html = html_new
+            print(f"  post-process: stripped v1 CSS block from {path.name}, ready for v2.")
+        else:
+            # Couldn't find the v1 block to strip — fall back to removing just the sentinel.
+            html = html.replace(POST_PROCESS_SENTINEL_V1, "", 1)
+            print(f"  post-process: v1 sentinel removed but CSS block pattern not matched — v2 CSS will append.")
 
     n_replaced = 0
 
@@ -1301,38 +1363,95 @@ def _post_process_html(path: Path) -> None:
         html = html.replace(old_scroll, new_scroll)
         n_replaced += 1
 
-    # 4. Custom CSS block — appended right before </head>.
+    # 4. Custom CSS block — appended right before </head>. v2 adds reliable
+    # section-level overflow scrolling (CSS-only, not jQuery-dependent) plus
+    # tighter typography so most slides fit at 720px logical height without scrolling.
     custom_css = """<style type=\"text/css\">
-/* Lecture slides — post-process clipping fixes. */
+/* Lecture slides — post-process clipping fixes (v2). */
+
+/* Smaller base font: ~10% more content fits vertically at logical 720 px */
 .reveal .slides section {
-    font-size: 0.85em;          /* tighter base font; gives ~15% more vertical headroom */
+    font-size: 0.78em;
 }
+
+/* Section-level overflow: when content exceeds the 720 px logical slide height,
+   scroll INSIDE the section. CSS-only — does not depend on jQuery being loaded. */
+.reveal .slides > section,
+.reveal .slides > section > section {
+    height: 100% !important;
+    max-height: 720px;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 0.5em 1em;
+    text-align: left;
+}
+
+/* Image: cap height so caption + bullets have room below it */
 .reveal .slides section img {
     max-width: 100%;
-    max-height: 60vh;           /* image never blows past 60% of viewport height */
+    max-height: 55vh;
     height: auto;
     width: auto;
     object-fit: contain;
 }
+
+/* Code blocks: scroll, smaller font, tighter lines */
 .reveal pre {
-    max-height: 70vh;
-    overflow: auto;             /* long code blocks scroll instead of clipping */
-    font-size: 0.7em;
+    max-height: 60vh;
+    overflow: auto;
+    font-size: 0.62em;
+    line-height: 1.2;
+    margin: 0.4em 0;
 }
+.reveal code {
+    font-size: 0.9em;
+}
+
+/* Tables: compress so they fit on slides */
 .reveal table {
-    font-size: 0.75em;          /* tables can otherwise blow past slide height */
+    font-size: 0.72em;
+    border-collapse: collapse;
+    margin: 0.4em 0;
 }
-.reveal h1, .reveal h2, .reveal h3 {
-    margin-top: 0.2em;
-    margin-bottom: 0.4em;
+.reveal table td, .reveal table th {
+    padding: 0.25em 0.5em;
+    line-height: 1.25;
 }
+
+/* Tighter heading spacing — saves vertical room */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+    margin-top: 0.15em;
+    margin-bottom: 0.3em;
+    line-height: 1.15;
+}
+
+/* Tighter list spacing */
 .reveal ul, .reveal ol {
     margin-left: 1em;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
 }
-/* Reveal sometimes leaves stray bottom padding when content fits — trim it. */
-.reveal .slides > section, .reveal .slides > section > section {
-    padding-top: 1em;
-    padding-bottom: 1em;
+.reveal li {
+    line-height: 1.3;
+    margin-bottom: 0.15em;
+}
+
+/* Tighter paragraph spacing */
+.reveal p {
+    margin: 0.3em 0;
+    line-height: 1.3;
+}
+
+/* Scrollbar styling so the scroll indicator is visible but not obtrusive */
+.reveal .slides > section::-webkit-scrollbar,
+.reveal .slides > section > section::-webkit-scrollbar {
+    width: 8px;
+}
+.reveal .slides > section::-webkit-scrollbar-thumb,
+.reveal .slides > section > section::-webkit-scrollbar-thumb {
+    background: rgba(31, 78, 121, 0.35);
+    border-radius: 4px;
 }
 </style>
 """ + POST_PROCESS_SENTINEL + "\n"
