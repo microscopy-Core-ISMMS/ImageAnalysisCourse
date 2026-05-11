@@ -972,35 +972,66 @@ print(f"Ground-truth count : {len(np.unique(gt)) - 1}")
 print(f"Good prediction    : {len(np.unique(good_pred)) - 1}  (count error: 0)")
 print(f"Bad prediction     : {len(np.unique(bad_pred)) - 1}   (count error: {len(np.unique(gt)) - len(np.unique(bad_pred))})")"""))
 
-CELLS.append(code("subslide", """# Metric versus biology plot
-# Why this matters: high IoU does not guarantee correct biology.
-# This synthetic experiment shows IoU vs cell-count error as predictions
-# are perturbed in ways that preserve overall pixel agreement.
+CELLS.append(code("subslide", """# Metric versus biology plot — three error modes, not one
+# Why this matters: high IoU does NOT guarantee a correct cell count. A single
+# linear knob (one perturbation strength) hides that — drop IoU and count error
+# rises together, looking like one metric tells you everything about the other.
+# In real data, different error TYPES produce different (IoU, count_err) regions:
+#   - Boundary errors only  → IoU drops, count unchanged
+#   - Mask merges only      → IoU near 1.0, count drops
+#   - Mixed errors          → both, scattered
+# The merge cloud is the takeaway: at IoU = 0.97, count error ranges 0-4.
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.random.seed(0)
-n_trials = 60
+rng = np.random.default_rng(0)
 
-# Each trial: a "predicted" segmentation that differs from ground truth
-# in a way controlled by a perturbation strength. IoU stays high; count error grows.
-strengths = np.linspace(0, 1, n_trials)
-ious = 0.95 - 0.10 * strengths + np.random.normal(0, 0.02, n_trials)
-count_errors = strengths * 8 + np.random.normal(0, 0.5, n_trials)
+# Mode A — boundary errors only (jagged edges, every cell still detected)
+n_a = 30
+erosion_a = rng.uniform(0.02, 0.25, n_a)
+ious_a    = 1.0 - erosion_a + rng.normal(0, 0.01, n_a)
+count_a   = rng.poisson(0.3, n_a).astype(float) + rng.normal(0, 0.1, n_a)
 
-fig, ax = plt.subplots(figsize=(7, 5))
-sc = ax.scatter(ious, count_errors, c=strengths, cmap='viridis',
-                s=40, edgecolor='k', linewidth=0.5)
+# Mode B — mask merges only (pixels right, two cells fuse into one instance)
+n_b = 30
+merges_b  = rng.integers(0, 5, n_b)
+ious_b    = 0.97 + rng.normal(0, 0.012, n_b)
+count_b   = merges_b + rng.poisson(0.3, n_b)
+
+# Mode C — mixed (both effects)
+n_c = 25
+ious_c    = 1.0 - rng.uniform(0, 0.15, n_c) + rng.normal(0, 0.012, n_c)
+count_c   = rng.integers(0, 3, n_c) + rng.poisson(0.3, n_c)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(ious_a, count_a, c='#4C72B0', s=70, edgecolor='k', linewidth=0.4,
+           label='Boundary errors only (hurts IoU)', zorder=3)
+ax.scatter(ious_b, count_b, c='#C44E52', s=70, edgecolor='k', linewidth=0.4,
+           label='Mask merges only (hurts count)',   zorder=3)
+ax.scatter(ious_c, count_c, c='#888888', s=45, edgecolor='k', linewidth=0.4,
+           alpha=0.7, label='Mixed errors',          zorder=2)
+
 ax.set_xlabel('IoU (pixel overlap with ground truth)')
-ax.set_ylabel('Count error (predicted minus actual cells)')
-ax.set_title('A high IoU does not guarantee a correct count')
-ax.axhline(0, color='gray', linewidth=0.8, linestyle='--')
-ax.invert_xaxis()  # higher IoU on the left
-cb = plt.colorbar(sc, ax=ax, label='Perturbation strength')
+ax.set_ylabel('Absolute cell-count error')
+ax.set_title('High IoU does not guarantee a correct count')
+ax.invert_xaxis()                  # higher IoU on the left
+ax.set_ylim(-0.6, 5.6); ax.set_xlim(1.02, 0.73)
+ax.axhline(0, color='gray', linewidth=0.6, linestyle='--', zorder=1)
+ax.legend(loc='lower left', fontsize=9, framealpha=0.95)
+
+# Annotate the gap — vertical spread of the red cloud at IoU = 0.97
+ax.annotate('At IoU = 0.97,\\ncount error ranges 0-4.\\nThe gap is real.',
+            xy=(0.965, 3.6), xytext=(0.83, 4.4),
+            arrowprops=dict(arrowstyle='->', color='#C44E52', lw=1.5),
+            fontsize=10, color='#C44E52', fontweight='bold',
+            bbox=dict(boxstyle='round,pad=0.4', fc='white',
+                      ec='#C44E52', lw=1.2))
+
 plt.tight_layout(); plt.show()
 
-print("Even at high IoU (0.85+), count error can be 3-5 cells.")
-print("This is the metrics-vs-biology gap. Choose the metric that matches your question.")"""))
+print("Look at the red points: IoU stays near 0.97 while count error spans 0-4.")
+print("That vertical spread is the metrics-vs-biology gap. The same overall")
+print("pixel agreement hides very different biological answers.")"""))
 
 
 # =============================================================================
