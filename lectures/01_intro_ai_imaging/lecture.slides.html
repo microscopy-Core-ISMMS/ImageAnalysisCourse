@@ -16,6 +16,40 @@ agent would not let the build script remove it programmatically.
 <meta charset="utf-8">
 <title>Stub — see lecture_slides.html</title>
 <meta http-equiv="refresh" content="0; url=lecture_slides.html">
+<style type="text/css">
+/* Lecture slides — post-process clipping fixes. */
+.reveal .slides section {
+    font-size: 0.85em;          /* tighter base font; gives ~15% more vertical headroom */
+}
+.reveal .slides section img {
+    max-width: 100%;
+    max-height: 60vh;           /* image never blows past 60% of viewport height */
+    height: auto;
+    width: auto;
+    object-fit: contain;
+}
+.reveal pre {
+    max-height: 70vh;
+    overflow: auto;             /* long code blocks scroll instead of clipping */
+    font-size: 0.7em;
+}
+.reveal table {
+    font-size: 0.75em;          /* tables can otherwise blow past slide height */
+}
+.reveal h1, .reveal h2, .reveal h3 {
+    margin-top: 0.2em;
+    margin-bottom: 0.4em;
+}
+.reveal ul, .reveal ol {
+    margin-left: 1em;
+}
+/* Reveal sometimes leaves stray bottom padding when content fits — trim it. */
+.reveal .slides > section, .reveal .slides > section > section {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+</style>
+<!-- LECTURE-HTML-POST-PROCESS-APPLIED -->
 </head>
 <body>
 <p>This is a build-leftover stub. The canonical deck is

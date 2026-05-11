@@ -7429,6 +7429,16 @@ main {
     </script>
 <!-- End of mathjax configuration --><!-- Reveal Theme -->
 <link href="https://unpkg.com/reveal.js@4.0.2/dist/theme/white.css" id="theme" rel="stylesheet"/>
+<style type="text/css">
+.reveal .slides section { font-size: 0.85em; }
+.reveal .slides section img { max-width: 100%; max-height: 60vh; height: auto; width: auto; object-fit: contain; }
+.reveal pre { max-height: 70vh; overflow: auto; font-size: 0.7em; }
+.reveal table { font-size: 0.75em; }
+.reveal h1, .reveal h2, .reveal h3 { margin-top: 0.2em; margin-bottom: 0.4em; }
+.reveal ul, .reveal ol { margin-left: 1em; }
+.reveal .slides > section, .reveal .slides > section > section { padding-top: 1em; padding-bottom: 1em; }
+</style>
+<!-- LECTURE-HTML-POST-PROCESS-APPLIED -->
 </head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
@@ -7709,8 +7719,11 @@ require(
             transition: "slide",
             slideNumber: "",
             plugins: [RevealNotes],
-            width: 960,
-			      height: 700,
+            width: 1280,
+            height: 720,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 1.5,
 
         });
 
@@ -7723,7 +7736,7 @@ require(
         Reveal.addEventListener('slidechanged', update);
 
         function setScrollingSlide() {
-            var scroll = false
+            var scroll = true
             if (scroll === true) {
               var h = $('.reveal').height() * 0.95;
               $('section.present').find('section')
