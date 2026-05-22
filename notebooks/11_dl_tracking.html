@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack) &#8212; AI for Microscopy Image Analysis</title>
+    <title>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer)) &#8212; AI for Microscopy Image Analysis</title>
   
   
   
@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -347,7 +347,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</h1>
+    <h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -385,8 +385,8 @@
   <!-- colab-badge -->
 <p><a class="reference external" href="https://colab.research.google.com/github/microscopy-Core-ISMMS/ImageAnalysisCourse/blob/2026-workshop/notebooks/11_dl_tracking.ipynb" rel="noreferer noopener" target="_blank"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <p><em>Click the badge to open this notebook in Google Colab. For best performance, switch to a GPU runtime: Runtime → Change runtime type → T4 GPU.</em></p>
-<section class="tex2jax_ignore mathjax_ignore" id="notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack">
-<h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)<a class="headerlink" href="#notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack-pointer">
+<h1>Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))<a class="headerlink" href="#notebook-11-dl-driven-tracking-choose-your-own-trackpy-btrack-ultrack-pointer" title="Link to this heading">#</a></h1>
 <p><strong>Status.</strong> Core lab — workshop day 3. Recommended after Notebooks 01 (Cellpose), 10 (3D segmentation).
 <strong>Estimated time.</strong> 25–35 minutes on Colab T4.</p>
 <p><strong>Learning goals.</strong></p>
@@ -402,6 +402,9 @@
 </div></blockquote>
 <blockquote>
 <div><p><strong>A note on btrack.</strong> The Bayesian tracker package (<code class="docutils literal notranslate"><span class="pre">btrack</span></code>) is powerful but has uncertain pip-install compatibility on free-tier Colab due to HDF5 dependencies. We detect this upfront and fall back to a simplified Kalman-style linker if needed — the teaching point lands either way.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>A note on Ultrack.</strong> We hands-on with TrackPy and btrack (or its Kalman fallback). Ultrack — the SOTA neural-network tracker — is introduced as a pointer near the end of the lab; we do not install or run it here.</p>
 </div></blockquote>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>

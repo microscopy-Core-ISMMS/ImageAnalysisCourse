@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -416,7 +416,7 @@
 </section>
 <section id="step-3-download-a-canonical-sample-image">
 <h2>Step 3 — Download a canonical sample image<a class="headerlink" href="#step-3-download-a-canonical-sample-image" title="Link to this heading">#</a></h2>
-<p>We’ll use one of the Cellpose example images. If your network blocks the download, the next cell falls back to a synthetic image so the rest of the notebook still runs.</p>
+<p>We’ll grab a small reference image from the Cellpose project’s public examples directory. Any real microscopy image works here; we picked this one because it’s small, license-clean, and stable. This notebook does <em>not</em> run Cellpose — we’re only using the URL as a convenient source of a real microscopy image for the I/O and plotting checks below. If your network blocks the download, the next cell falls back to a synthetic image so the rest of the notebook still runs.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>

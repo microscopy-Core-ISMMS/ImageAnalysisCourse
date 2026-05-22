@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -677,7 +677,8 @@
 </section>
 <section id="generate-ground-truth">
 <h2>Generate ground truth<a class="headerlink" href="#generate-ground-truth" title="Link to this heading">#</a></h2>
-<p>Real ground truth is hard. For this lab we construct a synthetic ground truth that we <em>know</em> is correct, so we can measure exactly how the predictions deviate. In practice the ground truth would come from expert annotation.</p>
+<p>Real ground truth is hard. For this lab we construct a synthetic “ground truth” so we can measure exactly how the predictions deviate. In practice the ground truth would come from expert annotation.</p>
+<p><strong>Be explicit about what we’re doing in the next cell.</strong> We set <code class="docutils literal notranslate"><span class="pre">gt_easy</span> <span class="pre">=</span> <span class="pre">masks_easy.copy()</span></code> and <code class="docutils literal notranslate"><span class="pre">gt_hard</span> <span class="pre">=</span> <span class="pre">masks_easy.copy()</span></code> — that is, the “ground truth” for the easy case is the easy-case prediction itself, and the hard case uses the <em>same</em> mask as its reference. This is deliberate: it gives a trivial IoU = 1.0 on easy as a baseline calibration (a sanity check that the metric code is wired up correctly), and a non-trivial drop on hard because <code class="docutils literal notranslate"><span class="pre">masks_hard</span></code> actually differs from <code class="docutils literal notranslate"><span class="pre">masks_easy</span></code>. The point isn’t to evaluate the easy prediction — it’s already perfect by construction. The pedagogically meaningful gap lives later in the <strong>metric–biology plot</strong>, where we perturb <code class="docutils literal notranslate"><span class="pre">gt_easy</span></code> (delete cells) to construct a series of synthetic predictions and watch IoU disagree with count error. That is the lab’s central learning moment; treat the easy/hard numbers here as scaffolding that gets us to it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the easy mask as the &#39;truth&#39; for both images, simulating a case where</span>

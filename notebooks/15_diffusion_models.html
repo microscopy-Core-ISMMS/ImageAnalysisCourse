@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -376,6 +376,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-reference">Cross-reference</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-no-hallucination-check-or-integrity-report">Why no hallucination-check or integrity report?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resources-and-next-steps">Resources and next steps</a></li>
 </ul>
@@ -872,6 +873,14 @@ D) All of the above.</p>
 <p>See NB03a (denoising hallucination check) and NB06 (virtual staining integrity) for the same principle applied to other generative methods. <strong>The rule is consistent:</strong> Generated != Measured. Disclose.</p>
 </section>
 </section>
+<section id="why-no-hallucination-check-or-integrity-report">
+<h2>Why no hallucination-check or integrity report?<a class="headerlink" href="#why-no-hallucination-check-or-integrity-report" title="Link to this heading">#</a></h2>
+<p>The standard workshop notebooks for restoration / translation tasks (NB03a denoising, NB06 virtual staining, NB07 super-resolution, NB12 deconvolution) all end with two artefacts: a <strong>quantitative hallucination check</strong> (per-pixel anomaly map vs. a reference) and a <strong>fill-in integrity report</strong> (PSNR / SSIM / anomaly fraction on a held-out test set). This notebook deliberately does <strong>not</strong> include either. Here is why.</p>
+<p>Restoration and translation tasks have a reference image: a clean acquisition, a paired fluorescence channel, a high-resolution ground truth. The anomaly map is <code class="docutils literal notranslate"><span class="pre">|prediction</span> <span class="pre">-</span> <span class="pre">reference|</span> <span class="pre">&gt;</span> <span class="pre">threshold</span></code> — it is defined because there is something to compare against. Unconditional diffusion <strong>generation</strong> has no ground truth. Every pixel is invented from noise, conditioned (in this demo) only on the model’s training distribution. An anomaly map against a reference is undefined; PSNR / SSIM against a reference is meaningless because no reference exists.</p>
+<p>What integrity reporting looks like for diffusion in research practice is therefore <strong>qualitative</strong>, not quantitative: training corpus, model checkpoint / DOI, sampling seed, conditioning signal (prompt, class label, or unconditional), number of denoising steps, and a clear figure-legend statement that the image is generated rather than measured. The previous section (§ “Integrity reporting for diffusion-generated bioimage”) captures this. Field standards for diffusion-artifact disclosure in biomedical images are still being established (see e.g. recent 2024 literature on diffusion artifacts in medical imaging); cite the current state of the art when you write up such figures rather than reproducing a fixed template here.</p>
+<p>This notebook also flags itself as <strong>frontier-status</strong> in the banner at the top — production-quality validation tooling for unconditional diffusion in bioimage is not yet standardized.</p>
+<p>If you adapt this notebook to a <strong>conditional</strong> generation task (e.g., diffusion-based denoising, deconvolution, or super-resolution where you have paired input/output data), the NB03a / NB06 / NB07 / NB12 integrity templates apply directly — port them over.</p>
+</section>
 <section id="closing-reflection">
 <h2>Closing reflection<a class="headerlink" href="#closing-reflection" title="Link to this heading">#</a></h2>
 <p>Diffusion models are the current frontier for image generation and restoration. Over 2024–2026, expect:</p>
@@ -1010,6 +1019,7 @@ D) All of the above.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-reference">Cross-reference</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-no-hallucination-check-or-integrity-report">Why no hallucination-check or integrity report?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resources-and-next-steps">Resources and next steps</a></li>
 </ul>

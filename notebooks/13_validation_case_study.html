@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1"><a class="reference internal" href="12_deconvolution.html">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -405,21 +405,40 @@
 <p>Install the libraries we’ll dispatch to. The setup cell installs everything up front; individual model weights download lazily on first use, so you can pick a single model from the menu without waiting for all of them.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
 
-<span class="c1"># Install in one pass. csbdeep is StarDist&#39;s backend; bioimageio.core is the BiMZ Python interface.</span>
-<span class="o">%</span><span class="k">pip</span> install --quiet &quot;cellpose&gt;=3.0&quot; &quot;stardist&gt;=0.8&quot; csbdeep \
-    <span class="s2">&quot;git+https://github.com/facebookresearch/segment-anything.git&quot;</span> \
-    <span class="n">bioimageio</span><span class="o">.</span><span class="n">core</span> <span class="n">scikit</span><span class="o">-</span><span class="n">image</span> <span class="n">matplotlib</span> <span class="n">pandas</span> <span class="n">tifffile</span>
+<span class="c1"># This lab dispatches to several heavyweight model libraries (Cellpose, StarDist,</span>
+<span class="c1"># segment-anything, bioimageio.core). Installing them on Colab pulls a newer</span>
+<span class="c1"># numpy as a transitive dep, which (a) conflicts with Colab&#39;s preinstalled</span>
+<span class="c1"># numba 0.60 (which requires numpy&lt;2.1), and (b) leaves Python&#39;s already-</span>
+<span class="c1"># loaded scikit-image in a stale-ABI state (&quot;cannot import name &#39;_center&#39;</span>
+<span class="c1"># from &#39;numpy._core.umath&#39;&quot;). Three-part fix:</span>
+<span class="c1">#   (1) cap numpy at &lt;2.1 so it stays compatible with Colab&#39;s numba;</span>
+<span class="c1">#   (2) reinstall scikit-image and tifffile alongside the new packages so</span>
+<span class="c1">#       they all agree on the resulting numpy ABI;</span>
+<span class="c1">#   (3) force-restart the kernel so the freshly-installed modules actually</span>
+<span class="c1">#       load (without restart, Python keeps using the OLD cached numpy).</span>
+<span class="c1"># Colab auto-reconnects; click &#39;Run all&#39; once more after the restart and the</span>
+<span class="c1"># cell falls through to the standard imports. csbdeep is StarDist&#39;s backend;</span>
+<span class="c1"># bioimageio.core is the BiMZ Python interface.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cellpose</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;cellpose not installed. Run: pip install &#39;cellpose&gt;=3.0,&lt;4&#39; &#39;stardist&gt;=0.8&#39; csbdeep &#39;git+https://github.com/facebookresearch/segment-anything.git&#39; bioimageio.core&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing model libraries. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+    <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+        <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;install --quiet --upgrade &#39;cellpose&gt;=3.0,&lt;4&#39; &#39;stardist&gt;=0.8&#39; csbdeep &#39;git+https://github.com/facebookresearch/segment-anything.git&#39; bioimageio.core &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>   <span class="c1"># SIGKILL — Colab auto-restarts the runtime</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">skdata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
-
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Imports OK.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>

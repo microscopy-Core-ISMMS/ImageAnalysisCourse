@@ -65,7 +65,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Notebook 13 — Validation Case Study (Interactive Model Picker)" href="13_validation_case_study.html" />
-    <link rel="prev" title="Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)" href="11_dl_tracking.html" />
+    <link rel="prev" title="Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))" href="11_dl_tracking.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="08_srrf_esrrf.html">Notebook 08 — SRRF and eSRRF: Analytical and AI-Enhanced Super-Resolution from a Stack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_cellpose_finetune.html">Notebook 09 — Cellpose 2.0+ Human-in-the-Loop Fine-Tuning (Colab)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_3d_segmentation.html">Notebook 10 — 3D Segmentation: Cellpose 3D + StarDist 3D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_dl_tracking.html">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Notebook 12 — Deconvolution (DL + classical baseline)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="13_validation_case_study.html">Notebook 13 — Validation Case Study (Interactive Model Picker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="14_spot_detection.html">Notebook 14 — Spot Detection (FISH / single-molecule / particles)</a></li>
@@ -367,6 +367,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#side-by-side-comparison-rl-vs-care-vs-ground-truth">Side-by-side comparison: RL vs CARE vs ground truth</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-check-the-key-validation">Hallucination check (the key validation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantitative-summary-across-all-held-out-images">Quantitative summary across all held-out images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrity-reporting-walkthrough">Integrity reporting walkthrough</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-each-method">When to use each method</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
 </ul>
@@ -1020,6 +1021,96 @@ We’ll build a synthetic dataset: clean round-blob objects → apply Gaussian P
 </ul>
 <p>The “best” method depends on your downstream analysis. If you’re counting objects, anomalies matter more than PSNR. If you’re measuring intensity, PSNR matters more.</p>
 </section>
+<section id="integrity-reporting-walkthrough">
+<h2>Integrity reporting walkthrough<a class="headerlink" href="#integrity-reporting-walkthrough" title="Link to this heading">#</a></h2>
+<p>If a deconvolved image goes into a paper, journals (Nature 2024, Cell 2025, eLife 2024) increasingly require explicit disclosure of:</p>
+<ul class="simple">
+<li><p><strong>Method identity</strong> (classical RL vs. learned CARE / U-Net; PSF assumed; training data)</p></li>
+<li><p><strong>Hallucination metrics</strong> (anomaly % vs. ground truth where available; visual checks otherwise)</p></li>
+<li><p><strong>Domain match</strong> (does the assumed PSF / training distribution match your real microscope?)</p></li>
+<li><p><strong>Reproducibility</strong> (iteration count, training seed, hyperparameters, software versions)</p></li>
+</ul>
+<p>The template below is a fill-in for that disclosure paragraph. Values are pulled from the per-method test-set metrics computed above; change <code class="docutils literal notranslate"><span class="pre">picked_method</span></code> to switch the row.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Integrity-report template — fill from the per-method test-set metrics computed above.</span>
+<span class="n">picked_method</span> <span class="o">=</span> <span class="s2">&quot;CARE&quot;</span>   <span class="c1"># one of: &quot;RL&quot;, &quot;CARE&quot;</span>
+
+<span class="k">if</span> <span class="n">picked_method</span> <span class="o">==</span> <span class="s2">&quot;RL&quot;</span><span class="p">:</span>
+    <span class="n">_label</span> <span class="o">=</span> <span class="s2">&quot;Richardson-Lucy (classical, iterative)&quot;</span>
+    <span class="n">_arch</span> <span class="o">=</span> <span class="s2">&quot;n/a -- parameter-free analytical update; tunable iteration count only&quot;</span>
+    <span class="n">_pred_arr</span> <span class="o">=</span> <span class="n">rl_outputs</span>
+<span class="k">elif</span> <span class="n">picked_method</span> <span class="o">==</span> <span class="s2">&quot;CARE&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">&#39;use_csbdeep_care&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span> <span class="ow">and</span> <span class="n">use_csbdeep_care</span><span class="p">:</span>
+        <span class="n">_label</span> <span class="o">=</span> <span class="s2">&quot;CARE (csbdeep, learned)&quot;</span>
+        <span class="n">_arch</span> <span class="o">=</span> <span class="s2">&quot;CARE U-Net (depth=2, kern=3), MSE loss, 3 epochs x 16 steps, batch=4&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_label</span> <span class="o">=</span> <span class="s2">&quot;PyTorch TinyUNet fallback (learned)&quot;</span>
+        <span class="n">_arch</span> <span class="o">=</span> <span class="s2">&quot;TinyUNet encoder/decoder (~ a few k params), MSE loss&quot;</span>
+    <span class="n">_pred_arr</span> <span class="o">=</span> <span class="n">care_outputs</span>
+
+<span class="c1"># Aggregate metrics across the held-out test set</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+<span class="n">_psnrs</span><span class="p">,</span> <span class="n">_ssims</span><span class="p">,</span> <span class="n">_anoms</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_test</span><span class="p">):</span>
+    <span class="n">_gt</span> <span class="o">=</span> <span class="n">X_test_clean</span><span class="p">[</span><span class="n">_i</span><span class="p">]</span>
+    <span class="n">_pr</span> <span class="o">=</span> <span class="n">_pred_arr</span><span class="p">[</span><span class="n">_i</span><span class="p">]</span>
+    <span class="n">_psnrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psnr_metric</span><span class="p">(</span><span class="n">_gt</span><span class="p">,</span> <span class="n">_pr</span><span class="p">,</span> <span class="n">data_range</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">_ssims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ssim_metric</span><span class="p">(</span><span class="n">_gt</span><span class="p">,</span> <span class="n">_pr</span><span class="p">,</span> <span class="n">data_range</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">_anoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_pr</span> <span class="o">-</span> <span class="n">_gt</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">==============================================================================</span>
+<span class="s1">DECONVOLUTION INTEGRITY REPORT</span>
+<span class="s1">==============================================================================</span>
+
+<span class="s1">Method:               </span><span class="si">{method}</span>
+<span class="s1">Source (training):    synthetic clean -&gt; Gaussian-PSF blur (sigma=2.5) -&gt; Poisson+Gaussian noise pairs</span>
+<span class="s1">                      (</span><span class="si">{n_train}</span><span class="s1"> train pairs + </span><span class="si">{n_test}</span><span class="s1"> held-out test pairs, all generated in this notebook)</span>
+<span class="s1">Model architecture:   </span><span class="si">{arch}</span>
+<span class="s1">Pre-trained?          No -- trained from scratch within this notebook (or, for RL, no training at all).</span>
+<span class="s1">Domain caveat:        Trained / tuned on synthetic Gaussian-PSF data. Transfer to a real microscope PSF is</span>
+<span class="s1">                      only approximate; on real data, measure the PSF empirically (bead images) and re-validate.</span>
+
+<span class="s1">Quantitative metrics on held-out test set (</span><span class="si">{n_test}</span><span class="s1"> images):</span>
+<span class="s1">  PSNR (mean):        </span><span class="si">{psnr_mean:.2f}</span><span class="s1"> dB</span>
+<span class="s1">  SSIM (mean):        </span><span class="si">{ssim_mean:.3f}</span>
+<span class="s1">  Anomaly % (|pred - clean| &gt; </span><span class="si">{thr:.2f}</span><span class="s1">, mean): </span><span class="si">{anom_mean:.1f}</span><span class="s1">%</span>
+
+<span class="s1">Hallucination check: Per-pixel difference map + thresholded anomaly mask vs. clean ground truth.</span>
+<span class="s1">                     Anomaly fraction above is the held-out aggregate.</span>
+<span class="s1">                     For the currently picked test image (test_idx=</span><span class="si">{tidx}</span><span class="s1">) the anomaly fraction</span>
+<span class="s1">                     was </span><span class="si">{anom_one:.1f}</span><span class="s1">%.</span>
+
+<span class="s1">Human review:        [Reviewer name + date]. [Notes: are anomalies clustered at object edges (expected</span>
+<span class="s1">                     from PSF mismatch) or in the background / object interior (suspect)?]</span>
+
+<span class="s1">Statement of use:    The deconvolved image is shown for visualization / quantification of object counts</span>
+<span class="s1">                     and morphology. Intensity quantification on deconvolved images is approximate;</span>
+<span class="s1">                     report both raw and deconvolved intensity where possible.</span>
+
+<span class="s1">Reproducibility:     numpy seed=42 (synthetic data generator); torch seed = default; RL iterations: see</span>
+<span class="s1">                     the Richardson-Lucy cell above. csbdeep / torch versions: print at runtime.</span>
+<span class="s1">==============================================================================</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">_label</span><span class="p">,</span>
+    <span class="n">arch</span><span class="o">=</span><span class="n">_arch</span><span class="p">,</span>
+    <span class="n">n_train</span><span class="o">=</span><span class="n">n_train</span><span class="p">,</span>
+    <span class="n">n_test</span><span class="o">=</span><span class="n">n_test</span><span class="p">,</span>
+    <span class="n">psnr_mean</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">_psnrs</span><span class="p">)),</span>
+    <span class="n">ssim_mean</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">_ssims</span><span class="p">)),</span>
+    <span class="n">anom_mean</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">_anoms</span><span class="p">)),</span>
+    <span class="n">thr</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span>
+    <span class="n">tidx</span><span class="o">=</span><span class="n">test_idx</span><span class="p">,</span>
+    <span class="n">anom_one</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="nb">float</span><span class="p">((</span><span class="n">_np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_pred_arr</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">X_test_clean</span><span class="p">[</span><span class="n">test_idx</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 <section id="when-to-use-each-method">
 <h2>When to use each method<a class="headerlink" href="#when-to-use-each-method" title="Link to this heading">#</a></h2>
 <p><strong>Richardson-Lucy:</strong></p>
@@ -1109,7 +1200,7 @@ We’ll build a synthetic dataset: clean round-blob objects → apply Gaussian P
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack / Ultrack)</p>
+        <p class="prev-next-title">Notebook 11 — DL-Driven Tracking (Choose-Your-Own: TrackPy / btrack (+ Ultrack pointer))</p>
       </div>
     </a>
     <a class="right-next"
@@ -1149,6 +1240,7 @@ We’ll build a synthetic dataset: clean round-blob objects → apply Gaussian P
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#side-by-side-comparison-rl-vs-care-vs-ground-truth">Side-by-side comparison: RL vs CARE vs ground truth</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-check-the-key-validation">Hallucination check (the key validation)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantitative-summary-across-all-held-out-images">Quantitative summary across all held-out images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrity-reporting-walkthrough">Integrity reporting walkthrough</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-each-method">When to use each method</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-reflection">Closing reflection</a></li>
 </ul>
