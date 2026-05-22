@@ -367,8 +367,11 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-definitions">§5 Method definitions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-baseline">§6a Gaussian baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#b-care-trained-from-scratch-supervised-needs-clean-reference">§6b CARE — trained from scratch (supervised, needs clean reference)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-noise2void-trained-from-scratch-self-supervised-no-clean-reference-needed">§6c Noise2Void — trained from scratch (self-supervised, no clean reference needed)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-pre-trained-care-from-the-bioimage-model-zoo">§6d Pre-trained CARE from the BioImage Model Zoo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-noise2void-trained-from-scratch-self-supervised-no-clean-reference-needed">§6c Noise2Void — trained from scratch (self-supervised, no clean reference needed)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-install-bioimageio-core-for-method-6d-bimz">Optional: install <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> for Method 6d (BiMZ)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-pre-trained-denoiser-from-the-bioimage-model-zoo">§6d Pre-trained denoiser from the BioImage Model Zoo</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-run-all-four-methods-at-once">§7 <em>Optional:</em> run all four methods at once</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantitative-comparison">§8 Quantitative comparison</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-check-pick-a-method-to-inspect">§9 Hallucination check — pick a method to inspect</a></li>
@@ -440,23 +443,11 @@
 <hr class="docutils" />
 <section id="setup">
 <h2>§2 Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
-<p>One pip install + imports. The bioimageio.core install is optional (only Method 6d uses it); the cell will still complete if BiMZ install fails.</p>
+<p>One pip install + imports. <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> (only Method 6d uses it) is <strong>not</strong> installed here — it’s an opt-in install in §6d, because it requires a kernel restart on Colab. If you skip it, Method 6d falls back to N2V-from-scratch automatically.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
-
-<span class="c1"># Colab provides torch, torchvision, scikit-image, matplotlib, numpy, scipy, pillow.</span>
-<span class="c1"># bioimageio.core is optional — only needed for the pre-trained BiMZ method.</span>
-<span class="c1"># Failure here is non-fatal; Method 6d will fall back to N2V-from-scratch.</span>
-<span class="c1"># Optional: bioimageio.core for the pre-trained BiMZ method (Method 6d).</span>
-<span class="c1"># Failure here is non-fatal; the notebook falls back to N2V-from-scratch.</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">bioimageio.core</span>  <span class="c1"># noqa: F401</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing bioimageio.core (optional)...&quot;</span><span class="p">)</span>
-        <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install --quiet bioimageio.core 2&gt; /dev/null || true&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.error</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -809,24 +800,42 @@
 <span class="n">BIMZ_MODEL_ID</span> <span class="o">=</span> <span class="s2">&quot;affable-shark&quot;</span>  <span class="c1"># Noise2Void model on bioimage.io</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_bimz_tensor_id</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return tensor ID as a string. v0_5 uses .id; v0_4 uses .name.&quot;&quot;&quot;</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bimz_to_numpy</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract numpy array from a bioimageio Tensor (wraps xarray DataArray).&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;to_numpy&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">load_and_apply_bimz</span><span class="p">(</span><span class="n">test_noisy</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">BIMZ_MODEL_ID</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pre-trained denoising via bioimageio.core. Returns (prediction, source_str).</span>
 <span class="sd">    Domain caveat: BiMZ N2V/CARE models are trained on specific modalities (e.g. DAPI);</span>
-<span class="sd">    running on a different modality reduces denoising quality. Honest disclaimer below.&quot;&quot;&quot;</span>
+<span class="sd">    running on a different modality reduces denoising quality.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">bioimageio.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_description</span><span class="p">,</span> <span class="n">predict</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BiMZ: loading model &#39;</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; from bioimage.io ...&quot;</span><span class="p">)</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="n">load_description</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="c1"># Convert (H, W) → (1, 1, H, W) for prediction; BiMZ accepts numpy or tensors.</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">test_noisy</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># batch, channel</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)])</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c1"># Coax various return types into a numpy array</span>
-        <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-        <span class="c1"># Squeeze to 2D</span>
+        <span class="c1"># bioimageio.core 0.6+: inputs is a dict {tensor_id: ndarray}, not a list.</span>
+        <span class="c1"># Output is a Sample; pull the numpy array via .members[output_id].</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">test_noisy</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (1, 1, H, W)</span>
+        <span class="n">input_id</span> <span class="o">=</span> <span class="n">_bimz_tensor_id</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">out_sample</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="n">input_id</span><span class="p">:</span> <span class="n">arr</span><span class="p">})</span>
+        <span class="n">output_id</span> <span class="o">=</span> <span class="n">_bimz_tensor_id</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># Sample.members maps id → Tensor</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">out_sample</span><span class="p">,</span> <span class="s2">&quot;members&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">out_sample</span>
+        <span class="n">out_tensor</span> <span class="o">=</span> <span class="n">members</span><span class="p">[</span><span class="n">output_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">output_id</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">else</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">members</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">_bimz_to_numpy</span><span class="p">(</span><span class="n">out_tensor</span><span class="p">)</span>
         <span class="k">while</span> <span class="n">pred</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -924,11 +933,52 @@
 </div>
 </div>
 </div>
+<section id="optional-install-bioimageio-core-for-method-6d-bimz">
+<h3>Optional: install <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> for Method 6d (BiMZ)<a class="headerlink" href="#optional-install-bioimageio-core-for-method-6d-bimz" title="Link to this heading">#</a></h3>
+<p>Method 6d uses the <a class="reference external" href="https://bioimage.io/" rel="noreferer noopener" target="_blank">BioImage Model Zoo</a> Python API to load a pre-trained CARE/N2V model. The library isn’t preinstalled on Colab, and installing it pulls heavy transitive deps that <strong>require a kernel restart</strong>. If you skip this cell, Method 6d falls back automatically to N2V-from-scratch.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">ENABLE_BIMZ</span> <span class="pre">=</span> <span class="pre">True</span></code> and run the cell to install. The kernel will restart; click <strong>Run all</strong> again after reconnect.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># @title Enable BiMZ install (optional) { run: &quot;auto&quot;, display-mode: &quot;form&quot; }</span>
+<span class="n">ENABLE_BIMZ</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># @param {type:&quot;boolean&quot;}</span>
+
+<span class="k">if</span> <span class="n">ENABLE_BIMZ</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+    <span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">bioimageio.core</span>  <span class="c1"># noqa: F401</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bioimageio.core already installed.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;bioimageio.core not installed. Run: pip install bioimageio.core&quot;</span><span class="p">)</span>
+        <span class="c1"># Installing bioimageio.core pulls a newer numpy as a transitive dep, which (a)</span>
+        <span class="c1"># conflicts with Colab&#39;s preinstalled numba 0.60 (requires numpy&lt;2.1), and (b)</span>
+        <span class="c1"># leaves Python&#39;s already-loaded scikit-image in a stale-ABI state. Three-part fix:</span>
+        <span class="c1">#   (1) cap numpy at &lt;2.1 so it stays compatible with Colab&#39;s numba;</span>
+        <span class="c1">#   (2) reinstall scikit-image and tifffile so they agree on the resulting numpy ABI;</span>
+        <span class="c1">#   (3) SIGKILL the kernel so the freshly-installed modules actually load.</span>
+        <span class="c1"># Colab auto-reconnects; click &#39;Run all&#39; once more after the restart.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing bioimageio.core. The kernel will restart; click &#39;Run all&#39; again after reconnect.&quot;</span><span class="p">)</span>
+        <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span>
+            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;install --quiet --upgrade bioimageio.core &#39;numpy&lt;2.1&#39; scikit-image tifffile&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>   <span class="c1"># SIGKILL — Colab auto-restarts the runtime</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BiMZ install skipped. Method 6d will fall back to N2V-from-scratch if bioimageio.core is not importable.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <hr class="docutils" />
-<section id="d-pre-trained-care-from-the-bioimage-model-zoo">
-<h2>§6d Pre-trained CARE from the BioImage Model Zoo<a class="headerlink" href="#d-pre-trained-care-from-the-bioimage-model-zoo" title="Link to this heading">#</a></h2>
-<p>Uses <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> to load a published model and run inference. <strong>~30 seconds</strong> including download. No training needed — someone else already did that.</p>
+<section id="d-pre-trained-denoiser-from-the-bioimage-model-zoo">
+<h2>§6d Pre-trained denoiser from the BioImage Model Zoo<a class="headerlink" href="#d-pre-trained-denoiser-from-the-bioimage-model-zoo" title="Link to this heading">#</a></h2>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> to load a published model and run inference. <strong>~30 seconds</strong> including download. No training needed — someone else already did that. The pinned model <code class="docutils literal notranslate"><span class="pre">affable-shark</span></code> is a Noise2Void model; the BiMZ registry has CARE models too, so this section sits at the intersection of §6b (CARE) and §6c (N2V).</p>
+<blockquote>
+<div><p>📦 <strong>Install first.</strong> If you haven’t already, set <code class="docutils literal notranslate"><span class="pre">ENABLE_BIMZ</span> <span class="pre">=</span> <span class="pre">True</span></code> in the cell just above and run it (the kernel restarts; click <em>Run all</em> again after reconnect). If <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> isn’t importable, this method falls back to N2V-from-scratch automatically.</p>
+</div></blockquote>
 <blockquote>
 <div><p>⚠️ <strong>Domain caveat.</strong> BiMZ N2V/CARE models are trained on specific modalities (a particular cell line, a particular fluorophore). If the model wasn’t trained on PAM-mice-like data, the denoising quality drops. The pinned model here (<code class="docutils literal notranslate"><span class="pre">affable-shark</span></code>) is a Noise2Void model from <a class="reference external" href="http://bioimage.io" rel="noreferer noopener" target="_blank">bioimage.io</a>. If the lookup fails (BiMZ API churn, network), this cell falls back to N2V-from-scratch.</p>
 </div></blockquote>
@@ -1275,8 +1325,11 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-definitions">§5 Method definitions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-baseline">§6a Gaussian baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#b-care-trained-from-scratch-supervised-needs-clean-reference">§6b CARE — trained from scratch (supervised, needs clean reference)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-noise2void-trained-from-scratch-self-supervised-no-clean-reference-needed">§6c Noise2Void — trained from scratch (self-supervised, no clean reference needed)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-pre-trained-care-from-the-bioimage-model-zoo">§6d Pre-trained CARE from the BioImage Model Zoo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-noise2void-trained-from-scratch-self-supervised-no-clean-reference-needed">§6c Noise2Void — trained from scratch (self-supervised, no clean reference needed)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-install-bioimageio-core-for-method-6d-bimz">Optional: install <code class="docutils literal notranslate"><span class="pre">bioimageio.core</span></code> for Method 6d (BiMZ)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-pre-trained-denoiser-from-the-bioimage-model-zoo">§6d Pre-trained denoiser from the BioImage Model Zoo</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-run-all-four-methods-at-once">§7 <em>Optional:</em> run all four methods at once</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantitative-comparison">§8 Quantitative comparison</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallucination-check-pick-a-method-to-inspect">§9 Hallucination check — pick a method to inspect</a></li>
