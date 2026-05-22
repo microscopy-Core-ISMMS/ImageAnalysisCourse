@@ -497,6 +497,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 1]</strong> <em>HeLa Cells sample image opened in Fiji, single channel selected, showing the standard ImageJ window (image canvas + tool palette + status bar).</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 1 — HeLa Cells in Fiji" src="../_images/screenshot_1.png" /></p>
+</div></blockquote>
 </section>
 <section id="a-2-launch-the-trainable-weka-segmentation-plugin">
 <h3>A.2 Launch the Trainable Weka Segmentation plugin<a class="headerlink" href="#a-2-launch-the-trainable-weka-segmentation-plugin" title="Link to this heading">#</a></h3>
@@ -504,6 +507,9 @@
 <p>The plugin opens its own window with: the image canvas in the center, two default classes (“class 1” and “class 2”) in the right panel, and the toolbar across the top with <em>Train classifier</em>, <em>Get probability</em>, <em>Create result</em>, <em>Save classifier</em>, <em>Settings</em>, and others.</p>
 <blockquote>
 <div><p><strong>[Screenshot 2]</strong> <em>TWS main window with the HeLa Cells image loaded, two default empty classes in the right panel, and the toolbar visible at the top.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 2 — TWS main window (two default classes)" src="../_images/screenshot_2.png" /></p>
 </div></blockquote>
 </section>
 <section id="a-3-add-and-label-classes">
@@ -519,6 +525,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 3]</strong> <em>TWS window after labeling: brush traces visible inside three cells (red), in the background (green), and inside two nuclei (blue), with the class panel on the right showing the three named classes.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 3 — TWS after labeling (cell / background / nucleus)" src="../_images/screenshot_3.png" /></p>
+</div></blockquote>
 </section>
 <section id="a-4-train-and-inspect-the-classifier">
 <h3>A.4 Train and inspect the classifier<a class="headerlink" href="#a-4-train-and-inspect-the-classifier" title="Link to this heading">#</a></h3>
@@ -531,7 +540,11 @@
 <div><p><strong>[Screenshot 4]</strong> <em>TWS overlay after first Train click: red/green/blue regions covering the image. Cells are mostly red, background mostly green, but several boundary pixels are clearly mis-classified — a deliberate teaching moment.</em></p>
 </div></blockquote>
 <blockquote>
-<div><p><strong>[Screenshot 5]</strong> <em>The probability map output (one image per class) opened as a stack, showing the cell-class probabilities ranging from 0 to 1 across the image.</em></p>
+<div><p><img alt="Screenshot 4 — TWS first Train output (imperfect overlay)" src="../_images/screenshot_4.png" />
+<strong>[Screenshot 5]</strong> <em>The probability map output (one image per class) opened as a stack, showing the cell-class probabilities ranging from 0 to 1 across the image.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 5 — TWS per-class probability maps" src="../_images/screenshot_5.png" /></p>
 </div></blockquote>
 </section>
 <section id="a-5-iterate">
@@ -546,6 +559,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 6]</strong> <em>TWS window after three iterations of refinement, showing a clean overlay where cells, nuclei, and background are correctly separated.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 6 — TWS overlay after 3 refinement iterations" src="../_images/screenshot_6.png" /></p>
+</div></blockquote>
 </section>
 <section id="a-6-apply-export-save-the-classifier">
 <h3>A.6 Apply, export, save the classifier<a class="headerlink" href="#a-6-apply-export-save-the-classifier" title="Link to this heading">#</a></h3>
@@ -556,6 +572,9 @@
 </ol>
 <blockquote>
 <div><p><strong>[Screenshot 7]</strong> <em>The “Create result” output: single-channel labeled image with three intensity levels (background, cell, nucleus), ready for export.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 7 — TWS Create result (indexed image)" src="../_images/screenshot_7.png" /></p>
 </div></blockquote>
 </section>
 <section id="a-7-going-further-labkit">
@@ -580,6 +599,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 8]</strong> <em>QuPath main window with a tutorial H&amp;E slide loaded, showing the slide canvas, project pane on the left, and overview thumbnail in the corner.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 8 — QuPath project with tutorial H&amp;E slide" src="../_images/screenshot_8.png" /></p>
+</div></blockquote>
 </section>
 <section id="b-2-annotate-tissue-classes">
 <h3>B.2 Annotate tissue classes<a class="headerlink" href="#b-2-annotate-tissue-classes" title="Link to this heading">#</a></h3>
@@ -591,6 +613,9 @@
 </ol>
 <blockquote>
 <div><p><strong>[Screenshot 9]</strong> <em>The slide with tumor annotations (red), stroma (green), and background (blue) painted across several fields of view.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 9 — QuPath slide with 3-class annotations" src="../_images/screenshot_9.png" /></p>
 </div></blockquote>
 </section>
 <section id="b-3-train-and-preview-live">
@@ -605,6 +630,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 10]</strong> <em>Pixel-classifier dialog open with Live prediction enabled, the slide overlay showing tissue class predictions across the slide.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 10 — QuPath Pixel-Classifier dialog (Live prediction)" src="../_images/screenshot_10.png" /></p>
+</div></blockquote>
 </section>
 <section id="b-4-apply-and-export">
 <h3>B.4 Apply and export<a class="headerlink" href="#b-4-apply-and-export" title="Link to this heading">#</a></h3>
@@ -616,6 +644,9 @@
 </ol>
 <blockquote>
 <div><p><strong>[Screenshot 11]</strong> <em>Slide after Create objects: clean polygon annotations matching the tumor / stroma / background regions.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 11 — QuPath Create objects (clean polygons)" src="../_images/screenshot_11.png" /></p>
 </div></blockquote>
 </section>
 <section id="b-5-what-this-enables">
@@ -646,6 +677,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 12]</strong> <em>Fiji updater with the deepImageJ update site checked, after a successful update.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 12 — Fiji Updater with deepImageJ site checked" src="../_images/screenshot_12.png" /></p>
+</div></blockquote>
 </section>
 <section id="c-2-browse-and-load-a-bimz-model">
 <h3>C.2 Browse and load a BiMZ model<a class="headerlink" href="#c-2-browse-and-load-a-bimz-model" title="Link to this heading">#</a></h3>
@@ -658,6 +692,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 13]</strong> <em>deepImageJ Run dialog open with a list of available BiMZ models, one selected with its citation and input/output specs visible.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 13 — deepImageJ Run dialog with BiMZ models" src="../_images/screenshot_13.png" /></p>
+</div></blockquote>
 </section>
 <section id="c-3-run-on-an-image">
 <h3>C.3 Run on an image<a class="headerlink" href="#c-3-run-on-an-image" title="Link to this heading">#</a></h3>
@@ -668,6 +705,9 @@
 </ol>
 <blockquote>
 <div><p><strong>[Screenshot 14]</strong> <em>Side-by-side: input image and deepImageJ-Run output for a segmentation model, with the model’s citation visible in the dialog.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 14 — deepImageJ side-by-side (input + output)" src="../_images/screenshot_14.png" /></p>
 </div></blockquote>
 </section>
 <section id="c-4-what-this-enables">
@@ -701,6 +741,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 15]</strong> <em>StarDist 2D dialog with the pretrained model chosen, the source image visible, and the segmentation output overlay showing instance-segmented nuclei.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 15 — StarDist 2D dialog + segmentation overlay" src="../_images/screenshot_15.png" /></p>
+</div></blockquote>
 </section>
 <section id="d-3-where-this-fits-the-workshop">
 <h3>D.3 Where this fits the workshop<a class="headerlink" href="#d-3-where-this-fits-the-workshop" title="Link to this heading">#</a></h3>
@@ -727,6 +770,9 @@
 <blockquote>
 <div><p><strong>[Screenshot 16]</strong> <em>QuPath Preferences → Extensions panel showing the StarDist extension installed.</em></p>
 </div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 16 — QuPath Extensions panel (StarDist installed)" src="../_images/screenshot_16.png" /></p>
+</div></blockquote>
 </section>
 <section id="e-2-run-on-a-slide">
 <h3>E.2 Run on a slide<a class="headerlink" href="#e-2-run-on-a-slide" title="Link to this heading">#</a></h3>
@@ -749,6 +795,9 @@
 <p>⚠ <em>The exact builder method names and the bundled model filename change between extension releases. Treat the snippet above as a placeholder — copy from the <a class="reference external" href="https://qupath.readthedocs.io/en/stable/docs/deep/stardist.html" rel="noreferer noopener" target="_blank">QuPath StarDist documentation</a> at the time you install.</em></p>
 <blockquote>
 <div><p><strong>[Screenshot 17]</strong> <em>QuPath script editor with a StarDist H&amp;E script loaded, executed across a slide region, and the resulting cell objects visible on the canvas.</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><img alt="Screenshot 17 — QuPath StarDist H&amp;E script + cell objects" src="../_images/screenshot_17.png" /></p>
 </div></blockquote>
 </section>
 <section id="e-3-where-this-fits-the-workshop">
@@ -820,112 +869,11 @@
 </section>
 <section id="screenshot-capture-checklist">
 <h2>Screenshot capture checklist<a class="headerlink" href="#screenshot-capture-checklist" title="Link to this heading">#</a></h2>
-<p>The 17 placeholder boxes above need real screenshots before this notebook is published. Capture them in a single session against the tool versions noted above (Fiji 2.16+, QuPath 0.5+) and replace the <code class="docutils literal notranslate"><span class="pre">[Screenshot</span> <span class="pre">N:</span> <span class="pre">…]</span></code> markers in the source markdown.</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>#</p></th>
-<th class="head"><p>Tool</p></th>
-<th class="head"><p>Where</p></th>
-<th class="head"><p>What to capture</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>1</p></td>
-<td><p>Fiji</p></td>
-<td><p>Section A.1</p></td>
-<td><p>HeLa Cells sample image, single channel selected, full Fiji window.</p></td>
-</tr>
-<tr class="row-odd"><td><p>2</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.2</p></td>
-<td><p>TWS main window, two empty default classes, toolbar visible.</p></td>
-</tr>
-<tr class="row-even"><td><p>3</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.3</p></td>
-<td><p>TWS window after labeling: brush traces visible for <code class="docutils literal notranslate"><span class="pre">cell</span></code> (red), <code class="docutils literal notranslate"><span class="pre">background</span></code> (green), <code class="docutils literal notranslate"><span class="pre">nucleus</span></code> (blue). Three-class panel on the right.</p></td>
-</tr>
-<tr class="row-odd"><td><p>4</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.4</p></td>
-<td><p>First Train output overlay — deliberately imperfect, with visible boundary errors.</p></td>
-</tr>
-<tr class="row-even"><td><p>5</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.4</p></td>
-<td><p>Probability map output as a stack, one image per class, full intensity range.</p></td>
-</tr>
-<tr class="row-odd"><td><p>6</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.5</p></td>
-<td><p>TWS overlay after 3 iterations of refinement — clean class separation.</p></td>
-</tr>
-<tr class="row-even"><td><p>7</p></td>
-<td><p>Fiji TWS</p></td>
-<td><p>Section A.6</p></td>
-<td><p>“Create result” output: 8-bit indexed image with one value per class.</p></td>
-</tr>
-<tr class="row-odd"><td><p>8</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section B.1</p></td>
-<td><p>Tutorial H&amp;E slide loaded, project pane left, overview thumbnail.</p></td>
-</tr>
-<tr class="row-even"><td><p>9</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section B.2</p></td>
-<td><p>Slide with <code class="docutils literal notranslate"><span class="pre">tumor</span></code> (red), <code class="docutils literal notranslate"><span class="pre">stroma</span></code> (green), <code class="docutils literal notranslate"><span class="pre">background</span></code> (blue) brush annotations.</p></td>
-</tr>
-<tr class="row-odd"><td><p>10</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section B.3</p></td>
-<td><p>Pixel-classifier dialog open, Live prediction enabled, overlay visible.</p></td>
-</tr>
-<tr class="row-even"><td><p>11</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section B.4</p></td>
-<td><p>Slide after Create objects — clean polygons.</p></td>
-</tr>
-<tr class="row-odd"><td><p>12</p></td>
-<td><p>Fiji updater</p></td>
-<td><p>Section C.1</p></td>
-<td><p>Updater dialog with deepImageJ update site checked.</p></td>
-</tr>
-<tr class="row-even"><td><p>13</p></td>
-<td><p>Fiji deepImageJ</p></td>
-<td><p>Section C.2</p></td>
-<td><p>deepImageJ Run dialog with BiMZ models listed, one selected.</p></td>
-</tr>
-<tr class="row-odd"><td><p>14</p></td>
-<td><p>Fiji deepImageJ</p></td>
-<td><p>Section C.3</p></td>
-<td><p>Side-by-side: input image and deepImageJ output, with citation visible.</p></td>
-</tr>
-<tr class="row-even"><td><p>15</p></td>
-<td><p>Fiji StarDist</p></td>
-<td><p>Section D.2</p></td>
-<td><p>StarDist 2D dialog with pretrained model chosen, segmentation overlay.</p></td>
-</tr>
-<tr class="row-odd"><td><p>16</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section E.1</p></td>
-<td><p>Preferences → Extensions panel showing StarDist installed.</p></td>
-</tr>
-<tr class="row-even"><td><p>17</p></td>
-<td><p>QuPath</p></td>
-<td><p>Section E.2</p></td>
-<td><p>Script editor with StarDist H&amp;E Groovy script, executed across a slide region, cell objects visible.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Suggested capture protocol:</strong></p>
-<ol class="arabic simple">
-<li><p>Run Fiji and QuPath on a stable laptop/desktop with a 1920×1200 (or larger) display so windows aren’t cropped.</p></li>
-<li><p>Use the same sample image across Sections A and D (HeLa Cells with a clear DAPI channel) for visual continuity.</p></li>
-<li><p>For QuPath sections (B, E), use the tutorial H&amp;E slide so anyone replicating can match.</p></li>
-<li><p>PNG, full-window screenshots; crop after the fact rather than capturing partial windows.</p></li>
-<li><p>After capture, save under <code class="docutils literal notranslate"><span class="pre">notebooks/figures/05/</span></code> and replace each <code class="docutils literal notranslate"><span class="pre">[Screenshot</span> <span class="pre">N:</span> <span class="pre">...]</span></code> in the source markdown with a Markdown image link of the form <code class="docutils literal notranslate"><span class="pre">![Screenshot</span> <span class="pre">N</span> <span class="pre">—</span> <span class="pre">short</span> <span class="pre">title](figures/05/screenshot_N.png)</span></code>.</p></li>
-</ol>
+<p>The 17 numbered placeholders above currently show gray “Pending: …” boxes — they’re real PNG files in
+<code class="docutils literal notranslate"><span class="pre">notebooks/figures/05/</span></code>, ready to be overwritten with actual captures. The full per-shot capture spec,
+tool-version requirements, and suggested capture order live in
+<span class="xref myst"><code class="docutils literal notranslate"><span class="pre">notebooks/figures/05/CAPTURE_CHECKLIST.md</span></code></span>. Drop a real PNG into
+<code class="docutils literal notranslate"><span class="pre">notebooks/figures/05/</span></code> with the matching <code class="docutils literal notranslate"><span class="pre">screenshot_N.png</span></code> name; no notebook edits required.</p>
 </section>
 <section id="appendix-exporting-sample-images-for-this-notebook">
 <h2>Appendix — Exporting sample images for this notebook<a class="headerlink" href="#appendix-exporting-sample-images-for-this-notebook" title="Link to this heading">#</a></h2>
